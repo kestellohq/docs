@@ -324,6 +324,17 @@ Every entry of a public type has a **Search and sharing** section, on the type's
 - **Sharing image**: the picture shown when someone shares a link to the entry on a social network or in a chat. Left empty, the featured image (the first image field of the type) is used. Pages have no image field by default, so choose a sharing image to give a page a picture in link previews.
 - **Hide from search engines**: the entry stays public, but it is left out of the sitemap and search engines are asked not to list it.
 
+### Titles and the default image for the whole site
+
+**System → Settings → Search and sharing** sets how every page's title is written:
+
+- **Page titles**: the pattern for every page, `{title} {sep} {site}` to begin with, which gives "Rye - Bakery". `{title}` is the page's title, or its search title when it has one. `{site}` is the site name, `{tagline}` the tagline and `{sep}` the separator.
+- **Home page title**: the pattern for the home page, `{site}` to begin with. For "Bakery - Bread, daily." use `{site} {sep} {tagline}`.
+- **Separator**: what `{sep}` becomes, such as `-`, `|` or `·`.
+- **Default sharing image**: the picture in link previews of pages that have no sharing image and no featured image, such as your logo.
+
+When a placeholder is empty, such as a tagline you never set, its separator is left out too, so a title never ends in a stray `-`. The admin keeps its own titles.
+
 To hide the whole site from search engines while you build it, use **Hide the site from search engines** on the **Reading** tab of **System → Settings**.
 
 ## The home page
