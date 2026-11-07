@@ -1,6 +1,6 @@
 # Moving from WordPress
 
-This page covers bringing a WordPress site into Kestello: what comes over, how to run the import, how to read its report, and what to do when something is left behind. Read it when you have a WordPress site you want to replace with Kestello, before you switch the domain over.
+This page covers bringing a WordPress site into Kestello: what comes over, how to run the import, how to read its report, and what to do when something is left behind. Read it when you have a WordPress site to replace with Kestello, your own or one you are moving for a client, before you switch the domain over.
 
 The import happens under **System → Import**. Administrators can use it. To let another role import, give it the permission *Import a site from WordPress* under **People → Roles**.
 

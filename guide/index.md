@@ -2,7 +2,7 @@
 
 Kestello is a content management system: software you install on your own web hosting to run a website. You write pages and posts, upload images, choose how the site looks and decide who may edit it, all from an admin area in your browser. You do not need to know how to code to run a Kestello site.
 
-This guide is for the people who run a site: owners, editors and whoever looks after the hosting. If you build themes or plugins, the [developer docs](/developers/) are the better starting point.
+This guide is for the people who run a site: owners, editors and whoever looks after the hosting. Often a developer or an agency built the site and set parts of it up for you; this guide covers the work you do day to day. If you build themes or plugins, the [developer docs](/developers/) are the better starting point.
 
 ## What you can do with it
 

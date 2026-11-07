@@ -1,8 +1,8 @@
 # Building on Kestello
 
-These pages are for developers who extend Kestello with plugins and themes, connect other systems to it through the API, or work on Kestello itself. They assume you write PHP 8.4 or newer and know the basics of Vue 3.
+Kestello is made for developers and agencies who build and look after sites for clients. These pages are for you: extending Kestello with plugins and themes, connecting other systems to it through the API, moving client sites over, or working on Kestello itself. They assume you write PHP 8.4 or newer and know the basics of Vue 3.
 
-If you run a site and do not write code, the [guide](/guide/) is for you.
+Your clients and their editors have the [guide](/guide/), written for people who do not write code. You can send them there.
 
 ## What makes Kestello different to build on
 
@@ -36,3 +36,4 @@ If you run a site and do not write code, the [guide](/guide/) is for you.
 | Connect another system | [REST API](/developers/rest-api) |
 | Ship a plugin or theme to other sites | [Packaging and signing](/developers/packaging) |
 | Run Kestello in production | [Configuration reference](/developers/configuration) and [Deployment](/developers/deployment) |
+| Move a client's site from WordPress | [Moving from WordPress](/guide/import-wordpress) and [`import:wordpress`](/developers/cli#import) |
