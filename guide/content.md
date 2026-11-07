@@ -319,10 +319,10 @@ Changing the address of a category or tag does not add a redirect. If the old ad
 
 Every entry of a public type has a **Search and sharing** section, on the type's tab in the visual editor and in the sidebar of the form view:
 
+- **Search title**: shown as the title in search engine results, in link previews and on the browser tab, in place of the entry's title. The page itself still shows its title. Use it for a title written for search, such as "Rye bread in three days" for a post called "Rye". Left empty, the title is used.
 - **Search description**: shown under the title in search engine results and in link previews on social networks, up to 300 characters. Left empty, Kestello uses the excerpt, or the first lines of the text. On a page built from blocks, that is the text every visitor sees; blocks shown only to signed-in people, to some roles or for a limited time are left out.
+- **Sharing image**: the picture shown when someone shares a link to the entry on a social network or in a chat. Left empty, the featured image (the first image field of the type) is used. Pages have no image field by default, so choose a sharing image to give a page a picture in link previews.
 - **Hide from search engines**: the entry stays public, but it is left out of the sitemap and search engines are asked not to list it.
-
-The featured image (the first image field of the type) is used as the picture in link previews. Pages have no image field by default, so links to pages are shared without a picture.
 
 To hide the whole site from search engines while you build it, use **Hide the site from search engines** on the **Reading** tab of **System → Settings**.
 
