@@ -41,7 +41,7 @@ There are two ways to authenticate. Kestello picks the method from the request: 
 
 | Method | Use it for | CSRF header | Scopes apply |
 |---|---|---|---|
-| Session cookie (`cms_session`) | The admin, Vue pages and plugin screens running on the same site | Required on `POST`, `PUT`, `PATCH`, `DELETE` | No |
+| Session cookie (`kestello_session`) | The admin, Vue pages and plugin screens running on the same site | Required on `POST`, `PUT`, `PATCH`, `DELETE` | No |
 | Personal access token (`Authorization: Bearer kst_pat_...`) | Scripts, servers, other applications | Never | Yes |
 
 What a caller may do is always the intersection of two things: the **capabilities** of the user's role, and, for tokens, the token's **scopes**. A token narrows what its user may do and never widens it. If the user's role loses a capability, every token of that user loses it too.
