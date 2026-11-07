@@ -59,11 +59,11 @@ If it is not, use your file manager or FTP program to give those three folders p
 
 Open your site's address in a browser. Kestello sees that it is not installed yet and opens the installer at `/install`. It has five steps.
 
-### Step 1: Requirements
+### Step 1: Server check
 
-A list of checks: PHP version, the database extension, the required PHP extensions, and whether the folders are writable. Every line must pass before you can continue.
+Kestello checks the PHP version, a database driver, the required PHP extensions, and the folders it writes to. Kestello creates any of those folders that are missing, because some file managers leave empty folders out when they unzip.
 
-If a line fails, the table under [Requirements](/guide/requirements) explains what it is. PHP versions and extensions are usually changed in the control panel (look for **PHP Selector**, **PHP Version** or **PHP Extensions**). After changing something, reload the page.
+When everything passes, you see **Your server is ready** and can continue. Otherwise the problems are listed first, each with what to do about it, and the checks that passed are folded away under **checks passed**. PHP versions and extensions are usually changed in the control panel (look for **PHP Selector**, **PHP Version** or **PHP Extensions**); the table under [Requirements](/guide/requirements) explains each one. After fixing something, choose **Check again**.
 
 ### Step 2: Database
 
@@ -72,16 +72,16 @@ Choose the database type. Only types whose PHP extension is installed are offere
 - **MySQL / MariaDB** or **PostgreSQL**: enter the host, the port (leave it empty for the usual one), the database name, the user and the password from step 1.
 - **SQLite**: enter only a name. The database is created as a file in `storage/database/`, outside the folder visitors can reach.
 
-Choose **Test and continue**. Kestello connects with these details before it lets you continue. If the connection fails you see the database's own error message; the most common ones are listed at the end of this page.
+Choose **Connect and continue**. Kestello connects with these details before it lets you continue. If the connection fails you see the database's own error message; the most common ones are listed at the end of this page.
 
 ### Step 3: Your site
 
 | Field | What to enter |
 |---|---|
 | Site name | Your site's name. It appears in the browser tab and in emails. You can change it later. |
-| Description | A short line about the site. Optional. |
+| Tagline | A short line about the site. Optional. |
 | Site address | The full address visitors will use, including `https://`, for example `https://example.com`. Links in emails are built from it. |
-| Timezone | Where you are. Dates in the admin, scheduled publishing and nightly tasks follow this clock. |
+| Time zone | Where you are. Dates in the admin, scheduled publishing and nightly tasks follow this clock. |
 
 ### Step 4: Your admin account
 
@@ -91,11 +91,13 @@ This is the first account and it has full access. Choose:
 - an **email address** you can receive mail at (it is used for password resets),
 - a **password** of at least 12 characters that is not a common password. A password manager can make one for you.
 
+If the password is refused, the username and email address stay filled in, so you only type the password again.
+
 ### Step 5: Install
 
-A summary of your choices. Check it, then choose **Install Kestello**. Kestello writes its configuration files to `config/` (the database details and secret key, plus commented files for scheduled tasks, background jobs, accounts and the audit log, each option at its default), creates the database tables and your account. If anything fails, it removes the configuration files again and shows the error, so you can correct the details and try again. Tables it already created are reused on the next attempt.
+A summary of your choices, with a **Change** link to the step each one came from. Check it, then choose **Install Kestello**. Kestello writes its configuration files to `config/` (the database details and secret key, plus commented files for scheduled tasks, background jobs, accounts and the audit log, each option at its default), creates the database tables and your account. If anything fails, it removes the configuration files again and shows the error, so you can correct the details and try again. Tables it already created are reused on the next attempt.
 
-When it is done you see **Kestello is installed** with a **Sign in** button. Sign in with the username or email address and the password from step 4. The sign-in page is always at `/login`.
+When it is done you see **Kestello is installed**, your site's address, and three things to do next: sign in, add the cron job for background tasks (the page shows the exact command for your server, with a **Copy** button), and the checks before you go live. Sign in with the username or email address and the password from step 4. The sign-in page is always at `/login`.
 
 ## 5. Set up background tasks {#background-tasks}
 
