@@ -620,7 +620,7 @@ Constructor dependencies are injected from the container, as `Greetings` is in t
 | `->nullable()` | `null` is allowed. |
 | `->default($value)` | Optional, and filled with `$value` when missing. |
 | `->min($n)`, `->max($n)` | Length for strings, value for numbers, item count for lists. |
-| `->format('email')` | One of `email`, `uri`, `date-time`, `date`, `uuid`, `slug`, `multiline`. |
+| `->format('email')` | One of `email`, `uri`, `date-time`, `date`, `uuid`, `slug`, `multiline`, `media`. On a settings tab, `multiline` shows a text area and `media` on an integer shows an image picker that stores the file's id (0 for none). |
 | `->pattern('[a-z]+')` | A regular expression without delimiters, matched against the whole value. |
 | `->description('...')` | Shown in the OpenAPI document and in admin forms. |
 | `->partial()` | On an object: every property optional with no defaults, for `PATCH`. |
