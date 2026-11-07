@@ -54,7 +54,7 @@ A migration is a PHP file that creates or changes database tables. Plugins ship 
 
 Files run in name order, which is why the name starts with a timestamp (`YYYY_MM_DD_HHMMSS_`). Each file runs once per site: Kestello records its file name and owner (`plugin:acme-events`) in the `migrations` table.
 
-Return an anonymous class, as above. Two plugins can then both have a `create_settings_table` migration without a class name clash. A file may instead declare a class named after the file (`2026_11_05_143000_create_events_table.php` declares `CreateEventsTable`), which is how older core migrations are written.
+Every migration returns an anonymous class, as above. Two plugins can then both have a `create_settings_table` migration without a class name clash.
 
 `down()` must undo `up()`. For plugins it runs when the plugin is uninstalled.
 
@@ -288,7 +288,7 @@ Use a model with casts (`'published' => 'bool'`, `'details' => 'array'`) so your
 | `Foreign key on [p_acme_events_tickets.event_id] has no referenced table (call ->on()).` | `foreign()` needs `->on('table')`. |
 | `Invalid foreign key action [DELETE].` | Use `CASCADE`, `SET NULL`, `RESTRICT`, `NO ACTION` or `SET DEFAULT`. |
 | `enum() needs at least one value.` | Pass the allowed values. |
-| `Migration "2026_11_05_143000_create_events_table.php" must return a Migration instance or declare class CreateEventsTable.` | The file returns nothing. Add `return new class extends Migration { ... };`. |
+| ``Migration "2026_11_05_143000_create_events_table.php" must return an instance: `return new class extends Migration { ... };`.`` | The file returns nothing, or declares a named class. Return an anonymous class instead. |
 | `Duplicate migration filename "..." in <folder>.` | Two directories given to one runner hold the same file name. |
 | `Usage: make:migration <name>` | Pass a name, such as `create_events_table`. |
 
