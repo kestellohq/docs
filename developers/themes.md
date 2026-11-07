@@ -177,12 +177,22 @@ defineProps({ kestelloVersion: { type: String, default: '' } });
 
 <template>
     <Head title="About" />
-    <section class="container py-5">
+    <section class="about">
         <h1>About</h1>
         <p>Running Kestello {{ kestelloVersion }}.</p>
     </section>
 </template>
+
+<style scoped>
+.about {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 48px 24px;
+}
+</style>
 ```
+
+Kestello ships no CSS framework. A theme styles its own markup; scoped styles in each component keep it tidy.
 
 A page receives only the props it declares. Everything else that was sent, such as `site`, `auth` and `menus`, is on `usePage().props`.
 
