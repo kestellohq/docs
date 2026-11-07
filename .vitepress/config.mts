@@ -76,6 +76,7 @@ const developers = [
         items: [
             { text: 'Themes', link: '/developers/themes' },
             { text: 'Rendering and caching', link: '/developers/frontend' },
+            { text: 'Search engines', link: '/developers/seo' },
         ],
     },
     {
