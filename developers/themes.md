@@ -236,6 +236,19 @@ Theme pages are named by their path, with no prefix, so a theme can also ship pa
 
 The [`base-child` example theme](https://github.com/kestellohq/examples/tree/main/themes/base-child) overrides `About` and `@hello/Greeting` this way. An override receives the same props as the original, so check the original component's `defineProps` first.
 
+Core's sign-in pages wear the admin's look. To give them your site's look instead, override any of them:
+
+| Page | Address | Props |
+|---|---|---|
+| `@core/auth/Login` | `/login` | `providers`, `canRegister` (sign-up is open) |
+| `@core/auth/Register` | `/register` | `domains` (when sign-up is limited to some) |
+| `@core/auth/CompleteRegistration` | `/register/complete` | `token`, `email`, `valid`, `minLength` |
+| `@core/auth/ForgotPassword` | `/forgot-password` | none |
+| `@core/auth/ResetPassword` | `/reset-password` | `token`, `valid`, `minLength` |
+| `@core/auth/TwoFactorChallenge` | `/login/two-factor` | none |
+
+Keep each form's field names and the address it posts to, which is the page's own address. Messages arrive in `page.props.flash` (`success`, `error`) and errors per field in the form's `errors`.
+
 ## Child themes
 
 A child theme names its parent and contains only what it changes:

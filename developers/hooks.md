@@ -157,12 +157,12 @@ Someone signed out.
 
 `Kestello\Cms\Events\UserRegistered`, since 0.1.0.
 
-A user account was created, by an admin or by an external sign-in. Not dispatched for the first admin, who is created by the installer before plugins run.
+A user account was created: by an admin, by email sign-up or by signing in with a provider. Not dispatched for the first admin, who is created by the installer before plugins run.
 
 | Property | Type | Description |
 |---|---|---|
 | `$userId` | `int` | The new user. |
-| `$via` | `string` | `admin`, or `external:<provider>` for an account created at sign-in. |
+| `$via` | `string` | `admin`, `email` for email sign-up, or `external:<provider>` for an account created at sign-in. |
 
 ### Background jobs
 
@@ -468,21 +468,23 @@ The fields of one API resource row (users, entries, media...). Add or redact fie
 
 Since 0.1.0. The value is `bool`.
 
-Whether an external sign-in may create a new account.
+Whether someone may create an account, by email sign-up or by signing in with a provider.
 
 | Argument | Description |
 |---|---|
-| `ExternalIdentity $identity` | Who is signing in. |
+| `string $email` | The address the account would use. Empty when a provider shared none. |
+| `?ExternalIdentity $identity` | Who is signing in with a provider, or null for email sign-up. |
 
 #### `auth.default_role`
 
 Since 0.1.0. The value is `string`.
 
-The role of an account created by an external sign-in. admin and unknown roles become user.
+The role of an account someone creates for themselves. admin and unknown roles become user.
 
 | Argument | Description |
 |---|---|
-| `ExternalIdentity $identity` | Who is signing in. |
+| `string $email` | The address the account would use. Empty when a provider shared none. |
+| `?ExternalIdentity $identity` | Who is signing in with a provider, or null for email sign-up. |
 
 #### `auth.password.errors`
 
@@ -499,7 +501,7 @@ Errors for a new password. Add your own rules; core's errors cannot be removed.
 
 Since 0.1.0. The value is `string`.
 
-Where to go after an external sign-in. The result must stay on this site.
+Where to go after signing in with a provider or finishing email sign-up. The result must stay on this site.
 
 | Argument | Description |
 |---|---|
