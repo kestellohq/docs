@@ -1,18 +1,23 @@
 // Cloudflare Workers: the docs are static assets only, no Worker code.
-// Deploy with `npx wrangler deploy` (it runs `npm run build` first), or connect the repository in
-// the Cloudflare dashboard (Workers Builds) with `npm run build` as the build command.
+// Workers Builds (the repository connected in the Cloudflare dashboard) runs `npm run build`, then
+// `npx wrangler deploy`. From a machine: `npx wrangler deploy` (it runs `npm run build` first).
 {
-    "name": "kestello-docs",
+    // must match the Worker's name in the Cloudflare dashboard
+    "name": "docs",
     "compatibility_date": "2026-11-01",
     "build": {
         "command": "npm run build"
     },
+    // keep docs.<account>.workers.dev reachable; attach docs.kestello.com under the Worker's
+    // Settings > Domains & Routes once the kestello.com zone is in this Cloudflare account
+    "workers_dev": true,
+    // Workers Builds deploys each branch and pull request as a preview (`npx wrangler preview`), which needs this block
+    "previews": {},
     "assets": {
         "directory": "./.vitepress/dist",
         // /guide/forms is served from guide/forms.html (VitePress cleanUrls), and /guide/forms.html redirects to it
         "html_handling": "auto-trailing-slash",
         // unknown addresses get the 404.html VitePress writes, with status 404
         "not_found_handling": "404-page"
-    },
-    "routes": [{ "pattern": "docs.kestello.com", "custom_domain": true }]
+    }
 }

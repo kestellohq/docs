@@ -8,12 +8,15 @@ import { fileURLToPath } from 'node:url';
 const read = (path) => readFileSync(fileURLToPath(new URL(`../${path}`, import.meta.url)), 'utf8');
 const jsonc = (text) => JSON.parse(text.replace(/^\s*\/\/.*$/gm, ''));
 
-test('the Worker serves the VitePress build at docs.kestello.com', () => {
+test('the Worker serves the VitePress build', () => {
     const worker = jsonc(read('wrangler.jsonc'));
+    assert.equal(worker.name, 'docs', 'must match the Worker connected in the Cloudflare dashboard, or Workers Builds deploys somewhere else');
+    assert.equal(worker.workers_dev, true, 'docs.<account>.workers.dev stays reachable');
+    assert.deepEqual(worker.previews, {}, 'pull request previews (`wrangler preview`) need a previews block');
+    assert.equal(worker.routes, undefined, 'the custom domain is attached in the dashboard, so a missing zone cannot fail the deploy');
     assert.equal(worker.assets.directory, './.vitepress/dist');
     assert.equal(worker.assets.not_found_handling, '404-page', 'VitePress writes 404.html; unknown addresses get it');
     assert.equal(worker.assets.html_handling, 'auto-trailing-slash', '/guide/forms is served from guide/forms.html');
-    assert.deepEqual(worker.routes, [{ pattern: 'docs.kestello.com', custom_domain: true }]);
     assert.equal(worker.build.command, 'npm run build');
 });
 
