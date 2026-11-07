@@ -1,0 +1,38 @@
+# Every pull request and push: the style rules from STYLE.md that a machine can check, their
+# tests, and a full VitePress build (which also fails on dead internal links).
+name: Docs
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Style and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+
+      - name: Style (STYLE.md)
+        run: npm run style
+
+      - name: Style checker tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

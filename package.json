@@ -1,0 +1,17 @@
+{
+  "name": "kestello-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "style": "node tools/check-style.mjs",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "check": "npm run style && npm test && npm run build"
+  },
+  "devDependencies": {
+    "vitepress": "1.6.4"
+  },
+  "license": "GPL-2.0-or-later"
+}
