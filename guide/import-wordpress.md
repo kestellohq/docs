@@ -10,10 +10,10 @@ The import happens under **System → Import**. Administrators can use it. To le
 |---|---|
 | Posts and pages | Posts and pages, with their title, text, excerpt, address, publish date, last-changed date and author. Drafts stay drafts, posts set to publish later stay scheduled, private posts stay private. Pages keep their parent page. |
 | Categories and tags | Categories (with their parent category) and tags, attached to the same posts. |
-| Media library | Files in the media library, with their title, alt text and caption. Images and other files linked from posts that were not in the media library come over too, when they are in the old site's `wp-content/uploads` folder. |
+| Media library | Files in the media library, with their title, alt text and caption. Images and other files linked from posts that were not in the media library come over too, when they are in the old site's `wp-content/uploads` folder, or on the host the old site kept its files on (a CDN, or `files.wordpress.com` for a WordPress.com site). |
 | Featured images | The post's featured image. |
 | Menus | Menus with their links, nested up to 4 levels. Links to posts, pages and categories point at what was imported. |
-| Old addresses | A redirect from each old address to the new one, so links and search results keep working. |
+| Old addresses | A redirect from each old address to the new one, so links and search results keep working. Sites that kept WordPress's plain addresses, such as `/?p=123` or `/?page_id=45`, are covered too. |
 
 Text written in the block editor becomes Kestello blocks: paragraphs, headings, lists, quotes, images, galleries, buttons, columns, groups, embeds from YouTube and Vimeo, and the rest of the common blocks. Posts written in the classic editor are converted the same way. When a block cannot be rebuilt here without losing something, its HTML is kept as it was, so no text is lost. Links inside posts that pointed at the old site are changed to point at the imported pages and files.
 
@@ -30,6 +30,9 @@ A few things change on the way:
 - Addresses are written in plain letters: a post at `/здраво/` is at `/zdravo` here, and the old address redirects to it.
 - A post whose address is already taken by Kestello, such as `admin`, gets a number added (`admin-2`). The report lists each one.
 - Category addresses are not nested here: `/category/news/releases/` redirects to `/category/releases`.
+- Blocks that showed something WordPress made as the page loaded, such as **Latest posts**, a search box or the site title, are left out. The report lists them in one line.
+- A video in a **Media & Text** block becomes a link next to the text, and the video behind a **Cover** is left out, since covers here take an image.
+- Social icons become a list of links.
 
 ## Before you start
 
@@ -86,6 +89,7 @@ You can import the same WordPress site again, for example to bring over posts wr
 
 - Posts, pages, categories, files and menus that came over before are updated with any changes from WordPress, and left alone when nothing changed. Files are not downloaded again.
 - Anything you changed on this site since the last import is kept as you left it, and listed under **Kept as edited here**. Publishing a scheduled post does not count as a change.
+- Posts keep the author they got the first time. To credit them to someone else, choose that person under **Authors** before you import again.
 - Categories and tags that were already on this site before the first import are used as they are and never changed by an import.
 - Anything you deleted on this site is not brought back.
 - New posts and files are added.
