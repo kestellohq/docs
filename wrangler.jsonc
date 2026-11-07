@@ -11,6 +11,8 @@
     // keep docs.<account>.workers.dev reachable; attach docs.kestello.com under the Worker's
     // Settings > Domains & Routes once the kestello.com zone is in this Cloudflare account
     "workers_dev": true,
+    // Workers Builds deploys each branch and pull request as a preview (`npx wrangler preview`), which needs this block
+    "previews": {},
     "assets": {
         "directory": "./.vitepress/dist",
         // /guide/forms is served from guide/forms.html (VitePress cleanUrls), and /guide/forms.html redirects to it

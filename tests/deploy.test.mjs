@@ -12,6 +12,7 @@ test('the Worker serves the VitePress build', () => {
     const worker = jsonc(read('wrangler.jsonc'));
     assert.equal(worker.name, 'docs', 'must match the Worker connected in the Cloudflare dashboard, or Workers Builds deploys somewhere else');
     assert.equal(worker.workers_dev, true, 'docs.<account>.workers.dev stays reachable');
+    assert.deepEqual(worker.previews, {}, 'pull request previews (`wrangler preview`) need a previews block');
     assert.equal(worker.routes, undefined, 'the custom domain is attached in the dashboard, so a missing zone cannot fail the deploy');
     assert.equal(worker.assets.directory, './.vitepress/dist');
     assert.equal(worker.assets.not_found_handling, '404-page', 'VitePress writes 404.html; unknown addresses get it');
