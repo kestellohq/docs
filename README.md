@@ -12,12 +12,12 @@ It is published at [docs.kestello.com](https://docs.kestello.com).
 
 ## Deploy to Cloudflare Workers
 
-The docs are static assets on Cloudflare Workers, with no Worker code. `wrangler.jsonc` serves the VitePress build (`.vitepress/dist`) at docs.kestello.com, with clean addresses (`/guide/forms`), the `404.html` VitePress writes for unknown addresses, and the headers in `public/_headers`.
+The docs are static assets on Cloudflare Workers, with no Worker code. `wrangler.jsonc` describes the Worker named `docs`: it serves the VitePress build (`.vitepress/dist`), with clean addresses (`/guide/forms`), the `404.html` VitePress writes for unknown addresses, and the headers in `public/_headers`.
 
 - **From your machine:** `npx wrangler login` once, then `npx wrangler deploy`. Wrangler runs `npm run build` first.
 - **From the repository:** in the Cloudflare dashboard, create a Worker from this repository (Workers Builds), with `npm run build` as the build command and `npx wrangler deploy` as the deploy command.
 
-The custom domain needs the kestello.com zone in the same Cloudflare account.
+The Worker's name in `wrangler.jsonc` must match the Worker in the dashboard. It answers at `docs.<account>.workers.dev`; attach docs.kestello.com under the Worker's **Settings > Domains & Routes** once the kestello.com zone is in the same Cloudflare account.
 
 ## Contributing
 
