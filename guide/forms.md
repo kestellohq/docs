@@ -80,7 +80,7 @@ A **File upload** field lets visitors attach files:
 
 Visitors see the limits under the field, in the site's language, for example "Up to 3 files, 12 MB each.".
 
-The same rules as the media library apply: only the file types allowed under **System → Settings → Media**, and never files a server could run. Uploaded files are stored privately, outside the part of the site visitors can reach, and can only be downloaded from the **Submissions** screen by people who may read submissions.
+The same rules as the media library apply: only the file types allowed under **Site → Settings → Media**, and never files a server could run. Uploaded files are stored privately, outside the part of the site visitors can reach, and can only be downloaded from the **Submissions** screen by people who may read submissions.
 
 Your hosting's own upload limit also applies to form uploads. If it is lower than **Largest file (MB)**, visitors see "is too large" for files below your limit.
 
@@ -106,7 +106,7 @@ The **After sending** section, on the **Form** tab, controls the end of the form
 - **Or go to a page**: a path on your site such as `/thanks`, or a full address. Visitors are taken there instead of seeing the message.
 - **When the form is closed**: the text shown in place of a closed form.
 
-The defaults are in the site's language ([**System → Settings**, **Language**](/guide/translating)). If you leave them as they are and later change the site's language, visitors see them in the new language. Text you wrote yourself stays as you wrote it.
+The defaults are in the site's language ([**Site → Settings**, **Language**](/guide/translating)). If you leave them as they are and later change the site's language, visitors see them in the new language. Text you wrote yourself stays as you wrote it.
 
 ### Close a form
 
@@ -124,7 +124,7 @@ You can add up to five emails per form, for example one to the office and one, w
 
 Each email lists the answers in the form's order and, when submissions are kept, includes **Open it in the admin**. Attached files are not sent with the email; their names are listed with "(download them in the admin)". The email's own wording, and the subject when you leave **Subject** empty, are in the site's language.
 
-Emails go through the mail settings under **System → Settings → Email** and are sent in the background, a moment after the visitor sends the form. If the mail server refuses a message, Kestello tries again, up to three times. Use **Send a test email** on the **Email** tab to check your mail settings first; see [Your first hour](/guide/first-steps#email).
+Emails go through the mail settings under **Site → Settings → Email** and are sent in the background, a moment after the visitor sends the form. If the mail server refuses a message, Kestello tries again, up to three times. Use **Send a test email** on the **Email** tab to check your mail settings first; see [Your first hour](/guide/first-steps#email).
 
 ## Read submissions
 
@@ -212,7 +212,7 @@ These are the messages you may see when saving the form:
 
 **"Another field is already called email."** Two fields have the same **Name**. Rename one.
 
-**Submissions arrive, but the emails do not.** Send a test email from **System → Settings → Email** first. If that works, open **System → Background jobs** and look for failed jobs: the error there says what the mail server answered. Also check the spam folder of the receiving mailbox.
+**Submissions arrive, but the emails do not.** Send a test email from **Site → Settings → Email** first. If that works, open **System → Background jobs** and look for failed jobs: the error there says what the mail server answered. Also check the spam folder of the receiving mailbox.
 
 ## Related pages
 

@@ -104,7 +104,7 @@ Whether the site address starts with `https://`.
 - **Recommended**: "The site address (app.url) is not set, so links in emails and from the scheduler may be wrong." Or, on a development address: "The site runs on a local development address without HTTPS."
 - **Critical**: "The site address does not use HTTPS. Passwords and sessions can be intercepted."
 
-**Fix**: turn on a certificate in your control panel (often labelled "SSL" or "Let's Encrypt"). Check that `https://` works in the browser, then change **Site address** under **System → Settings** to start with `https://`.
+**Fix**: turn on a certificate in your control panel (often labelled "SSL" or "Let's Encrypt"). Check that `https://` works in the browser, then change **Site address** under **Site → Settings** to start with `https://`.
 
 ### Writable folders {#core-writable}
 
@@ -122,7 +122,7 @@ How much space is left on the disk that holds `storage`.
 - **Critical**: below 200 MB: "Uploads, caches and backups will start failing."
 - On some hosts the space cannot be measured; the check then passes with "Free disk space could not be measured on this host."
 
-**Fix**: delete old backups under **System → Backups**, or keep backups on outside storage (see [Backups](/guide/backups)). Delete media you no longer use. Ask your host for more space if needed.
+**Fix**: delete old backups under **Site → Backups**, or keep backups on outside storage (see [Backups](/guide/backups)). Delete media you no longer use. Ask your host for more space if needed.
 
 ### PHP limits {#core-php-limits}
 
@@ -190,9 +190,9 @@ Kestello writes a small test file to every storage disk (where uploads and backu
 ### Email delivery {#core-mail}
 
 - **Passed**: "Email is sent through SMTP."
-- **Recommended**: "Email uses PHP mail(), which often lands in spam or is disabled by hosts. Configure SMTP in settings." A **Mail settings** button opens **System → Settings**.
+- **Recommended**: "Email uses PHP mail(), which often lands in spam or is disabled by hosts. Configure SMTP in settings." A **Mail settings** button opens **Site → Settings**.
 
-**Fix**: enter your mail provider's SMTP details under **System → Settings → Email** and use **Send a test email**. See [Your first hour](/guide/first-steps#email).
+**Fix**: enter your mail provider's SMTP details under **Site → Settings → Email** and use **Send a test email**. See [Your first hour](/guide/first-steps#email).
 
 ### Plugins and themes {#core-extensions}
 
@@ -211,7 +211,7 @@ Kestello can keep finished pages ready for visitors who are not signed in, which
 - **Passed**: "Pages are cached for visitors who aren't signed in, and refreshed when content changes."
 - **Recommended**: "Pages are rendered for every visitor. Turn the page cache on under Settings → Performance."
 
-**Fix**: open **System → Settings**, choose **Performance** and turn on **Cache pages**. The page cache is off by default while debug mode is on.
+**Fix**: open **Site → Settings**, choose **Performance** and turn on **Cache pages**. The page cache is off by default while debug mode is on.
 
 ### Backups {#core-backups}
 
@@ -220,7 +220,7 @@ Kestello can keep finished pages ready for visitors who are not signed in, which
 - **Recommended**: "Scheduled backups are on, but the newest is … days old. Check that the scheduler runs." Shown when the newest backup is older than 2 days with daily backups, or 8 days with weekly backups.
 - **Recommended**: "Scheduled backups are off and the newest backup is … days old." Shown after 7 days.
 
-An **Open backups** button opens **System → Backups**. **Fix**: make a backup, and check [Scheduled tasks](#core-scheduler). See [Backups](/guide/backups).
+An **Open backups** button opens **Site → Backups**. **Fix**: make a backup, and check [Scheduled tasks](#core-scheduler). See [Backups](/guide/backups).
 
 ### Image processing {#media-images}
 
@@ -298,7 +298,7 @@ The tasks Kestello ships with. Times are on the clock of the timezone set under 
 | `sessions.gc` | hourly | Removes expired sessions. |
 | `cache.prune` | hourly | Removes expired cache entries and rate-limit counters, which otherwise pile up in `storage/` or the cache table. |
 | `health.check` | hourly | Runs Site Health and tells administrators about new critical problems. |
-| `backups.run` | 02:30 | Makes the scheduled backup (daily or weekly, as set under **System → Backups**). |
+| `backups.run` | 02:30 | Makes the scheduled backup (daily or weekly, as set under **Site → Backups**). |
 | `audit.prune` | 03:10 | Deletes old audit entries and expired password-reset links. |
 | `queue.prune-failed` | 03:20 | Deletes failed jobs older than 30 days. |
 | `auth.prune-tokens` | 03:30 | Deletes access tokens that expired over 30 days ago. |

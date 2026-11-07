@@ -4,7 +4,7 @@ This page is for people who want to translate the Kestello admin, emails and mes
 
 ## Choose the language of your site
 
-Open **System → Settings**, and under **General** choose a **Language**, then save. The list shows English and every language that comes with your version of Kestello. The admin, the emails Kestello sends and the text of your theme switch to it. Numbers, dates and plurals follow the language too.
+Open **Site → Settings**, and under **General** choose a **Language**, then save. The list shows English and every language that comes with your version of Kestello. The admin, the emails Kestello sends and the text of your theme switch to it. Numbers, dates and plurals follow the language too.
 
 Languages written right to left, such as Arabic or Hebrew, turn the admin around as well.
 
@@ -36,7 +36,7 @@ The template has a note at the top that says the same.
 
 ## Try it on a site
 
-On a test site, copy your `.po` file into `core/resources/lang/`, then choose the language under **System → Settings**. Each page of the admin loads the new sentences.
+On a test site, copy your `.po` file into `core/resources/lang/`, then choose the language under **Site → Settings**. Each page of the admin loads the new sentences.
 
 ::: warning
 Files you add to `core/` are replaced by the next Kestello update. Send the translation in (below) so it ships with Kestello.

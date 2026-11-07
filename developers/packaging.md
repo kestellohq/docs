@@ -144,7 +144,7 @@ The command line (`plugin:install`, `theme:install`, `package:update`, `core:upd
 
 `app.packages.admin_unsigned` (default `false`) lets the admin install unsigned and untrusted packages too. Turn it on only on development and staging sites.
 
-The admin installs plugins under **Plugins → Manage plugins** and Kestello releases under **System → Updates**. **Appearance → Themes** imports only themes without code (themes made in the admin and exported); a theme with PHP or Vue code is installed on the server with `theme:install`.
+The admin installs plugins under **Plugins → Manage plugins** and Kestello releases under **Site → Updates**. **Appearance → Themes** imports only themes without code (themes made in the admin and exported); a theme with PHP or Vue code is installed on the server with `theme:install`.
 
 ## Check a package
 
@@ -282,7 +282,7 @@ php bin/cms core:install-zip
 `core:install-zip [--out=dist]` writes `kestello-<version>.zip` and its `.sha256` from a checkout. It holds the top-level `.htaccess`, `bin/cms`, `public/`, `core/`, the base theme, and the license, readme, changelog and security policy, all inside one `kestello/` folder. It is built from that list, so tests, tooling, Docker files, other plugins and themes, `config/` and `storage/` never go in, nor do hidden files other than `.htaccess` and the Vite manifests. The folders Kestello writes to are left out on purpose: the installer creates them. The release workflow builds this zip for every release; it is not signed, because nothing installs it automatically.
 ### Apply a release
 
-In the admin, **System → Updates** with **Upload a Kestello release** applies releases signed by a trusted key (or any untampered release when `app.packages.admin_unsigned` is `true`). On the server:
+In the admin, **Site → Updates** with **Upload a Kestello release** applies releases signed by a trusted key (or any untampered release when `app.packages.admin_unsigned` is `true`). On the server:
 
 ```bash
 php bin/cms core:update kestello-core-0.2.0.zip
@@ -305,7 +305,7 @@ After a successful update, Kestello keeps the running release, the one before it
 
 Official releases are GitHub releases of [kestellohq/cms](https://github.com/kestellohq/cms/releases). A maintainer pushes a `vX.Y.Z` tag, and the release workflow builds `kestello-core-X.Y.Z.zip`, signs it with the release key, checks it with `core:verify`, and publishes it with its `.sha256` file and `kestello.stub.php` (see [Editor setup](/developers/editor-setup)).
 
-Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **System → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
+Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **Site → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
 
 **Review the update** asks GitHub again where the zip is, downloads it, and throws it away unless its SHA-256 matches the published checksum. Then it goes through the same review and update as an uploaded zip. From the admin, the signature must come from a key in `release.keys` or `app.packages.trusted_keys`.
 

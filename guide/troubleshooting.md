@@ -115,7 +115,7 @@ If the sign-in page works but the admin shows an error, a plugin is the usual ca
 
 Kestello sends email for password resets, Site Health alerts, form notifications and anything plugins send.
 
-1. Open **System → Settings** and choose **Email**. If no **SMTP server** is filled in, Kestello hands mail to PHP's built-in mail function, which many hosts block or which lands in spam. Enter your mail provider's SMTP details. See [Your first hour](/guide/first-steps#email).
+1. Open **Site → Settings** and choose **Email**. If no **SMTP server** is filled in, Kestello hands mail to PHP's built-in mail function, which many hosts block or which lands in spam. Enter your mail provider's SMTP details. See [Your first hour](/guide/first-steps#email).
 2. Use **Send a test email** with your own address. It uses the saved settings, so save first.
 3. If you see "The email could not be sent. Check the mail settings and the server log.", the mail server refused the message or could not be reached. Find the reason in the logs (see [Find the error log](#logs)). The common messages:
    - "SMTP connection failed": the server name or port is wrong, or the host blocks outgoing mail on that port. Try port `587` with `tls`, or `465` with `ssl`. Some hosts only allow their own mail server.
@@ -142,7 +142,7 @@ Kestello shows this page while it updates a plugin, a theme or itself, and while
 What to do:
 
 1. **Wait a few minutes** if someone has started an update or a restore. Large restores take a while.
-2. **Sign in at `/login`.** If you can reach the admin, maintenance is in "visitors" mode. Open **System → Updates** or **Plugins → Manage plugins** and read what went wrong. See [Updates](/guide/updates#incomplete-rollback) for what to do after an incomplete rollback.
+2. **Sign in at `/login`.** If you can reach the admin, maintenance is in "visitors" mode. Open **Site → Updates** or **Plugins → Manage plugins** and read what went wrong. See [Updates](/guide/updates#incomplete-rollback) for what to do after an incomplete rollback.
 3. **If even the admin shows the page**, a restore is running or failed. The person who started the restore saw an error that says what went wrong. After a failed restore, restore a backup from the server. When putting the site back also failed, the error names the safety backup to use:
 
    ```bash
@@ -217,7 +217,7 @@ Then open **System → Site Health** and use **Run checks again**. **Writable fo
 Kestello keeps finished pages ready for visitors who are not signed in (the page cache). When you save content, the pages that show it are refreshed by themselves, so you rarely notice the cache. Old content still shows in a few cases:
 
 - Someone changed a theme's or plugin's files by hand, over FTP or SSH. Kestello cannot know.
-- A CDN or proxy in front of the site keeps pages too. How long it may keep them is set by **CDN cache time** under **System → Settings → Performance**.
+- A CDN or proxy in front of the site keeps pages too. How long it may keep them is set by **CDN cache time** under **Site → Settings → Performance**.
 - Your own browser kept the old page.
 
 Signed-in people always get fresh pages. To see what visitors see, open the page in a private browser window.
@@ -239,7 +239,7 @@ If pages stay old after that, clear the cache files in `storage/cache` and the c
 php bin/cms cache:clear
 ```
 
-If your site sits behind a CDN, clear that cache in the CDN's control panel too, and consider a short **CDN cache time**. To turn the page cache off while you investigate, turn off **Cache pages** under **System → Settings → Performance**.
+If your site sits behind a CDN, clear that cache in the CDN's control panel too, and consider a short **CDN cache time**. To turn the page cache off while you investigate, turn off **Cache pages** under **Site → Settings → Performance**.
 
 ::: tip
 Your browser's developer tools show a response header `X-Kestello-Cache` on pages from the cache. `HIT` means the page came from the cache.

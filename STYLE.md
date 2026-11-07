@@ -11,7 +11,7 @@ These rules keep the docs readable for two very different readers: the person wh
 
 - Write to the reader as "you". Write about the product as "Kestello".
 - Say what to do, then why, in that order. One idea per sentence.
-- Use the exact words the admin uses, in bold: **System → Backups**, **Upload a plugin**. Check the label in the admin before writing it.
+- Use the exact words the admin uses, in bold: **Site → Backups**, **Upload a plugin**. Check the label in the admin before writing it.
 - Prefer short, common words. "Use", not "utilize". "Start", not "initiate". "Help", not "facilitate".
 - Do not use these words: seamless, robust, leverage, powerful, effortless, cutting-edge, delve, unlock, elevate, streamline, game-changer, simply, just, easy, obviously.
 - No em dashes and no en dashes in prose. Use a comma, a colon, parentheses or a new sentence. Ranges are written with "to": "PHP 8.4 to 8.5".

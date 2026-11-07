@@ -69,7 +69,7 @@ return [
 PHP-FPM clears the environment of its workers by default (`clear_env = yes`). Pass the variables you need with `env[DB_PASSWORD] = ...` lines in the pool configuration, or set `clear_env = no`. The command line (`bin/cms`, cron, queue workers) sees the shell's environment, so set the variables in both places.
 :::
 
-A few `app.*` values are also edited in the admin under **System → Settings**, on the **General** tab: **Site name**, **Tagline**, **Site address** and **Timezone**. Saving that tab stores them in the database and writes them back into `config/app.php` as `app.name`, `app.description`, `app.url` and `app.timezone`, if that file is writable and holds only plain values. A file with code in it (`getenv()`, `$_ENV`, `define()`, functions, `require`) is left alone. When the file is not written, the database copy is what pages, emails and the API show, and `config/app.php` keeps its older values.
+A few `app.*` values are also edited in the admin under **Site → Settings**, on the **General** tab: **Site name**, **Tagline**, **Site address** and **Timezone**. Saving that tab stores them in the database and writes them back into `config/app.php` as `app.name`, `app.description`, `app.url` and `app.timezone`, if that file is writable and holds only plain values. A file with code in it (`getenv()`, `$_ENV`, `define()`, functions, `require`) is left alone. When the file is not written, the database copy is what pages, emails and the API show, and `config/app.php` keeps its older values.
 
 ## `config/app.php`
 
@@ -85,7 +85,7 @@ The installer writes this file with `name`, `description`, `url`, `timezone`, `d
 | `app.timezone` | string | `'UTC'` | A PHP timezone identifier, such as `Europe/Berlin`. |
 | `app.locale` | string | `'en'` | The language of the admin and the site. Language packs live in `core/resources/lang` and in a plugin's or theme's `resources/lang`. |
 | `app.fallback_locale` | string | `'en'` | The language used when a string is missing from `app.locale`. |
-| `app.debug` | bool | `false` | Shows full error pages with stack traces and turns the page cache off unless it is turned on under **System → Settings → Performance**. Never `true` on a public site. |
+| `app.debug` | bool | `false` | Shows full error pages with stack traces and turns the page cache off unless it is turned on under **Site → Settings → Performance**. Never `true` on a public site. |
 
 ### Security and sessions
 
@@ -336,7 +336,7 @@ return [
 | `auth.link_by_verified_email` | bool | `false` | Links an external sign-in to an existing account with the same verified e-mail address. |
 | `auth.trust_provider_mfa` | bool | `false` | Accepts the sign-in provider's two-step check instead of asking for Kestello's. |
 
-The last five keys are defaults: a value saved under **System → Settings**, **Accounts** wins over the file.
+The last five keys are defaults: a value saved under **Site → Settings**, **Accounts** wins over the file.
 
 ## File storage: `config/storage.php`
 
@@ -381,7 +381,7 @@ Check a disk with `php bin/cms storage:test backups`.
 
 ## Settings kept in the admin
 
-Some settings have no config key and live only in the database, edited under **System → Settings**:
+Some settings have no config key and live only in the database, edited under **Site → Settings**:
 
 | Tab | Settings |
 |---|---|

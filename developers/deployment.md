@@ -369,7 +369,7 @@ When several servers share one Redis, set the same `prefix` on all of them, or i
 
 ## Backups off the server
 
-Kestello's scheduled backups (nightly by default, under **System → Backups**) are written to the `backups` storage disk, which is `storage/app/backups` on the same server. Put that disk somewhere else so a lost server does not take its backups with it:
+Kestello's scheduled backups (nightly by default, under **Site → Backups**) are written to the `backups` storage disk, which is `storage/app/backups` on the same server. Put that disk somewhere else so a lost server does not take its backups with it:
 
 ```php
 <?php
@@ -393,7 +393,7 @@ sudo -u www-data php bin/cms storage:test backups
 
 Or copy `storage/app/backups/` off the server with your own tool (rsync, restic, your host's snapshots).
 
-A backup holds the database and, when **Include files (uploads, plugins, themes)** is on, `content/plugins`, `content/themes`, uploads, `storage/fonts`, `storage/forms` and `storage/plugins`. Scheduled backups leave the files out until you turn that switch on under **System → Backups**. Files on S3 and other remote disks are not copied. A backup does not hold `config/`. Keep a copy of `config/app.php` and `config/database.php` somewhere safe as well: without the same `app.secret_key`, secrets stored in the database (mail passwords, API keys) cannot be decrypted after a restore on a new server.
+A backup holds the database and, when **Include files (uploads, plugins, themes)** is on, `content/plugins`, `content/themes`, uploads, `storage/fonts`, `storage/forms` and `storage/plugins`. Scheduled backups leave the files out until you turn that switch on under **Site → Backups**. Files on S3 and other remote disks are not copied. A backup does not hold `config/`. Keep a copy of `config/app.php` and `config/database.php` somewhere safe as well: without the same `app.secret_key`, secrets stored in the database (mail passwords, API keys) cannot be decrypted after a restore on a new server.
 
 See [Backups](/guide/backups) for restoring.
 
@@ -446,7 +446,7 @@ sudo -u www-data php bin/cms core:update --status
 
 A development checkout has no `current.php` and runs `core/` directly. Its first core update creates the pointer.
 
-Updates come from release zips built with `core:release`. Apply them from **System → Updates** or with `core:update`; [Packaging and signing](/developers/packaging#releases-of-kestello) describes the checks, the backup and the rollback.
+Updates come from release zips built with `core:release`. Apply them from **Site → Updates** or with `core:update`; [Packaging and signing](/developers/packaging#releases-of-kestello) describes the checks, the backup and the rollback.
 
 ::: tip
 When you run PHP-FPM with `opcache.validate_timestamps=0`, reload PHP-FPM after `core:update` on the command line. Otherwise PHP-FPM keeps the old `current.php` in OPcache and serves the old release.

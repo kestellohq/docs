@@ -2,7 +2,7 @@
 
 This page covers updating plugins, themes and Kestello itself. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
 
-Kestello looks for new versions of itself and shows them on **System → Updates**, where you can review and apply one. For plugins and themes it does not look yet: you get the new zip from whoever publishes the plugin or theme, and upload it.
+Kestello looks for new versions of itself and shows them on **Site → Updates**, where you can review and apply one. For plugins and themes it does not look yet: you get the new zip from whoever publishes the plugin or theme, and upload it.
 
 ## Who can update
 
@@ -21,7 +21,7 @@ The same signature rules apply as for installing: from the admin, only zips sign
 When you start an update, Kestello works through these steps by itself:
 
 1. **Checks the zip.** It reads the new version, checks its signature and its code, and checks that it fits your site: the PHP version, PHP extensions, and the versions other active plugins require. If something does not fit, it stops here and nothing changes.
-2. **Backs up the database.** The backup appears under **System → Backups** with the type **Before an update** and a note such as *Before updating Acme Shop 1.2.0 to 1.3.0*. It holds the database only; the old files are kept separately (see below).
+2. **Backs up the database.** The backup appears under **Site → Backups** with the type **Before an update** and a note such as *Before updating Acme Shop 1.2.0 to 1.3.0*. It holds the database only; the old files are kept separately (see below).
 3. **Shows visitors a maintenance page.** Visitors get a page titled **Back in a moment** that says *The site is being updated. Please try again in a minute.* People who are signed in, the admin and the API keep working.
 4. **Puts the new files in place.** The old plugin or theme folder is moved aside, not deleted.
 5. **Checks the site on the new version.** Kestello starts the site fresh and checks that:
@@ -43,11 +43,11 @@ Only one update runs at a time, and no backup or restore can start while an upda
 
 - **Plugins and themes:** the old folder goes to `storage/app/backups/packages/`, named after the plugin, its old version and the date, for example `acme-shop-1.2.0-20261105-143012-a1b2c3`. Kestello keeps the newest three per plugin or theme.
 - **Kestello:** each release lives in its own folder under `core/releases/`, and the file `core/current.php` names the one that runs. Kestello keeps the running release, the one before it, and one more.
-- **The database:** in the **Before an update** backup. These count as automatic backups, so after each scheduled backup the oldest are removed once there are more than the number under **Keep** in the **Schedule** box on **System → Backups**. See [Backups](/guide/backups).
+- **The database:** in the **Before an update** backup. These count as automatic backups, so after each scheduled backup the oldest are removed once there are more than the number under **Keep** in the **Schedule** box on **Site → Backups**. See [Backups](/guide/backups).
 
 ### How the check reaches the site
 
-Kestello checks the new version in a separate PHP process on the server when it can. On hosts that switch that off (the PHP function `proc_open` is disabled on some shared hosting), it requests the site over HTTP instead, at the site address from **System → Settings**. You normally do not need to change anything. If the HTTP check cannot reach the site (see [If something goes wrong](#if-something-goes-wrong)), these settings in `config/app.php` help:
+Kestello checks the new version in a separate PHP process on the server when it can. On hosts that switch that off (the PHP function `proc_open` is disabled on some shared hosting), it requests the site over HTTP instead, at the site address from **Site → Settings**. You normally do not need to change anything. If the HTTP check cannot reach the site (see [If something goes wrong](#if-something-goes-wrong)), these settings in `config/app.php` help:
 
 | Setting | What it does |
 |---|---|
@@ -60,7 +60,7 @@ Kestello checks the new version in a separate PHP process on the server when it 
 1. Read the publisher's release notes for anything you must do first.
 2. Check **System → Site Health**. Fix critical problems before updating: the check after the update also fails on problems that were already there, such as a home page that already shows a server error.
 3. Pick a quiet moment (see the warning above).
-4. If you want a copy that includes files or lives off the server, make one under **System → Backups** with **Back up now**. The automatic backup only covers the database.
+4. If you want a copy that includes files or lives off the server, make one under **Site → Backups** with **Back up now**. The automatic backup only covers the database.
 
 ## Update a plugin {#update-a-plugin}
 
@@ -104,7 +104,7 @@ A Kestello release is a zip named like `kestello-core-1.5.0.zip`, published on t
 
 ### Check the Updates screen
 
-Open **System → Updates**. The **Kestello** box shows:
+Open **Site → Updates**. The **Kestello** box shows:
 
 | Line | What it means |
 |---|---|
@@ -149,7 +149,7 @@ Official releases are signed by **Kestello releases**, so the signature line rea
 From a zip, for a site that cannot reach GitHub:
 
 1. Download `kestello-core-1.5.0.zip` from the [releases page](https://github.com/kestellohq/cms/releases).
-2. Open **System → Updates** and choose **Upload a Kestello release**.
+2. Open **Site → Updates** and choose **Upload a Kestello release**.
 3. Under **Release zip**, choose the release and choose **Upload and review**. Nothing changes yet. The box is the same as above, and so are the next steps.
 
 When it worked you see **Kestello 1.5.0 is running.** If the check failed, the box shows **The update was not applied**, the problems, and **Kestello 1.4.0 and the database were put back. The site runs as before.**
@@ -172,7 +172,7 @@ php bin/cms core:update kestello-core-1.5.0.zip
 
 The admin only moves forward. Uploading an older version than the one installed stops with *This is Acme Shop 1.1.0, older than the installed 1.2.0.* (or, for Kestello, *… Going back is done by restoring a backup.*).
 
-The safest way back is to restore the **Before an update** backup from **System → Backups** together with the old files. When an update fails its check, Kestello already does this for you.
+The safest way back is to restore the **Before an update** backup from **Site → Backups** together with the old files. When an update fails its check, Kestello already does this for you.
 
 If you need to go back later, after the new version has been running for a while, someone on the server can force it:
 
@@ -194,7 +194,7 @@ Kestello then keeps the maintenance page on for visitors for up to seven days, w
 3. Fix the cause the message names, such as freeing disk space or correcting folder permissions.
 4. For a plugin or theme: with your FTP program or on the server, replace the folder in `content/plugins/` (or `content/themes/`) with the old folder from `storage/app/backups/packages/`. Rename it to the plain slug, for example `acme-shop`.
 5. For Kestello: check that `core/current.php` names the old version (`php bin/cms core:update --status` shows it), and that its folder exists in `core/releases/`.
-6. Restore the database backup the message names under **System → Backups** (restoring needs an administrator), or on the server with `php bin/cms backup:restore <name>`. A finished restore also removes the maintenance page. See [Backups](/guide/backups).
+6. Restore the database backup the message names under **Site → Backups** (restoring needs an administrator), or on the server with `php bin/cms backup:restore <name>`. A finished restore also removes the maintenance page. See [Backups](/guide/backups).
 7. If the site works and the maintenance page is still on, delete the file `storage/framework/maintenance.json`.
 
 If a plugin was suspended along the way, see [When a plugin breaks the site](/guide/plugins#when-a-plugin-breaks-the-site).
@@ -231,7 +231,7 @@ If a plugin was suspended along the way, see [When a plugin breaks the site](/gu
 
 **"The site could not be reached at https://example.com to check the update (…). Set app.updates.health_url to an address the server can reach itself at."** The HTTP check could not reach your own site from the server. This happens when the site address points through a firewall or proxy the server cannot use, or DNS is not set up yet. Set `app.updates.health_url` to an address that works from the server, such as `http://127.0.0.1`.
 
-**"The site address is not set (app.url), so the update could not be checked."** Enter the **Site address** under **System → Settings**.
+**"The site address is not set (app.url), so the update could not be checked."** Enter the **Site address** under **Site → Settings**.
 
 **"The check did not finish within 120 seconds."** The site took too long to start on the new version, often because of a long database change on a large site. The update was rolled back. Try again at a quiet time, or ask the publisher.
 

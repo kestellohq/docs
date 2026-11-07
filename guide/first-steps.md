@@ -4,16 +4,19 @@ You have installed Kestello and signed in. This page walks you through the admin
 
 ## Finding your way around
 
-The admin lives at `/admin` on your site. The menu on the left is grouped by what you are doing:
+The admin lives at `/admin` on your site. The menu on the left is grouped by what you are doing, with the screens you use most at the top:
 
 | Group | What is in it |
 |---|---|
 | **Overview** | The home screen: whether the site is healthy, what changed recently, and anything that needs you. |
 | **Content** | Your pages and posts (and any content types you add), **Media** and **Forms**. |
-| **People** | **People** (accounts), **Roles** (what each kind of account may do) and **Your profile**. |
-| **Appearance** | **Themes**, **Styles**, **Templates**, **Menus** and **Redirects**. |
+| **People** | **People** (accounts) and **Roles** (what each kind of account may do). |
+| **Appearance** | **Themes**, **Styles**, **Templates** and **Menus**. |
+| **Site** | **Settings**, **Updates**, **Backups**, **Import** and **Redirects**. |
 | **Plugins** | **Manage plugins**, followed by any screens your plugins add. |
-| **System** | **Site Health**, **Updates**, **Backups**, **Infrastructure**, **File storage**, **Background jobs**, **Scheduled tasks**, **Content types** and **Settings**. |
+| **System** | The tools for whoever looks after the site: **Site Health**, **Security**, **Audit log**, **Content types**, **Webhooks**, **API**, **Background jobs**, **Scheduled tasks**, **File storage** and **Infrastructure**. |
+
+Choose a group's name to fold it away or open it again; your browser remembers which are folded. **System** starts folded, and the group of the screen you are on always opens. Your name at the bottom of the menu opens **Your profile**. To jump straight to any screen, press **Ctrl K** (**⌘K** on a Mac) and type part of its name.
 
 You only see the screens your account is allowed to use. As the first administrator you see all of them; an editor sees far fewer.
 
@@ -31,7 +34,7 @@ The same checks, with details, are under **System → Site Health**.
 
 ## 2. Settings
 
-Open **System → Settings**. The settings are split into groups.
+Open **Site → Settings**. The settings are split into groups.
 
 ### General
 
@@ -93,7 +96,7 @@ Pick the smallest role that lets each person do their job. **Roles** shows what 
 
 ## 5. Make your first backup
 
-Open **System → Backups** and choose **Back up now**. Files (uploads, themes and plugins) are included unless you untick that option; without them the backup holds only the database. The backup appears in the list when it is done.
+Open **Site → Backups** and choose **Back up now**. Files (uploads, themes and plugins) are included unless you untick that option; without them the backup holds only the database. The backup appears in the list when it is done.
 
 Nightly backups are on by default. Under **Schedule** you can change how often they run and how many are kept. Backups made by hand are kept until you delete them.
 

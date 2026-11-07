@@ -119,7 +119,7 @@ After a few minutes, **System → Scheduled tasks** shows when each task last ra
 
 - **HTTPS.** Turn on a certificate for your domain in the control panel, then make sure the site address under **Settings** starts with `https://`.
 - **Site Health.** Open **System → Site Health**. Anything marked critical needs fixing before visitors arrive; recommendations can wait.
-- **Backups.** Open **System → Backups** and make your first backup. The nightly schedule is on by default.
+- **Backups.** Open **Site → Backups** and make your first backup. The nightly schedule is on by default.
 
 ## Installing on a server with nginx {#nginx}
 

@@ -57,10 +57,10 @@ The capabilities Kestello itself defines:
 | *Edit menus and assign them to theme locations* | **Appearance → Menus**. |
 | *Upload files, and edit or delete their own* | Adding files to **Media**. |
 | *Edit and delete everyone's files* | Changing or removing any file in **Media**. |
-| *Change site settings* | **System → Settings** (except the email and site address fields, which also need *Manage infrastructure...*), and clearing the page cache. |
+| *Change site settings* | **Site → Settings** (except the email and site address fields, which also need *Manage infrastructure...*), and clearing the page cache. |
 | *Install, update, activate, deactivate and delete plugins* | **Plugins → Manage plugins**. |
-| *Update Kestello itself* | Core updates under **System → Updates**. |
-| *Make and download backups (restoring needs an administrator)* | **System → Backups**, except restoring and uploading, which are for administrators only. |
+| *Update Kestello itself* | Core updates under **Site → Updates**. |
+| *Make and download backups (restoring needs an administrator)* | **Site → Backups**, except restoring and uploading, which are for administrators only. |
 | *Read the audit log* | The record of who changed what. |
 | *Manage infrastructure, background jobs, scheduled tasks and Site Health* | **System → Site Health**, **Infrastructure**, **File storage**, **Background jobs**, **Scheduled tasks**, and the email and site address settings. |
 | *Build content types, fields and taxonomies* | **System → Content types**. |
@@ -68,7 +68,7 @@ The capabilities Kestello itself defines:
 | *Write custom CSS* | Custom CSS under **Appearance → Styles**. |
 | *Create, switch, export and import themes* | **Appearance → Themes**. |
 | *Build forms and read what people send* | **Content → Forms** and their submissions. |
-| *Manage redirects and see addresses that were not found* | **Appearance → Redirects**. |
+| *Manage redirects and see addresses that were not found* | **Site → Redirects**. |
 | *Add code to every page of the site* | The settings that add code snippets to every page (for example an analytics tag). |
 
 Each content type adds six capabilities of its own, named after the type: for posts these are *Create posts*, *Edit posts*, *Edit others posts*, *Publish posts*, *Delete posts* and *Delete others posts*. Each taxonomy adds two: for categories, *Manage categories* and *Assign categories to entries*.
@@ -252,7 +252,7 @@ The link works once and expires after 60 minutes. Asking for a new link cancels 
 
 A password reset does not turn off two-step sign-in. After the new password, Kestello still asks for the code.
 
-Reset emails go through the mail settings under **System → Settings → Email**. If they do not arrive, see [Troubleshooting](/guide/troubleshooting).
+Reset emails go through the mail settings under **Site → Settings → Email**. If they do not arrive, see [Troubleshooting](/guide/troubleshooting).
 
 ## Change your own password
 
@@ -322,7 +322,7 @@ Entries are kept for 365 days, then removed by the daily `audit.prune` task. Cha
 
 ## Let people create their own account {#sign-up}
 
-By default only people who manage accounts can add new ones. To let visitors create an account themselves, such as the customers of a shop or the members of a club, open **System → Settings** and choose **Accounts**.
+By default only people who manage accounts can add new ones. To let visitors create an account themselves, such as the customers of a shop or the members of a club, open **Site → Settings** and choose **Accounts**.
 
 | Setting | What it does |
 |---|---|
@@ -341,7 +341,7 @@ The link works once and expires after 24 hours. Nothing is created before the li
 
 The page answers the same way whether or not an address already has an account, so the form can't be used to find out who has one. The owner of an existing account gets an email instead, with links to sign in and to reset the password.
 
-Sign-up only works when the site's email reaches people. Before you open it, send a test email from **System → Settings**, **Email**.
+Sign-up only works when the site's email reaches people. Before you open it, send a test email from **Site → Settings**, **Email**.
 
 ## Sign in with Google or other providers
 
@@ -403,9 +403,9 @@ Two more settings under **Accounts** are about providers. **Connect provider sig
 
 **Someone is locked out completely.** See [Troubleshooting](/guide/troubleshooting) for the steps when nobody can sign in.
 
-**No sign-up email arrives.** Check the spam folder first. Then send a test email from **System → Settings**, **Email**: if that one doesn't arrive either, the site's email isn't set up. A visitor can ask for a new link up to 3 times an hour from one place.
+**No sign-up email arrives.** Check the spam folder first. Then send a test email from **Site → Settings**, **Email**: if that one doesn't arrive either, the site's email isn't set up. A visitor can ask for a new link up to 3 times an hour from one place.
 
-**"Use an address at example.org."** Sign-up is limited to some email domains, and the address is at another one. The domains are listed under **System → Settings**, **Accounts**.
+**"Use an address at example.org."** Sign-up is limited to some email domains, and the address is at another one. The domains are listed under **Site → Settings**, **Accounts**.
 
 **"This link is invalid or has expired."** The sign-up link was already used, is older than 24 hours, or was replaced by a newer one. Choose **Get a new link** and use the newest email.
 

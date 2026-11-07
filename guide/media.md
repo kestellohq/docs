@@ -27,7 +27,7 @@ Editors, authors and contributors can upload. Editors can change and delete anyo
 
 ## Allowed files and size limits
 
-Open **System → Settings**, then the **Media** tab. Images (JPEG, PNG, GIF, WebP and AVIF) are always allowed. The rest can be switched on and off:
+Open **Site → Settings**, then the **Media** tab. Images (JPEG, PNG, GIF, WebP and AVIF) are always allowed. The rest can be switched on and off:
 
 | Setting | What it allows | Default |
 |---|---|---|
@@ -158,7 +158,7 @@ Out of the box, uploads are stored on the server in the folder `storage/app/medi
 
 **"Files of type .php can't be uploaded."** The file name contains an extension that is never accepted, even hidden in the middle, as in `photo.php.jpg`.
 
-**"Uploading video files is switched off in the media settings."** (or audio, document, archive). Turn on that kind under **System → Settings → Media**.
+**"Uploading video files is switched off in the media settings."** (or audio, document, archive). Turn on that kind under **Site → Settings → Media**.
 
 **"This type of file is not supported. (.psd)"** Kestello does not know this kind of file at all, for example a `.psd` or `.heic`. Convert it to a supported format first. Most phones can save photos as JPEG instead of HEIC.
 
