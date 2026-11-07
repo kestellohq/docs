@@ -26,7 +26,9 @@ If the user you created is allowed to create databases, you can skip creating th
 
 ## 2. Upload the files
 
-Upload the whole Kestello folder to your hosting account. The result should look like this, with `public` being the folder the web server shows to visitors:
+Download `kestello-X.Y.Z.zip` from the [latest release](https://github.com/kestellohq/cms/releases/latest) (the zip named after the version, not `kestello-core-…`, which is for updating a site). It holds one folder, `kestello`.
+
+Upload that folder to your hosting account. Most file managers can upload the zip and unpack it on the server, which is much faster than uploading 1,500 files. It does not matter if they leave out empty folders: the installer creates the ones it needs. The result should look like this, with `public` being the folder the web server shows to visitors:
 
 ```text
 your-site/

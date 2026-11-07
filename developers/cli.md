@@ -63,6 +63,7 @@ A restore replaces the whole database. Everyone is signed out, and anything chan
 | `package:verify <zip>` | Checks a package's signature, manifest and code without installing it. |
 | `package:update <zip>` | Updates an installed plugin or theme: backup, swap, health check, automatic rollback. `--downgrade` to install an older version. |
 | `core:release [<dir>]` | Builds a Kestello release zip from this core (or the core folder given). `--out=dist`, `--key=<file>`. |
+| `core:install-zip` | Builds `kestello-<version>.zip`, the folder people upload to install a new site. `--out=dist`. |
 | `core:update <zip>` | Updates Kestello itself: backup, switch release, health check, automatic switch back. `--downgrade`. |
 | `core:update --status` | Shows the running version and the releases on disk. |
 | `core:check` | Asks GitHub whether a new Kestello version is out (`config/release.php`). Installs nothing. |

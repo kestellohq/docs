@@ -242,7 +242,7 @@ When the update starts from the command line, the running PHP is the one running
 
 ## Releases of Kestello
 
-Kestello itself ships as `kestello-core-<version>.zip`. Everything in it is inside a `core/` folder, and it must hold `core/VERSION`, `core/core.json`, `core/bootstrap.php` and `core/src/Kernel.php`. Signing works exactly as for packages.
+Kestello itself ships as two zips. `kestello-<version>.zip` is for new sites: a `kestello/` folder to upload and install (see [The install zip](#install-zip)). `kestello-core-<version>.zip` updates sites that already run. Everything in it is inside a `core/` folder, and it must hold `core/VERSION`, `core/core.json`, `core/bootstrap.php` and `core/src/Kernel.php`. Signing works exactly as for packages.
 
 ### Build a release
 
@@ -272,6 +272,14 @@ The version is read from `VERSION` and must be a semantic version. `core.json` d
 
 A site's own `releases/` folder and `current.php` never go into a release, and neither do `node_modules/` and dotfiles (except `.vite`).
 
+
+### The install zip {#install-zip}
+
+```bash
+php bin/cms core:install-zip
+```
+
+`core:install-zip [--out=dist]` writes `kestello-<version>.zip` and its `.sha256` from a checkout. It holds the top-level `.htaccess`, `bin/cms`, `public/`, `core/`, the base theme, and the license, readme, changelog and security policy, all inside one `kestello/` folder. It is built from that list, so tests, tooling, Docker files, other plugins and themes, `config/` and `storage/` never go in, nor do hidden files other than `.htaccess` and the Vite manifests. The folders Kestello writes to are left out on purpose: the installer creates them. The release workflow builds this zip for every release; it is not signed, because nothing installs it automatically.
 ### Apply a release
 
 In the admin, **System → Updates** with **Upload a Kestello release** applies releases signed by a trusted key (or any untampered release when `app.packages.admin_unsigned` is `true`). On the server:
