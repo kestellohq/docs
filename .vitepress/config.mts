@@ -12,6 +12,7 @@ const guide = [
             { text: 'Requirements', link: '/guide/requirements' },
             { text: 'Installing Kestello', link: '/guide/installation' },
             { text: 'Your first hour', link: '/guide/first-steps' },
+            { text: 'Moving from WordPress', link: '/guide/import-wordpress' },
         ],
     },
     {

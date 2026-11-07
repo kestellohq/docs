@@ -36,6 +36,14 @@ Commands that change data ask for confirmation unless you pass `--yes` (or `--fo
 A restore replaces the whole database. Everyone is signed out, and anything changed since the backup was made is gone (except in the safety backup).
 :::
 
+## Import
+
+| Command | What it does |
+|---|---|
+| `import:wordpress <export.xml>` | Imports a WordPress export, the same import as **System → Import**. It shows what will come over and asks before importing; `--yes` skips the question and `--dry-run` only shows it. `--uploads=<folder>` takes files from a copy of `wp-content/uploads` before downloading them. `--no-media` leaves files out, `--no-redirects` makes no redirects. `--as=<username>` names the administrator it runs as (needed when the site has more than one), `--author=<username>` credits posts whose author has no account here. Exits with code `2` when some items could not be imported; they are listed, and **Try again** under **System → Import** retries them. |
+
+See [Moving from WordPress](/guide/import-wordpress) for what comes over.
+
 ## Plugins and themes
 
 | Command | What it does |
