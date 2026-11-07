@@ -320,6 +320,29 @@ Each row shows when it happened, who did it, what happened in plain words and th
 
 Entries are kept for 365 days, then removed by the daily `audit.prune` task. Change that with `audit.retention_days` in `config/audit.php`, see [Configuration](/developers/configuration). Nobody can edit or delete entries from the admin.
 
+## Let people create their own account {#sign-up}
+
+By default only people who manage accounts can add new ones. To let visitors create an account themselves, such as the customers of a shop or the members of a club, open **System → Settings** and choose **Accounts**.
+
+| Setting | What it does |
+|---|---|
+| **Who can create an account** | **Nobody: you add people yourself** (the default), **Anyone**, or **Only people with an address at the domains below**. |
+| **Allowed email domains** | For the last choice: the part after the @, separated by commas, such as `example.org, example.net`. |
+| **Role for new accounts** | What new accounts may do. **User** can sign in and change their own profile. Administrator is never given this way. |
+
+You need *Create, edit and delete users* to change these.
+
+When sign-up is open, the sign-in page shows **Create an account**. It takes two steps:
+
+1. The visitor enters their email address and chooses **Send link**. Kestello emails a link to that address.
+2. The link opens **Choose your password**. When they choose **Create account**, the account is created and they are signed in.
+
+The link works once and expires after 24 hours. Nothing is created before the link is opened, so a mistyped address never becomes an account. The password is chosen only after the link, so nobody can set up an account with someone else's address and a password of their own.
+
+The page answers the same way whether or not an address already has an account, so the form can't be used to find out who has one. The owner of an existing account gets an email instead, with links to sign in and to reset the password.
+
+Sign-up only works when the site's email reaches people. Before you open it, send a test email from **System → Settings**, **Email**.
+
 ## Sign in with Google or other providers
 
 Kestello can let people sign in with an account from another service, such as Google or GitHub, instead of a password. The providers come from plugins; Kestello has none switched on by itself. Once a provider plugin is set up, a button with the provider's name appears on the sign-in page under the usual form.
@@ -336,7 +359,9 @@ Kestello emails you when a sign-in method is added to your account. If that was 
 
 To remove one, choose **Disconnect** next to it. If it is your only way to sign in and you have never set a password, the button is disabled until you set one.
 
-By default, signing in with a provider only works for people who already have an account and have connected that provider. People without an account see "There is no account for this sign-in, and registration is closed." If two-step sign-in is on for an account, Kestello still asks for the code after the provider sign-in.
+By default, signing in with a provider only works for people who already have an account and have connected that provider. People without an account see "There is no account for this sign-in, and registration is closed." When **Who can create an account** lets them [create their own account](#sign-up), signing in with a provider creates one instead. With the domains choice, only a provider that confirms the email address can create one. If two-step sign-in is on for an account, Kestello still asks for the code after the provider sign-in.
+
+Two more settings under **Accounts** are about providers. **Connect provider sign-ins by email** connects a provider sign-in to the account with the same address, when the provider confirmed that address. Leave it off unless you trust every provider you use. **Trust the provider's two-step check** skips Kestello's code when the provider says it already asked for a second factor.
 
 ## If something goes wrong
 
@@ -377,6 +402,12 @@ By default, signing in with a provider only works for people who already have an
 **"An account with this email already exists. Sign in with your password, then connect ... from your profile."** You tried a provider sign-in before connecting it. Sign in with your password and connect it under **Your profile → Connected sign-ins**.
 
 **Someone is locked out completely.** See [Troubleshooting](/guide/troubleshooting) for the steps when nobody can sign in.
+
+**No sign-up email arrives.** Check the spam folder first. Then send a test email from **System → Settings**, **Email**: if that one doesn't arrive either, the site's email isn't set up. A visitor can ask for a new link up to 3 times an hour from one place.
+
+**"Use an address at example.org."** Sign-up is limited to some email domains, and the address is at another one. The domains are listed under **System → Settings**, **Accounts**.
+
+**"This link is invalid or has expired."** The sign-up link was already used, is older than 24 hours, or was replaced by a newer one. Choose **Get a new link** and use the newest email.
 
 ## Next
 

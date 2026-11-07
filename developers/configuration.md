@@ -330,13 +330,13 @@ return [
 | `auth.revoke_on_password_change` | bool | `true` | When a user's password changes, their other sessions end and all their API tokens are revoked. With `false`, sessions and tokens survive a password change. |
 | `auth.password_min_length` | int | `12` | Shortest accepted password. Values below `8` are raised to `8`. |
 | `auth.two_factor_roles` | list of strings | `['admin']` | Roles expected to use two-step sign-in. A user in one of these roles is told it is expected for their account. It is not enforced. |
-| `auth.registration` | string | `'closed'` | External sign-in policy: `closed`, `open` or `domains`. |
-| `auth.registration_domains` | list or comma-separated string | `[]` | E-mail domains allowed to register when `auth.registration` is `domains`. |
-| `auth.default_role` | string | `'user'` | Role given to accounts created by external sign-in. |
+| `auth.registration` | string | `'closed'` | Who can create an account, by email sign-up or by signing in with a provider: `closed`, `open` or `domains`. |
+| `auth.registration_domains` | list or comma-separated string | `[]` | Email domains allowed to register when `auth.registration` is `domains`. |
+| `auth.default_role` | string | `'user'` | Role given to accounts people create themselves. `admin` and unknown roles become `user`. |
 | `auth.link_by_verified_email` | bool | `false` | Links an external sign-in to an existing account with the same verified e-mail address. |
 | `auth.trust_provider_mfa` | bool | `false` | Accepts the sign-in provider's two-step check instead of asking for Kestello's. |
 
-The last five keys are defaults: a value saved in the admin for the same setting wins over the file.
+The last five keys are defaults: a value saved under **System → Settings**, **Accounts** wins over the file.
 
 ## File storage: `config/storage.php`
 
