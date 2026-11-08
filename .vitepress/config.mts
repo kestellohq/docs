@@ -39,6 +39,7 @@ const guide = [
             { text: 'Site Health', link: '/guide/health' },
             { text: 'Troubleshooting', link: '/guide/troubleshooting' },
             { text: 'Translating Kestello', link: '/guide/translating' },
+            { text: 'Public demo', link: '/guide/demo' },
         ],
     },
 ];
