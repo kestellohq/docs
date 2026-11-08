@@ -154,9 +154,10 @@ Kestello can keep its cache, sessions, background jobs and search in different s
 
 ### Updates {#core-update-stopped}
 
-Checks that no update of Kestello, a plugin or a theme stopped halfway without being put back. Normally the site puts such an update back by itself on the next request; this check fails when that did not work three times.
+Checks that no update of Kestello, a plugin or a theme stopped halfway without being put back. Normally the site puts such an update back by itself on the next request; this check fails when that did not work three times. It also notices an update that has been running for more than 15 minutes.
 
 - **Passed**: "No update stopped halfway."
+- **Recommended**: "The update of … is still running." Most likely the host stopped the update while its check kept running. The site puts the update back once that check ends. If this stays for an hour, ask your host to restart PHP for your site.
 - **Critical**: "The update of … stopped halfway and was not put back." An **Open Updates** button opens **Site → Updates**.
 
 **Fix**: see [If going back did not finish](/guide/updates#incomplete-rollback).
