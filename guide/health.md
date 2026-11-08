@@ -114,6 +114,15 @@ Kestello checks that it can write to `storage`, `storage/framework`, `storage/lo
 
 **Fix**: give those folders permission `755` (or `775` if your host says so) in your file manager or FTP program. On a VPS, make the web server's user (often `www-data`) the owner. See [Troubleshooting](/guide/troubleshooting#permission-errors).
 
+### Private folders {#core-private-files}
+
+Whether browsers can read files that must stay on the server. Kestello writes a one-time secret into `storage/`, asks your site for it over the web, and deletes it again.
+
+- **Passed**: "Browsers cannot read config/, storage/, core/ or content/." When the site address isn't set or the server cannot reach itself, the check passes with a note that it could not check.
+- **Critical**: "Files in storage/ can be downloaded from the web", followed by what to do. Settings, sessions, logs and backups are probably readable by anyone.
+
+**Fix**: set the domain's document root to the `public` folder (see [Installation](/guide/installation)). On nginx, if you cannot, deny `/config`, `/storage`, `/core` and `/content` in the server block. On Apache, make sure `.htaccess` files are allowed (`AllowOverride All`).
+
 ### Free disk space {#core-disk-space}
 
 How much space is left on the disk that holds `storage`.

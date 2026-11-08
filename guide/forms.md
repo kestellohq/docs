@@ -103,7 +103,7 @@ The **After sending** section, on the **Form** tab, controls the end of the form
 
 - **Button text**: the label of the send button. The default is "Send".
 - **Thank-you message**: shown in place of the form after it was sent. The default is "Thank you. We received your message."
-- **Or go to a page**: a path on your site such as `/thanks`, or a full address. Visitors are taken there instead of seeing the message.
+- **Or go to a page**: a path on your site such as `/thanks`, or a full `https://` address. Visitors are taken there instead of seeing the message. A path must stay on your site: one starting with `//` or `/\` is refused.
 - **When the form is closed**: the text shown in place of a closed form.
 
 The defaults are in the site's language ([**Site → Settings**, **Language**](/guide/translating)). If you leave them as they are and later change the site's language, visitors see them in the new language. Text you wrote yourself stays as you wrote it.

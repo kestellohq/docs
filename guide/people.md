@@ -99,7 +99,7 @@ Kestello does not email the new person. Send them the address of the sign-in pag
 2. Under **Details**, change **Username**, **Email**, **Role** or **Note**. The note is only visible to people who manage accounts. Under the **Role** field you see a summary of what the chosen role may do.
 3. Choose **Save changes**.
 
-A role change takes effect on the person's next click; they do not need to sign in again.
+A role change takes effect on the person's next click; they do not need to sign in again. An email change here takes effect at once, and any password reset link already sent to the old address stops working.
 
 You cannot change your own role or status, or set your own password, on this screen. Your own account shows "This is your own account. Change your password, email and sign-in security from your profile."
 
@@ -189,7 +189,7 @@ The minimum length comes from the config key `auth.password_min_length` (default
 
 ## Confirming your password {#confirming-your-password}
 
-Some actions ask for your password again even though you are signed in, for example: adding, changing or deleting accounts, creating or editing roles, turning two-step sign-in on or off, making new recovery codes, creating access tokens and disconnecting a sign-in provider. A dialog titled **Confirm your password** appears. Enter your password and choose **Confirm**. For the next 10 minutes, these actions do not ask again.
+Some actions ask for your password again even though you are signed in, for example: adding, changing or deleting accounts, creating or editing roles, changing your email address, turning two-step sign-in on or off, making new recovery codes, creating access tokens, disconnecting a sign-in provider, and creating or activating a theme. A dialog titled **Confirm your password** appears. Enter your password and choose **Confirm**. For the next 10 minutes, these actions do not ask again.
 
 This protects you if you leave a signed-in browser unattended.
 
@@ -213,6 +213,8 @@ The codes are not shown again. Each one signs you in once if you lose your phone
 ### Signing in with two-step sign-in
 
 After your password, Kestello asks for the **Authentication code** from your app. If you do not have your phone, choose **Use a recovery code** and type one of your recovery codes instead. When you sign in with a recovery code, you see how many you have left; make new ones soon.
+
+An account takes at most 20 wrong codes an hour, from anywhere; after that, codes are refused until the hour is up. After 5 wrong codes, Kestello emails the account's owner: whoever typed them got past the password. If that email reaches you and it wasn't you, change your password straight away.
 
 ### New recovery codes, or turning it off
 
@@ -253,6 +255,14 @@ The link works once and expires after 60 minutes. Asking for a new link cancels 
 A password reset does not turn off two-step sign-in. After the new password, Kestello still asks for the code.
 
 Reset emails go through the mail settings under **Site → Settings → Email**. If they do not arrive, see [Troubleshooting](/guide/troubleshooting).
+
+## Change your own email address
+
+1. Open **Your profile**.
+2. Under **Account**, change **Email** and choose **Save profile**. You may be asked to [confirm your password](#confirming-your-password).
+3. Open the link Kestello emails to the new address.
+
+Until you open the link, your account keeps the old address, and your profile says which address is waiting. The link works once, for 24 hours. Your old address gets an email saying a change was asked for, so you would notice if someone else did it. Once the new address is confirmed, password reset links sent to the old address stop working.
 
 ## Change your own password
 
