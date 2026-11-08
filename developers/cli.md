@@ -74,6 +74,7 @@ See [Moving from WordPress](/guide/import-wordpress) for what comes over.
 | `core:install-zip` | Builds `kestello-<version>.zip`, the folder people upload to install a new site. `--out=dist`. |
 | `core:update <zip>` | Updates Kestello itself: backup, switch release, health check, automatic switch back. `--downgrade`. |
 | `core:update --status` | Shows the running version and the releases on disk. |
+| `update:recover` | Finishes or puts back an update that stopped halfway, also after the site stopped trying by itself. Plugins are not loaded while it runs. |
 | `core:check` | Asks GitHub whether a new Kestello version is out (`config/release.php`). Installs nothing. |
 | `core:verify <zip>` | Checks a release zip is signed by a key in `core/config/release.php` and matches its `.sha256`. Works without an installed site; the release workflow runs it. |
 

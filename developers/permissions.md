@@ -205,10 +205,10 @@ Core endpoints that require it:
 | Your account | `POST /me/tokens`, `POST /me/2fa/totp`, `POST /me/2fa/totp/confirm`, `DELETE /me/2fa`, `POST /me/2fa/recovery-codes`, `DELETE /me/identities/{id}` |
 | People and roles | `POST /users`, `PATCH /users/{id}`, `DELETE /users/{id}`, `POST /roles`, `PATCH /roles/{name}`, `DELETE /roles/{name}` |
 | Settings | `PATCH /settings` |
-| Plugins and themes | `POST /plugins/install`, `POST /plugins/upload`, `POST /plugins/update`, `POST /plugins/{slug}/activate`, `POST /plugins/{slug}/deactivate`, `DELETE /plugins/{slug}`, `POST /themes/{slug}/activate`, `DELETE /themes/{slug}`, `POST /themes/import` |
+| Plugins and themes | `POST /plugins/install`, `POST /plugins/upload`, `POST /plugins/update`, `POST /plugins/switch-back`, `POST /plugins/{slug}/activate`, `POST /plugins/{slug}/deactivate`, `DELETE /plugins/{slug}`, `POST /themes/{slug}/activate`, `DELETE /themes/{slug}`, `POST /themes/import` |
 | Content types | `POST /content-models`, `PATCH /content-models/{id}`, `DELETE /content-models/{id}` |
 | Backups | `POST /backups/upload`, `GET /backups/{name}/download`, `POST /backups/{name}/restore`, `DELETE /backups/{name}` |
-| Updates | `POST /updates/core`, `POST /updates/core/upload` |
+| Updates | `POST /updates/core`, `POST /updates/core/upload`, `POST /updates/core/switch-back`, `POST /updates/recover` |
 | Infrastructure | `PUT /system/platform/{subsystem}`, `DELETE /system/platform/{subsystem}`, `POST /system/storage/move`, `PATCH /system/storage/quotas` |
 
 All paths are under `/api/v1`. Use `requiresRecentAuth()` in your own endpoints for actions with the same weight: deleting everything a plugin stores, changing who can reach something, sending data to another server. A public endpoint cannot require it.
