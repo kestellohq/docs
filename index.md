@@ -13,6 +13,9 @@ hero:
     - theme: alt
       text: I run a site
       link: /guide/
+    - theme: alt
+      text: Try the live demo
+      link: https://demo.kestello.com/
 
 features:
   - title: Developers

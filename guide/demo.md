@@ -2,6 +2,8 @@
 
 A public demo is a Kestello site anyone can sign in to and try. This page covers what visitors can and cannot do on one, how it resets, and how you look after it on the server. Read it before you put a demo online, for example to show Kestello to clients or in a post about it.
 
+Kestello's own demo is at [demo.kestello.com](https://demo.kestello.com/). Sign in there to see what visitors get on a demo, then set up your own as described below.
+
 ## Set one up
 
 Install Kestello as usual (see [Installation](/guide/installation)). In step 3, under **What is this site for?**, choose **A public demo**. The installer then skips the administrator step and creates one account, `demo`, with the password `demo`.

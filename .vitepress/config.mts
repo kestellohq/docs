@@ -117,6 +117,7 @@ export default defineConfig({
         nav: [
             { text: 'Guide', link: '/guide/', activeMatch: '^/guide/' },
             { text: 'Developers', link: '/developers/', activeMatch: '^/developers/' },
+            { text: 'Live demo', link: 'https://demo.kestello.com/' },
             { text: 'kestello.com', link: 'https://kestello.com' },
         ],
         socialLinks: [{ icon: 'github', link: 'https://github.com/kestellohq/cms' }],
