@@ -17,6 +17,7 @@ git clone <repository> kestello
 cd kestello
 cp .env.example .env
 docker compose up -d
+npm ci && npm run build   # the admin and page scripts: built here, not stored in git
 ```
 
 The Compose project is named `kestello`, so its containers, network and volumes are the same wherever the repository is checked out.
@@ -105,7 +106,7 @@ npm run build          # core, plugins and themes
 npm run build:core     # core only
 ```
 
-Built files go to an `assets/build/` folder (for core, `core/resources/assets/build/`) and are committed. Reload the page to see the change. To build a single plugin or theme, pass its folder: `node core/build/build.mjs content/plugins/acme-events`.
+Built files go to an `assets/build/` folder. Core's (`core/resources/assets/build/`) are not committed: CI builds them for its checks and the release workflow for the zips. A plugin or theme commits its own, since its zip ships them. Reload the page to see the change. To build a single plugin or theme, pass its folder: `node core/build/build.mjs content/plugins/acme-events`.
 
 ## Running the tests
 
