@@ -129,7 +129,7 @@ Every update of a plugin, theme or Kestello itself checks the site after the new
 
 | Key | Type | Default | Meaning |
 |---|---|---|---|
-| `app.ssr.url` | string or null | `getenv('KESTELLO_SSR_URL') ?: null` | The address of the SSR process (`core/ssr/server.mjs`), such as `http://127.0.0.1:13714`. `null` renders pages in the browser only. See [Frontend](/developers/frontend). |
+| `app.ssr.url` | string or null | `getenv('KESTELLO_SSR_URL') ?: null` | The address of the SSR process (`core/ssr/server.mjs`), such as `http://127.0.0.1:13714`. It must be an `http` or `https` address; anything else is ignored, and redirects from it are not followed. `null` renders pages in the browser only. See [Frontend](/developers/frontend). |
 | `app.ssr.timeout` | float | `1.5` | Seconds to wait for the SSR process before falling back to rendering in the browser. |
 
 The environment variable is read by core's default file. If the site's `config/app.php` sets `ssr.url`, that value wins over the variable.

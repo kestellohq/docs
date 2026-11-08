@@ -19,7 +19,7 @@ The examples assume the site lives in `/var/www/kestello`, PHP 8.5 runs as `www-
 
 ## Web server
 
-Only `public/` is meant to be reachable from the web. It holds `index.php`, `.htaccess`, `favicon.ico` and `assets/`. Everything else (`config/`, `storage/`, `core/`, `content/`) is served through PHP or not at all: media at `/uploads` and public files at `/files` are streamed by Kestello from `storage/app/`, and plugin and theme assets are served by Kestello from their `assets/` folders.
+Only `public/` is meant to be reachable from the web. It holds `index.php`, `.htaccess`, `favicon.ico` and `assets/`. Everything else (`config/`, `storage/`, `core/`, `content/`) is served through PHP or not at all; each of those folders also holds a deny-all `.htaccess` for Apache, and **Site Health** warns when files in `storage/` can be downloaded: media at `/uploads` and public files at `/files` are streamed by Kestello from `storage/app/`, and plugin and theme assets are served by Kestello from their `assets/` folders.
 
 `public/index.php` reads `core/current.php` when it exists and loads `core/releases/<version>/bootstrap.php`; without it, it loads `core/bootstrap.php`. `bin/cms` does the same.
 

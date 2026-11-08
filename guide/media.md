@@ -146,7 +146,7 @@ Kestello has no way to swap the file behind an existing library item. To use a n
 Deleting removes the file and all its sizes from storage. This cannot be undone. Entries that used it show a missing file until you pick another one; in the editor, the field shows **Removed from the library**.
 :::
 
-**Used in** lists entries whose fields point at the file. Files that only appear through a link typed into text, such as a PDF linked from a paragraph, are not counted. Check those before deleting.
+**Used in** lists entries whose fields point at the file. It names only the entries you may open; entries you can't open are counted ("And 2 entries you cannot open"). Files that only appear through a link typed into text, such as a PDF linked from a paragraph, are not counted. Check those before deleting.
 
 ## Storage on other disks
 
