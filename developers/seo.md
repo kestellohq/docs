@@ -144,7 +144,7 @@ $cms->filters->add('sitemap.urls', function (array $urls, string $file): array {
 
 ## Settings that change the output
 
-Under **System → Settings → Search and sharing**, stored as site settings:
+Under **Site → Settings → Search and sharing**, stored as site settings:
 
 | Setting | Key |
 |---|---|

@@ -257,11 +257,11 @@ Some top-level addresses belong to the site itself and cannot be used by a page,
 
 ### Change an address
 
-When you change the address of a **published** entry, Kestello adds a redirect from the old address to the new one by itself. For a page, the redirect covers everything below it too: `/services/web` follows when `/services` moves to `/what-we-do`. You can see these redirects under **Appearance → Redirects**. See [Redirects](/guide/redirects#automatic-redirects).
+When you change the address of a **published** entry, Kestello adds a redirect from the old address to the new one by itself. For a page, the redirect covers everything below it too: `/services/web` follows when `/services` moves to `/what-we-do`. You can see these redirects under **Site → Redirects**. See [Redirects](/guide/redirects#automatic-redirects).
 
 ### Post addresses
 
-Posts can carry their date in the address. Open **System → Settings**, then the **Reading** tab. **Post addresses** offers four patterns, each shown as an example address:
+Posts can carry their date in the address. Open **Site → Settings**, then the **Reading** tab. **Post addresses** offers four patterns, each shown as an example address:
 
 - `/blog/sample-post` (the default: no date)
 - `/blog/2026/sample-post`
@@ -313,7 +313,7 @@ Each category and tag has a public page listing its posts, at `/category/news` o
 
 A category or tag that is used only by drafts, scheduled posts or trashed posts has no public page yet: its address shows "not found", it is left out of the sitemap, and the list in the admin does not link to it. It appears as soon as one post that uses it is published.
 
-Changing the address of a category or tag does not add a redirect. If the old address was shared, add one yourself under **Appearance → Redirects**.
+Changing the address of a category or tag does not add a redirect. If the old address was shared, add one yourself under **Site → Redirects**.
 
 ## Search and sharing
 
@@ -339,7 +339,7 @@ They are advice: you can publish with any of them.
 
 ### Titles and the default image for the whole site
 
-**System → Settings → Search and sharing** sets how every page's title is written:
+**Site → Settings → Search and sharing** sets how every page's title is written:
 
 - **Page titles**: the pattern for every page, `{title} {sep} {site}` to begin with, which gives "Rye - Bakery". `{title}` is the page's title, or its search title when it has one. `{site}` is the site name, `{tagline}` the tagline and `{sep}` the separator.
 - **Home page title**: the pattern for the home page, `{site}` to begin with. For "Bakery - Bread, daily." use `{site} {sep} {tagline}`.
@@ -367,13 +367,13 @@ Without anything to set up, every public page gives search engines:
 
 Pages hidden from search engines, and every page while the whole site is hidden, get none of the description and stay out of the sitemap.
 
-To hide the whole site from search engines while you build it, use **Hide the site from search engines** on the **Reading** tab of **System → Settings**.
+To hide the whole site from search engines while you build it, use **Hide the site from search engines** on the **Reading** tab of **Site → Settings**.
 
 ## The home page
 
 By default, your theme decides what visitors see at your site's address, often a list of the newest posts. To show one of your pages instead:
 
-1. Open **System → Settings**, then the **Reading** tab.
+1. Open **Site → Settings**, then the **Reading** tab.
 2. Under **Home page**, pick the page. Only published pages are listed. **The theme's home page** goes back to the default.
 3. Save.
 

@@ -2,7 +2,7 @@
 
 This page covers making backups of your site, what they contain, how long they are kept, and how to restore one, either on the same site or on a new server. Read it before you change anything big (a redesign, a new plugin, an update), and before you move the site to another host.
 
-Everything here happens under **System → Backups**. People with the permission *Make and download backups (restoring needs an administrator)* can make, download and delete backups. Restoring a backup, or uploading one from another site, is for administrators only, because a backup holds the list of accounts: restoring it decides who can sign in.
+Everything here happens under **Site → Backups**. People with the permission *Make and download backups (restoring needs an administrator)* can make, download and delete backups. Restoring a backup, or uploading one from another site, is for administrators only, because a backup holds the list of accounts: restoring it decides who can sign in.
 
 ## What a backup contains
 
@@ -27,7 +27,7 @@ A database-only backup is smaller and quicker. When you restore it, your files s
 
 ## Make a backup now
 
-1. Open **System → Backups**.
+1. Open **Site → Backups**.
 2. Choose **Back up now**.
 3. Leave **Include files (uploads, plugins, themes)** on if you want everything needed to move the site. Turn it off for a database-only backup: content, settings and people.
 4. Optionally write a **Note**, such as "before the redesign". It is shown next to the backup in the list, and makes it easier to find the right one later.
@@ -49,7 +49,7 @@ Make a backup by hand before any change you might want to undo. Kestello also ma
 
 Automatic backups are on by default: every day, database only, and the newest 7 are kept. To change that:
 
-1. Open **System → Backups**.
+1. Open **Site → Backups**.
 2. In the **Schedule** box, choose how often under **Back up automatically**:
    - **Every day**: each night at 02:30, on the clock of the timezone set under **Settings → General**,
    - **Every week (Sundays)**: on Sundays at 02:30,
@@ -70,7 +70,7 @@ Automatic backups run as a scheduled task, so they need the cron job described i
 
 A backup that lives only on the same server as the site does not help if that server is lost. Download important backups and keep them somewhere else.
 
-1. Open **System → Backups**.
+1. Open **Site → Backups**.
 2. In the row of the backup, choose the download button (the arrow pointing down).
 3. If you signed in more than 10 minutes ago, Kestello asks you to **Confirm your password** first. A backup contains every account's password hash, so it asks again before letting the file leave the server.
 
@@ -98,10 +98,10 @@ Before you start, know what Kestello does for you:
 
 To restore:
 
-1. Open **System → Backups**.
+1. Open **Site → Backups**.
 2. In the row of the backup, choose **Restore**.
 3. Read the warning in the **Restore this backup?** window. It says the date of the backup and whether its files will be restored too.
-4. In the field **Type the site name, …, to confirm**, type your site's name exactly as it is set under **System → Settings** (the **Site name** field). The **Restore** button stays greyed out until the name matches.
+4. In the field **Type the site name, …, to confirm**, type your site's name exactly as it is set under **Site → Settings** (the **Site name** field). The **Restore** button stays greyed out until the name matches.
 5. Choose **Restore**. If you signed in more than 10 minutes ago, confirm your password.
 6. Wait. Do not close the page. A database-only restore of a small site takes seconds; a large site with files takes longer.
 
@@ -164,7 +164,7 @@ Plugins are installed before the database is rebuilt, so their tables are create
 
 Use this to bring a site to a new Kestello installation. Only administrators can upload backups.
 
-1. Open **System → Backups** on the site you are moving to.
+1. Open **Site → Backups** on the site you are moving to.
 2. Choose **Upload a backup**.
 3. Under **Backup zip**, choose the zip file you downloaded from the other site.
 4. Choose **Upload**. You may be asked to confirm your password.
@@ -179,15 +179,15 @@ The upload is limited by your hosting's upload size limit. For a large backup wi
 
 A backup with files carries everything a site needs. Moving works the same way whether you change hosting, change domain, or change database type (for example from SQLite to MySQL, or from MySQL to PostgreSQL).
 
-1. **On the old site**, open **System → Backups**, choose **Back up now** with **Include files (uploads, plugins, themes)** on, and wait for it to finish.
+1. **On the old site**, open **Site → Backups**, choose **Back up now** with **Include files (uploads, plugins, themes)** on, and wait for it to finish.
 2. Download the backup.
 3. **On the new server**, install Kestello as described in [Installing Kestello](/guide/installation), with the database type you want. Use the same Kestello version as the old site, or a newer one. A backup from a newer Kestello is refused.
 4. Optionally, carry over the old site's app key so stored passwords keep working (see [Passwords and secrets after a move](#app-key)).
 5. Install the same plugins and themes the old site used, or plan to restore with `--with-code` from the command line (see [Restoring code from another site](#code-from-another-site)).
-6. Upload the backup under **System → Backups → Upload a backup**, or copy it to the server with FTP or SFTP if it is too large.
+6. Upload the backup under **Site → Backups → Upload a backup**, or copy it to the server with FTP or SFTP if it is too large.
 7. Restore it. In the confirmation field, type the **new** site's name, the one you entered in the installer, because that is the site being replaced.
 8. Sign in with your account from the old site.
-9. Open **System → Settings** and check the **Site address** under **General**. It came back from the old site. Correct it if the domain changed, then save.
+9. Open **Site → Settings** and check the **Site address** under **General**. It came back from the old site. Correct it if the domain changed, then save.
 10. Open **System → Site Health** and fix anything it reports. Set up the cron job on the new server if you have not yet.
 
 If the old site was older than the new installation, the restore brings the database up to date by itself.
@@ -198,7 +198,7 @@ Kestello encrypts a few stored values with a secret key that each installation m
 
 You have two options:
 
-- **Enter them again.** Re-enter the SMTP password under **System → Settings → Email**, and the secrets in each plugin's settings. People who use two-step sign-in need it turned off and set up again; an administrator with server access does that with `php bin/cms auth:reset-2fa <username>` (see [People](/guide/people)).
+- **Enter them again.** Re-enter the SMTP password under **Site → Settings → Email**, and the secrets in each plugin's settings. People who use two-step sign-in need it turned off and set up again; an administrator with server access does that with `php bin/cms auth:reset-2fa <username>` (see [People](/guide/people)).
 - **Bring the old key along.** Open `config/app.php` on the old site and copy the value of `secret_key`. On the new site, add it to `config/app.php` as a list under `previous_keys`, leaving the new `secret_key` as it is:
 
   ```php
@@ -249,7 +249,7 @@ This is done in a configuration file, not in the admin:
    php bin/cms storage:test backups
    ```
 
-5. Open **System → Backups**. The bottom of the **Schedule** box now says **Backups are kept on the backups disk (s3).** Make a backup to check that it works.
+5. Open **Site → Backups**. The bottom of the **Schedule** box now says **Backups are kept on the backups disk (s3).** Make a backup to check that it works.
 
 Backups already in `storage/app/backups` are not moved. Download the ones you want to keep before you switch.
 
@@ -267,7 +267,7 @@ Restoring from an outside disk works the same as from the server: Kestello downl
 
 **"Only administrators can restore or upload backups."** Your role may make and download backups, but not restore or upload them. Ask an administrator.
 
-**"Type the site's name, …, to confirm."** The name you typed does not match the **Site name** under **System → Settings**. Capital letters count, and so do spaces inside the name.
+**"Type the site's name, …, to confirm."** The name you typed does not match the **Site name** under **Site → Settings**. Capital letters count, and so do spaces inside the name.
 
 **"The file is larger than this server accepts (…). Copy it to the server and use: bin/cms backup:restore <file.zip>"** The zip is bigger than your hosting's upload limit. Upload it with FTP or SFTP and restore it from the command line, or ask your host to raise the PHP upload limit.
 

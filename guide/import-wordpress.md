@@ -2,7 +2,7 @@
 
 This page covers bringing a WordPress site into Kestello: what comes over, how to run the import, how to read its report, and what to do when something is left behind. Read it when you have a WordPress site to replace with Kestello, your own or one you are moving for a client, before you switch the domain over.
 
-The import happens under **System → Import**. Administrators can use it. To let another role import, give it the permission *Import a site from WordPress* under **People → Roles**.
+The import happens under **Site → Import**. Administrators can use it. To let another role import, give it the permission *Import a site from WordPress* under **People → Roles**.
 
 ## What comes over
 
@@ -39,13 +39,13 @@ A few things change on the way:
 
 1. In WordPress, open **Tools → Export**, choose **All content** and choose **Download Export File**. You get an `.xml` file.
 2. Keep the WordPress site online while you import. The files in its media library are downloaded from it.
-3. Make a backup of this site under **System → Backups**, so you can go back to how it was.
+3. Make a backup of this site under **Site → Backups**, so you can go back to how it was.
 
 The export file holds the text of your site, not the files. If the old site is already offline, you can still import its files from a copy of its `wp-content/uploads` folder with the command line (see [Large sites and old sites that are offline](#large-sites-and-old-sites-that-are-offline)).
 
 ## Run the import
 
-1. Open **System → Import**.
+1. Open **Site → Import**.
 2. Under **WordPress export file**, choose the file you downloaded, then choose **Read the file**. Nothing is imported yet.
 3. Check what will come over. The table lists, for posts and pages, files, files linked from posts, categories and tags, menus and redirects, how many will be imported and how many are skipped. Under it, each reason for skipping is listed with a few examples, such as **In the WordPress trash.** or **This site has no content type "portfolio".**
 4. Under **Authors**, choose whose name each WordPress author's posts carry here. People are matched by email address first, then by username. Authors with no match are credited to **Me, the person importing**. To credit them to someone else, choose that person in the list.
@@ -59,7 +59,7 @@ A progress bar shows how far it is and which part it is on: categories and tags,
 How long it takes depends mostly on how many files are downloaded.
 
 ::: warning
-On a site without a background worker (most shared hosting), the import runs while the **System → Import** screen is open. Closing it pauses the import; opening it again carries on where it stopped. When a background worker runs, you can leave the screen. **System → Background jobs** shows whether one runs.
+On a site without a background worker (most shared hosting), the import runs while the **Site → Import** screen is open. Closing it pauses the import; opening it again carries on where it stopped. When a background worker runs, you can leave the screen. **System → Background jobs** shows whether one runs.
 :::
 
 To stop an import, choose **Stop**. What was imported stays.
@@ -131,7 +131,7 @@ The export points at an address on a private network, such as a WordPress site o
 A post or file made the server stop three times in a row, usually by running out of memory or time. The rest of the import carries on. Ask your host to raise the PHP memory limit, then choose **Try again**, or use the command line.
 
 **Another import is running. Wait for it to finish, or stop it.**
-Only one import runs at a time. Open **System → Import** to see it.
+Only one import runs at a time. Open **Site → Import** to see it.
 
 ## Next steps
 

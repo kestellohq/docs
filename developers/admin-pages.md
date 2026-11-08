@@ -55,8 +55,11 @@ The menu is a list of groups. Core defines:
 | `content` | Content | 10 |
 | `people` | People | 20 |
 | `appearance` | Appearance | 30 |
+| `site` | Site | 40 |
 | `plugins` | Plugins | 80 |
 | `system` | System | 90 |
+
+`site` holds what a site owner changes or runs now and then: settings, updates, backups, import and redirects. `system` holds the tools for whoever looks after the site, such as health checks, logs and background jobs, and starts folded in the sidebar. A screen a site owner uses every week belongs in `plugins` or a group of its own, not in `system`.
 
 A plugin's entries go to `plugins` unless you name another group. A plugin with several screens can add its own group:
 

@@ -19,7 +19,7 @@ Work from the Kestello source ([kestellohq/cms](https://github.com/kestellohq/cm
 | You need | Where it is |
 | --- | --- |
 | An admin label or message | The Vue page under `core/resources/js/pages/admin/`, the text inside `__()`. Copy it exactly. |
-| A menu path such as **System → Updates** | The `admin->page()` registration in the module (`core/src/Cms/**/*Module.php`): its group and label. |
+| A menu path such as **Site → Updates** | The `admin->page()` registration in the module (`core/src/Cms/**/*Module.php`): its group and label. |
 | A command and its options | `core/src/Cms/Console/**/*Command.php`: `$name`, `$description`, and the options `handle()` reads. Run it and copy the output. |
 | A config key and its default | `core/config/*.php`; the site's own files in `config/` override them. |
 | An API endpoint | `core/src/Cms/Api/Endpoints/`, or the explorer at **System → API**. |
@@ -29,7 +29,7 @@ Work from the Kestello source ([kestellohq/cms](https://github.com/kestellohq/cm
 
 Follow STYLE.md, "Structure of a page": what the page covers and when you need it; the task in the order the reader meets it, with numbered steps (one action each); "If something goes wrong" with the real messages in bold quotes and what each means; "Next" with links.
 
-- Admin labels in bold, exactly as shown: **Review the update**, **System → Settings**.
+- Admin labels in bold, exactly as shown: **Review the update**, **Site → Settings**.
 - Commands in `bash` blocks without `$`; output in a separate `text` block, copied from a real run.
 - Tables for reference (settings, commands, fields), never for steps.
 - `::: warning` for data loss or lock-out, `::: danger` only for what cannot be undone.

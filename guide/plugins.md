@@ -121,9 +121,9 @@ Deactivating always works, even for a plugin that crashes: Kestello switches it 
 
 ## Change a plugin's settings
 
-Plugins with settings add a tab to **System → Settings**, next to the built-in groups. Each such tab has a box titled **From a plugin** that names the plugin it belongs to.
+Plugins with settings add a tab to **Site → Settings**, next to the built-in groups. Each such tab has a box titled **From a plugin** that names the plugin it belongs to.
 
-1. Open **System → Settings**.
+1. Open **Site → Settings**.
 2. Choose the plugin's tab.
 3. Change the fields and save.
 
@@ -193,7 +193,7 @@ You need someone who can run commands on the server.
 
 Recovery mode only applies to the browser that opened the link. Visitors keep getting the normal site. While it is on, **Site Health** reports **The site is in recovery mode: plugins are not loaded.**
 
-The link is built from the site address in **System → Settings**. If that address is wrong, the link is too; fix the address part by hand.
+The link is built from the site address in **Site → Settings**. If that address is wrong, the link is too; fix the address part by hand.
 
 ### Without a terminal
 

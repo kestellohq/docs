@@ -10,7 +10,7 @@ Redirects in Kestello only apply to addresses that would otherwise show "not fou
 
 To move a page that exists, change its address in the editor instead. Kestello then adds the redirect for you.
 
-Redirects are under **Appearance → Redirects**. Editors and administrators can use this screen.
+Redirects are under **Site → Redirects**. Editors and administrators can use this screen.
 
 ## Automatic redirects {#automatic-redirects}
 
@@ -21,7 +21,7 @@ When you change the address of a **published** entry, Kestello adds a redirect f
 
 For pages (and other types whose entries can have a parent), the redirect covers everything below the old address too. If `/services` becomes `/what-we-do`, then `/services/web-design` goes to `/what-we-do/web-design`.
 
-These redirects are listed under **Appearance → Redirects** with the note **page moved**. To see only them, set **Added** to **When a page moved**.
+These redirects are listed under **Site → Redirects** with the note **page moved**. To see only them, set **Added** to **When a page moved**.
 
 A few things do not need redirects, and do not get one:
 
@@ -35,7 +35,7 @@ And a few things do not get one, but may need one:
 
 ## Add a redirect
 
-1. Open **Appearance → Redirects**.
+1. Open **Site → Redirects**.
 2. Choose **Add a redirect**.
 3. Under **Which addresses**, choose what the rule covers (see the table below).
 4. In **From**, enter the old address, starting with `/`, such as `/old-page`. Leave out your domain.
@@ -75,7 +75,7 @@ The list shows how often each rule was used (**Used**) and when it was last used
 
 ## The Not found list {#the-not-found-list}
 
-Kestello remembers every address visitors asked for that found nothing. Open the **Not found** tab on **Appearance → Redirects** to see them:
+Kestello remembers every address visitors asked for that found nothing. Open the **Not found** tab on **Site → Redirects** to see them:
 
 - **Address**: what was asked for.
 - **Asked for**: how many times.
@@ -110,7 +110,7 @@ A redirect that leads back to where it started would send visitors around in a c
 To move many redirects at once, for example from your previous site:
 
 1. Prepare a CSV file with one redirect per line: `source,target,status,match,note`. Only the first two are needed. **status** defaults to `301` and **match** to `exact`; the other values for **match** are `prefix` and `regex`. A header line is optional.
-2. Choose **Import** on **Appearance → Redirects**.
+2. Choose **Import** on **Site → Redirects**.
 3. Pick the file under **File**, or paste the lines under **Or paste the lines**.
 4. Choose **Import** in the window. Kestello reports how many were added and updated, for example "12 added, 3 updated." Rules for addresses that already have one are updated. Lines with problems are listed under **These lines were skipped:** with their line number and the reason; the other lines are imported.
 
