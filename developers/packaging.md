@@ -307,7 +307,7 @@ Official releases are GitHub releases of [kestellohq/cms](https://github.com/kes
 
 Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **Site → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
 
-**Review the update** asks GitHub again where the zip is, downloads it, and throws it away unless its SHA-256 matches the published checksum. Then it goes through the same review and update as an uploaded zip. From the admin, the signature must come from a key in `release.keys` or `app.packages.trusted_keys`.
+**Review the update** asks GitHub again where the zip is, downloads it, and throws it away unless its SHA-256 matches the published checksum. Then it goes through the same review and update as an uploaded zip. From the admin, the signature must come from a key in `release.keys`, made with `core:release --key`. Keys in `app.packages.trusted_keys` sign plugins and themes only, and a zip signed with `package:sign` is never accepted as a core release.
 
 To publish your own builds, for a fork or an agency distribution, point your sites at your repository and your key in `config/release.php`:
 
