@@ -368,6 +368,29 @@ return [
 
 Check a disk with `php bin/cms storage:test backups`.
 
+### Media in an S3 bucket
+
+Point the `media` disk at a bucket to keep uploads there. The S3 driver also takes `endpoint` and `path_style` for S3-compatible services, `url` for the public address of the files (a CDN, for example), `acl` and `direct_uploads`.
+
+| Key | Default | Meaning |
+|---|---|---|
+| `acl` | `false` | `true`: Kestello makes each file public with an object ACL. `false`: the bucket policy decides what is public. |
+| `direct_uploads` | `false` | `true`: browsers send files straight to the bucket instead of through your server. The bucket's CORS rules must allow `POST` from the site's address. |
+
+With direct uploads, the browser puts the file at a private key, `incoming/<upload id>`. Kestello then checks it like any other upload and copies it to the key it chose, where it becomes public. A file that fails the checks, or an upload that is never finished, is deleted from `incoming/` and is never public.
+
+When `acl` is `false` and the bucket policy makes files public, keep `incoming/` out of it. Otherwise an upload could be read before it is checked:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        { "Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::acme-media/*" },
+        { "Effect": "Deny", "Principal": "*", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::acme-media/incoming/*" }
+    ]
+}
+```
+
 ## Other groups
 
 | Key | Type | Default | Meaning |
