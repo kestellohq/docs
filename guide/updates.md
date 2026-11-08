@@ -1,6 +1,6 @@
 # Updates
 
-This page covers updating plugins, themes and Kestello itself. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
+This page covers updating plugins, themes and Kestello itself, and going back afterwards. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. If the server stops the update halfway, the site puts itself back on the next visit. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
 
 Kestello looks for new versions of itself and shows them on **Site → Updates**, where you can review and apply one. For plugins and themes it does not look yet: you get the new zip from whoever publishes the plugin or theme, and upload it.
 
@@ -31,13 +31,27 @@ When you start an update, Kestello works through these steps by itself:
    - the home page (`/`) and the status address (`/api/v1/status`) answer without a server error.
 6. **Finishes, or goes back.** If every check passed, the maintenance page goes away and you see that the update worked. If any check failed, Kestello puts the old files back, restores the database from the backup made in step 2, checks the site once more on the old version, and only then removes the maintenance page.
 
-The maintenance page from step 3 switches itself off after 30 minutes at most, even if the update process dies half way.
+The maintenance page from step 3 switches itself off after 30 minutes at most.
+
+### If the server stops the update halfway {#stopped-halfway}
+
+On shared hosting, the host may stop PHP in the middle of an update: a time limit, a memory limit, or a server restart. Kestello writes down each step before it takes it, so it knows where it was:
+
+- **For Kestello itself**, the file `core/current.php` only names the new release while the update is still running. Once the update process is gone, the next request already runs the old release, so a half-checked release is never what visitors get.
+- **On the next request** to the site (a visitor, you, or the scheduled task), Kestello finishes the job before anything else runs, and before any plugin loads:
+  - if the check had already passed, it keeps the new version;
+  - otherwise it puts the old files back and restores the database from the **Before an update** backup;
+  - then it removes the maintenance page and shows the page that was asked for.
+
+You do not need FTP or the command line for this. The audit log under **System → Audit log** records it as *Put back an update that stopped halfway*.
+
+If putting it back fails three times in a row, Kestello stops trying by itself and keeps visitors on the maintenance page. See [If going back did not finish](#incomplete-rollback).
 
 ::: warning
 If an update goes back, the database returns to how it was at step 2. Anything someone saved in the admin while the update ran is lost. Background jobs waiting to run (emails, image sizes) and sign-ins are kept, so nobody is signed out. Updates usually take seconds to a few minutes, but avoid updating while editors are busy.
 :::
 
-Only one update runs at a time, and no backup or restore can start while an update runs.
+Only one update runs at a time, and no backup or restore can start while an update runs. A new update cannot start while an earlier one that stopped halfway has not been put back.
 
 ### Where the old version is kept
 
@@ -168,13 +182,30 @@ php bin/cms core:update kestello-core-1.5.0.zip
 
 `php bin/cms core:update --status` lists the release folders on disk and marks the running one with `*`.
 
-## Go back to an older version
+## Switch back after an update {#switch-back}
 
-The admin only moves forward. Uploading an older version than the one installed stops with *This is Acme Shop 1.1.0, older than the installed 1.2.0.* (or, for Kestello, *… Going back is done by restoring a backup.*).
+An update can pass its check and still turn out wrong a day later: a layout that broke, a feature that behaves differently. You can go back to the version before the last update from the admin:
 
-The safest way back is to restore the **Before an update** backup from **Site → Backups** together with the old files. When an update fails its check, Kestello already does this for you.
+- **Kestello:** on **Site → Updates**, the **Kestello** box says *Updated from 1.4.0 on …* and shows **Switch back to 1.4.0**.
+- **A plugin:** on **Plugins → Manage plugins**, the plugin says *Updated from 1.2.0 on …* and shows **Switch back to 1.2.0**.
 
-If you need to go back later, after the new version has been running for a while, someone on the server can force it:
+Switching back puts back two things together: the old code, still on the server, and the **Before an update** backup of the database. Restoring the database is what makes it safe, since the newer version may have changed the database in ways the older one does not understand.
+
+::: warning
+Anything changed on the site since the update (posts, pages, settings, people) is lost from the site when you switch back. Kestello makes a backup of the site as it is now first, listed under **Site → Backups** as **Before a restore**, so you can still get those changes out of it.
+:::
+
+To switch back:
+
+1. Choose **Switch back to 1.4.0**.
+2. Read the box, which names the date of the backup that will be restored, and choose **Switch back to 1.4.0** again.
+3. The page reloads. Visitors see the maintenance page for the few seconds it takes. When it is done you see **Kestello 1.4.0 is running again, with the database from before the update.** (or **Acme Shop 1.2.0 is back, …** for a plugin).
+
+The button only appears when everything needed is still there: the backup (backups are removed after a while, see [Where the old version is kept](#where-the-old-version-is-kept)) and the old code. You can switch back once: after that, the next way forward is a new update. For a theme with code, ask someone on the server to use the command line below.
+
+## Go back further
+
+Uploading an older version than the one installed stops with *This is Acme Shop 1.1.0, older than the installed 1.2.0.* (or, for Kestello, *… Going back is done by restoring a backup.*). To go back further than the last update, someone on the server can force it:
 
 ```bash
 php bin/cms package:update acme-shop-1.2.0.zip --downgrade
@@ -187,7 +218,14 @@ This goes through the same backup and check. It does not undo database changes t
 
 Very rarely, the return to the old version fails too, for example because the disk is full or a file cannot be moved. Then the box shows the problems with the update, followed by lines that start with **After rolling back:** or **Rolling back failed:**. The second kind names the database backup and, for a plugin or theme, the folder in `storage/app/backups/packages/` that holds the old files.
 
-Kestello then keeps the maintenance page on for visitors for up to seven days, with the reason *An update failed and could not be rolled back completely*. You and other signed-in people can still use the admin. Work through these steps:
+The same happens when an update [stopped halfway](#stopped-halfway) and putting it back failed three times. Then **Site → Updates** (and **Plugins → Manage plugins**) show a box titled **An update stopped halfway and was not put back**, and **System → Site Health** lists it as critical.
+
+Kestello then keeps the maintenance page on for visitors for up to seven days. You and other signed-in people can still use the admin. Work through these steps:
+
+1. Fix the cause, if you know it: often the disk is full, or a folder cannot be written. **System → Audit log** has the reason each try failed.
+2. Choose **Try again** in the box on **Site → Updates**. The page reloads and the site tries once more, before plugins load. On the server, `php bin/cms update:recover` does the same and prints what happened.
+
+If that does not work either, put the site back by hand:
 
 1. Write down the full message, including the backup name and folder.
 2. Open **System → Site Health** to see what is wrong now.
@@ -202,6 +240,10 @@ If a plugin was suspended along the way, see [When a plugin breaks the site](/gu
 ## If something goes wrong
 
 **"Another update is running. Try again when it has finished."** Only one update runs at a time. Wait for the other one. If you are sure none is running, the lock clears by itself when the process that held it ended.
+
+**"Another update has not finished. Wait for it, or put it back under Site → Updates if it stopped."** An earlier update is still running, or it stopped halfway and was not put back yet. See [If going back did not finish](#incomplete-rollback).
+
+**"There is no earlier version to switch back to."** The backup from before the update or the old code is no longer on the server, or you already switched back once. See [Go back further](#go-back-further).
 
 **"A backup or restore is already running. Try again when it has finished."** An update needs to make a backup first. Wait for the backup or restore to finish, then try again.
 

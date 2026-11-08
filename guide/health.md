@@ -152,6 +152,15 @@ Kestello can keep its cache, sessions, background jobs and search in different s
 
 **Fix**: open **System → Infrastructure**, find the service marked **Fallback active**, and use **Test connection** to see the error. Usually the outside service (such as Redis) is down, or its address or password changed. Fix the service, or change the driver back.
 
+### Updates {#core-update-stopped}
+
+Checks that no update of Kestello, a plugin or a theme stopped halfway without being put back. Normally the site puts such an update back by itself on the next request; this check fails when that did not work three times.
+
+- **Passed**: "No update stopped halfway."
+- **Critical**: "The update of … stopped halfway and was not put back." An **Open Updates** button opens **Site → Updates**.
+
+**Fix**: see [If going back did not finish](/guide/updates#incomplete-rollback).
+
 ### Scheduled tasks {#core-scheduler}
 
 Kestello does recurring work on a schedule: publishing posts set for later, nightly backups, cleanup, and running background jobs. Something has to start the scheduler every minute. This check looks at when it last ran.
