@@ -583,6 +583,16 @@ Since 0.1.0. The value is `string`.
 
 The generated robots.txt.
 
+#### `seo.alternates`
+
+Since 0.1.0. The value is `list`.
+
+The same page in other languages, as ['hreflang' => 'de', 'href' => '/de/page'] pairs, written as hreflang links. Invalid language tags and addresses are left out. Empty by default.
+
+| Argument | Description |
+|---|---|
+| `array $data` | The page: component, props and url. |
+
 #### `seo.head`
 
 Since 0.1.0. The value is `list`.
@@ -592,6 +602,32 @@ The search and sharing tags of a page, as ['meta' or 'link', attributes] pairs. 
 | Argument | Description |
 |---|---|
 | `array $data` | The page props. |
+
+#### `seo.schema`
+
+Since 0.1.0. The value is `list`.
+
+The schema.org nodes of a page's JSON-LD @graph (WebSite, Organization or Person, WebPage, Article, BreadcrumbList). Add, change or remove nodes; each needs an @type. Pages that are not listed in search get none.
+
+| Argument | Description |
+|---|---|
+| `array $data` | The page: component, props and url. |
+
+#### `sitemap.files`
+
+Since 0.1.0. The value is `array`.
+
+The files listed in /sitemap.xml, name => last change (DateTimeInterface or null). Add "`<name>`-`<n>`" to serve /sitemaps/`<name>`-`<n>`.xml and fill it with sitemap.urls.
+
+#### `sitemap.urls`
+
+Since 0.1.0. The value is `list`.
+
+The addresses in one sitemap file, as ['loc' => '/path', 'lastmod' => ?DateTimeInterface, 'images' => [urls]]. Only addresses on this site are kept.
+
+| Argument | Description |
+|---|---|
+| `string $file` | The file name, such as post-1. |
 
 ### Security
 
