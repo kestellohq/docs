@@ -84,8 +84,11 @@ Choose **Connect and continue**. Kestello connects with these details before it 
 | Tagline | A short line about the site. Optional. |
 | Site address | The full address visitors will use, including `https://`, for example `https://example.com`. Links in emails are built from it. |
 | Time zone | Where you are. Dates in the admin, scheduled publishing and nightly tasks follow this clock. |
+| What is this site for? | **A website** for your own site. **A public demo** to let others try Kestello: there is no admin step, everyone signs in as `demo`, and the site resets every hour. See [Public demo](/guide/demo). |
 
 ### Step 4: Your admin account
+
+A public demo skips this step: its only account is `demo`.
 
 This is the first account and it has full access. Choose:
 

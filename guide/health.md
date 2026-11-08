@@ -243,6 +243,14 @@ The details also show whether lossless optimizers and PDF thumbnails (Ghostscrip
 
 **Fix**: see [Search](/guide/search).
 
+### Demo {#core-demo}
+
+Only on a [public demo](/guide/demo).
+
+- **Passed**: "The demo resets every hour." Or, when the hour is up but scheduled tasks have not run since (a quiet demo without cron): "The demo resets the next time scheduled tasks run."
+- **Critical**: "The demo has no snapshot, so it cannot reset." Run `php bin/cms demo:snapshot` on the server.
+- **Critical**: "The demo should have reset N minutes ago, but did not." Scheduled tasks ran, but the reset failed. Open **System → Scheduled tasks** and look at `demo.reset` for the error.
+
 ## Check from the command line {#command-line}
 
 The same checks run from a terminal, which is useful on a VPS and for monitoring tools. From the site's root folder:

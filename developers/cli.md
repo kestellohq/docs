@@ -136,6 +136,8 @@ These work in a checkout that was never installed.
 |---|---|
 | `token:create <user>` | Creates a personal access token for the API. `--name=`, `--scopes=a,b`, `--days=`. The token is shown once. |
 | `user:password <username\|email>` | Sets a user's password when email cannot be used. Asks for it twice without showing it, or reads it from standard input when piped. `--generate` makes one and prints it once. A password given as an argument is refused, so it does not end up in the shell history. |
+| `demo:snapshot` | On a [public demo](/guide/demo): takes the snapshot every hourly reset goes back to, from the site as it is now, and sets the `demo` account's password back to `demo`. |
+| `demo:reset` | On a public demo: puts the site back to its snapshot now. Everyone is signed out. |
 | `auth:reset-2fa <username\|email>` | Turns off two-step sign-in for a user who lost their device and recovery codes. |
 | `recovery:link` | Prints a signed link that opens the site with every plugin off and the default theme. Use it when a plugin locks you out of the admin. |
 | `key:generate` | Makes a new secret key. The old one is kept for decrypting existing data; `--forget-old` drops it. |
