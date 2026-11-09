@@ -160,6 +160,8 @@ How you update a theme depends on what kind it is:
 
 A Kestello release is a zip named like `kestello-core-1.5.0.zip`, published on the [Kestello releases page](https://github.com/kestellohq/cms/releases). It replaces the `core` folder only; your `config`, `content` and `storage` folders are not touched.
 
+![The Updates screen: the Kestello version, PHP version and when it last checked, and the list of plugins and themes.](/screenshots/updates.png)
+
 ### Check the Updates screen
 
 Open **Site → Updates**. The **Kestello** box shows:

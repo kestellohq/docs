@@ -2,6 +2,8 @@
 
 A job is work that runs in the background instead of while a visitor waits: sending mail, calling a slow API, resizing images, cleaning up old rows. Scheduled tasks are work that runs on a clock: every night at four, every fifteen minutes on weekdays. This page covers writing a job, pushing it, retries and timeouts, unique jobs, chains and batches, job middleware, the scheduler, and how workers, cron and the web runner execute everything. Read it when your plugin does anything that takes more than a moment, or anything that must happen regularly.
 
+![The Background jobs screen: waiting and failed jobs, and whether a worker is active.](/screenshots/background-jobs.png)
+
 ## Write a job
 
 A job is a class that implements `Kestello\Contracts\Queue\Job` and has a `handle()` method:

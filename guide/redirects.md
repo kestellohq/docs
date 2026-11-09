@@ -44,6 +44,8 @@ And a few things do not get one, but may need one:
 7. Optionally add a **Note** for yourself and other editors, such as why the redirect exists.
 8. Choose **Add the redirect**.
 
+![The Redirects screen with the Redirects and Not found tabs, a search field and the list of redirects.](/screenshots/redirects.png)
+
 The new rule works straight away.
 
 ### Which addresses

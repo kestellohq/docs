@@ -13,6 +13,8 @@ Site Health is a set of checks Kestello runs on itself: the PHP version, folders
 4. The tabs filter the list: **Needs attention** (the default, critical and recommended together), **Critical**, **Recommended**, **Passed** and **All**.
 5. Select a check to open it. You see the full message, details such as version numbers or sizes, the check's id (for example `core.scheduler`), and sometimes a button that takes you to the screen where you fix it.
 
+![Site Health: a summary of the checks, then the checks that need attention.](/screenshots/health.png)
+
 You only see **Site Health** if your role has the permission *Manage infrastructure, background jobs, scheduled tasks and Site Health*. Administrators have it.
 
 ### The buttons at the top
@@ -304,6 +306,8 @@ php /home/youraccount/kestello/bin/cms health > /dev/null || echo "Kestello Site
 ## Scheduled tasks and background jobs
 
 Two screens under **System** show the background machinery in detail.
+
+![Scheduled tasks: each task with its schedule, next run, last run and a Run now button.](/screenshots/scheduled-tasks.png)
 
 ### Scheduled tasks {#scheduled-tasks}
 

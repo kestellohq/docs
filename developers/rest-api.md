@@ -2,6 +2,8 @@
 
 This page covers Kestello's REST API: where it lives, how to authenticate, the scopes a token can carry, the error format, rate limits, pagination and the OpenAPI document. The second half shows how a plugin adds its own endpoints. Read it when you connect another system to a site, or when your plugin needs an API for its admin screens or for integrations.
 
+![The API screen in the admin: every endpoint, with a form to try one and the code to call it.](/screenshots/api-explorer.png)
+
 The admin itself is a client of this API. Every admin screen calls the same endpoints described here, so anything the admin does, an integration can do within its token's scopes (with the exceptions listed under [Recent authentication](#recent-authentication)).
 
 ## Base address

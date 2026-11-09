@@ -105,3 +105,16 @@
     padding: 0 0.35em;
     background: var(--vp-c-bg-alt);
 }
+
+/*
+ * Screenshots of the admin (public/screenshots/, made by npm run screenshots): framed so a
+ * white admin screen doesn't melt into the white page, and clickable to see full size.
+ */
+.vp-doc img[src*='/screenshots/'] {
+    display: block;
+    margin: 20px 0 24px;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
+    cursor: zoom-in;
+}

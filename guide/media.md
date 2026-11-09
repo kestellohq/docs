@@ -6,6 +6,8 @@ This page covers the media library: uploading images and files, which kinds of f
 
 Open **Content → Media**. Everything uploaded to the site is here, newest first. Anyone who can use the admin can open this screen.
 
+![The Media screen: an area to drop files on, and the library of images below it.](/screenshots/media-library.png)
+
 - The tabs filter by kind: **All**, **Images**, **Documents**, **Audio**, **Video** and **Archives**. Only the kinds your site allows are shown.
 - **Search** finds files by title, file name or alt text.
 - **Only mine** shows the files you uploaded yourself.
@@ -151,6 +153,8 @@ Deleting removes the file and all its sizes from storage. This cannot be undone.
 ## Storage on other disks
 
 Out of the box, uploads are stored on the server in the folder `storage/app/media`, and visitors see them at addresses starting with `/uploads`. An administrator can move the library to an outside storage service such as an S3-compatible bucket under **System → File storage**. The disk has to be added in `config/storage.php` first. New uploads go to the new disk straight away and existing files follow one by one; pages keep working while they move. The same screen sets **Upload quotas**: how much each role may keep in the library.
+
+![System → File storage: the disks with how many files each holds, and upload quotas per role.](/screenshots/file-storage.png)
 
 ## If something goes wrong
 

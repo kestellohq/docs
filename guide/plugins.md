@@ -12,6 +12,8 @@ Installing, activating, deactivating and deleting also ask you to confirm your p
 
 ## The plugins screen
 
+![The Plugins screen: Upload a plugin, and the installed Notices plugin with its version, Active and Deactivate.](/screenshots/plugins.png)
+
 Open **Plugins → Manage plugins**. Each installed plugin has a row with its name, version and a status:
 
 | Status | What it means |

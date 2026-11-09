@@ -6,6 +6,8 @@ This page covers building the menus visitors use to find their way around your s
 
 A menu is a list of links you build in the admin. On its own, a menu is not shown anywhere. Your theme decides **where** menus can appear, for example across the top of every page or in the footer. Each of those places is a **theme location**, and you choose which menu goes in each one.
 
+![The Menus screen: Theme locations at the top, Add items on the left and the footer menu's items on the right.](/screenshots/menus.png)
+
 You can build as many menus as you like and switch them between locations at any time.
 
 Menus are under **Appearance → Menus**. Editors and administrators can use this screen.

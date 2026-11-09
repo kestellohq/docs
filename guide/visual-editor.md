@@ -4,12 +4,17 @@ Pages and posts are written in the visual editor: the page in the middle looks t
 
 ## The parts of the editor
 
-When you open a page or post, the editor fills the screen:
+When you open a page or post, the editor fills the screen. The numbers in the picture match the list below it.
 
-- **The bar at the top**: back to the list, the title, the buttons that open the panels, **Undo** and **Redo**, the preview widths, the status with whether your work is **Unsaved** or **Saved** (for example "Draft · Saved 4 minutes ago"), **Form**, **Preview**, and the buttons that save (**Save draft**, **Publish**, **Update** and so on).
-- **The page in the middle**: the real page. Click any text to type in it.
-- **The left panel**: **Add a block**, **Layers** or **Find and replace**, one at a time.
-- **The right panel**, with four tabs:
+![The visual editor with the About page of a bakery site open. Numbered marks show the Add a block button, the page, the tabs of the right panel, the preview widths and the Update button.](/screenshots/editor-parts.png)
+
+1. **Add a block** and the buttons next to it open the left panel: **Add a block**, **Layers** or **Find and replace**, one at a time. **Undo**, **Redo** and **Details and outline** sit beside them.
+2. **The page**: the real page, with your theme around it. Click any text to type in it.
+3. **The right panel**, with four tabs (described below).
+4. **Preview widths**: see the page as on a phone, a tablet or a full screen.
+5. **The save button**: **Save draft** and **Publish** for a draft, **Update** for a published page. Next to it are the status with **Unsaved** or **Saved**, **Form** and **Preview**.
+
+The right panel has four tabs:
   - **Block**: the settings of the selected block.
   - **Style**: its colours, spacing, text size and border.
   - A tab named after the content type, such as **Page** or **Post**: when it goes live, its address, template, parent page, author, the **Search and sharing** fields and its revisions.
@@ -22,9 +27,16 @@ The buttons in the bar show their name and shortcut when you point at them. Pres
 
 ### Prefer a form
 
-Choose **Form** in the bar to edit the same page as a list of fields and blocks instead. Choose **Visual editor** to come back. Kestello remembers your choice in this browser.
+Choose **Form** in the bar to edit the same page as a list of fields and blocks instead.
+
+![The About page in the form view: the blocks as a list of fields.](/screenshots/editor-form.png)
+ Choose **Visual editor** to come back. Kestello remembers your choice in this browser.
 
 ## Start a new page
+
+::: tip The quickest start
+Open **Pages**, choose **New page**, type a title and start writing. Everything else on this page is for when you want more than text.
+:::
 
 1. Open **Content → Pages** and choose **New page** (or **Content → Posts** and **New post**).
 2. Type the title in the bar at the top, where it says **Add a title**. The page shows it as you type.
@@ -44,6 +56,8 @@ Pages are made of **blocks**: a heading, a paragraph of text, an image, a row of
 - **Add a block** in the bar (the button with a plus) opens the library on the left. Click a block to add it after the selected block, or at the end of the page when nothing is selected. You can also drag it onto the page or into the layers. Type under **Find a block or pattern** to narrow the list.
 - On an empty line of text, type `/`. A small list opens at the cursor; type to search, then press Enter.
 - The plus button on the block toolbar adds a block after the selected one.
+
+![The Add a block panel open on the left, with the blocks grouped under Text, Media and Layout.](/screenshots/editor-add-block.png)
 
 The library groups the blocks into **Text**, **Media**, **Layout**, **Entries and data** and **Widgets**. Plugins can add more.
 
@@ -76,6 +90,8 @@ A layout is a whole page. Choosing one for a page that already has blocks asks f
 
 Click a block on the page to select it. A blue outline shows it, the **Block** tab shows its settings and a toolbar appears next to it. The toolbar moves out of the way of the text you are reading; to keep it in one place instead, open **Options** (the three dots at the right of the bar) and turn on **Block toolbar at the top**.
 
+![The heading "Who we are" selected: a blue outline around it, the block toolbar above it, and its settings in the Block tab on the right.](/screenshots/editor-block.png)
+
 From left to right, the block toolbar offers:
 
 - **Select** the block that holds this one (shown when there is one).
@@ -93,6 +109,8 @@ Press Esc to clear the selection; the right panel then shows the page's own sett
 
 **Layers** (the button with lines in the bar, or Alt+Shift+O) lists every block in order, with the blocks inside others indented below them. Each row shows the block's kind and its first words, so you can tell the blocks apart. Use it to select a block that is hard to click on the page, such as an empty one or one inside a column.
 
+![The Layers panel on the left, listing every block of the page in order.](/screenshots/editor-layers.png)
+
 In the layers:
 
 - The arrow keys move between blocks, and the left arrow selects the block that holds the current one.
@@ -108,6 +126,8 @@ A row with an eye icon is hidden on some screens or for some visitors; see [Choo
 **Undo** and **Redo** in the bar (Ctrl+Z and Ctrl+Shift+Z, or Cmd on a Mac) step back and forward through every change. After a step you may regret, such as removing a block, adding a layout or **Replace all**, a message at the bottom right offers **Undo** for a few seconds.
 
 ## Style a block
+
+![The Style tab for a selected heading, with Phone, Tablet and Desktop at the top and the Colour and Spacing settings below.](/screenshots/editor-style.png)
 
 The **Style** tab changes how the selected block looks, without touching the theme:
 
@@ -140,9 +160,13 @@ Blocks shown only to signed-in members, or only within a date window, are left o
 
 The three buttons in the middle of the bar show the page as on a phone (390 pixels wide), a tablet (820 pixels) or a full screen. Above the page, a line such as "Phone, 390 px wide" says which width you are looking at. The width also chooses which screen size the **Style** tab changes.
 
+![The same About page shown at phone width in the middle of the editor.](/screenshots/editor-phone.png)
+
 ## Find and replace
 
 **Find and replace** (the magnifying glass, or Ctrl+Shift+F) searches the words on the page: headings, text, lists, tables and buttons.
+
+![The Find and replace panel on the left, with the Find and Replace with fields.](/screenshots/editor-find-replace.png)
 
 1. Type under **Find**. The panel lists each block with a match, the words found marked. Click one to go to that block.
 2. Type the new words under **Replace with**.
@@ -153,6 +177,10 @@ Turn on **Match upper and lower case** to find "Spring" but not "spring".
 ## Details, outline and checks
 
 The **i** button in the bar opens **Details and outline**: the number of words, characters, paragraphs and blocks, the reading time, and the page's headings in order. Click a heading in the outline to go to it.
+
+![Details and outline open over the page: counts of words, characters, headings, paragraphs and blocks, the reading time, and the outline of headings.](/screenshots/editor-details.png)
+
+![The Checks tab listing one problem on the page.](/screenshots/editor-checks.png)
 
 The **Checks** tab looks at the page as visitors get it, theme included, for problems such as an image without alt text, a link with no text, an empty heading or heading levels that skip one (from Heading 2 to Heading 4). Choose **Show** next to a problem to select the block. **Check again** runs the checks after you change something.
 

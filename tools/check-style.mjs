@@ -1,7 +1,8 @@
 // The rules from STYLE.md a machine can check, outside code: no en or em dashes, none of the
-// banned words, no exclamation marks in headings, sentence-case headings.
+// banned words, no exclamation marks in headings, sentence-case headings, and screenshots that
+// have alt text and exist under public/screenshots/.
 // Usage: node tools/check-style.mjs [files...]   (default: every page)
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -38,6 +39,24 @@ export function check(markdown) {
     return problems;
 }
 
+/**
+ * Every screenshot needs alt text (what the picture shows, for people who can't see it) and
+ * a file. `exists` is given the path under public/, such as "screenshots/menus.png".
+ *
+ * @param {(file: string) => boolean} exists
+ * @returns {{line: number, message: string}[]}
+ */
+export function checkScreenshots(markdown, exists) {
+    const problems = [];
+    markdown.split('\n').forEach((text, i) => {
+        for (const m of text.matchAll(/!\[([^\]]*)\]\(\/(screenshots\/[^)\s]+)\)/g)) {
+            if (m[1].trim().length < 10) problems.push({ line: i + 1, message: `${m[2]}: describe what the screenshot shows in its alt text` });
+            if (!exists(m[2])) problems.push({ line: i + 1, message: `${m[2]} does not exist: run npm run screenshots, or fix the name` });
+        }
+    });
+    return problems;
+}
+
 function pages(dir) {
     return readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? pages(path.join(dir, e.name)) : e.name.endsWith('.md') ? [path.join(dir, e.name)] : []));
 }
@@ -46,7 +65,8 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const files = process.argv.length > 2 ? process.argv.slice(2) : [...pages('guide'), ...pages('developers'), 'index.md'];
     let count = 0;
     for (const file of files) {
-        for (const p of check(readFileSync(file, 'utf8'))) {
+        const markdown = readFileSync(file, 'utf8');
+        for (const p of [...check(markdown), ...checkScreenshots(markdown, (f) => existsSync(path.join('public', f)))]) {
             count++;
             console.log(`${file}:${p.line}: ${p.message}`);
         }

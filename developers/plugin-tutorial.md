@@ -2,7 +2,7 @@
 
 This page walks through a small plugin from an empty folder to an active, checked package: a **Notices** plugin that keeps short messages in its own table, lets editors manage them on an admin screen, exposes them through the REST API, has a settings tab, and hands the current notices to every page so the theme can show them. Follow it when you write your first plugin, or come back to it when you need a working example of one of the pieces. It assumes you have read [Architecture](/developers/architecture) and have a site running as described in [Local development](/developers/local-development).
 
-Every file on this page was run against Kestello 0.1 on SQLite: the migration, the model, the endpoints, the settings tab and the shared page data all work as shown.
+Every file on this page was copied out of it and run against Kestello 0.1.0-rc.2 on SQLite: the migration, the model, the endpoints, the settings tab and the shared page data work as shown, and the outputs are the real ones.
 
 ## What you will build
 
@@ -168,7 +168,58 @@ The migration runs when the plugin is activated. `down()` runs when the plugin i
 
 ## The API
 
-The admin screen will only talk to these endpoints, so anything it does a script with a token can do as well. Each endpoint is one class that declares its route, the capability a person needs, the token scopes it accepts and the shape of its input. Kestello does the routing, validation, authorisation, rate limiting and error format.
+The admin screen will only talk to these endpoints, so anything it does a script with a token can do as well. Each endpoint is one class that declares its route, who may call it and the shape of its input. Kestello does the routing, validation, authorisation, rate limiting and error format.
+
+### Who may call an endpoint: capabilities and scopes
+
+Every endpoint names two things, and they answer different questions:
+
+| | A **capability** | A **scope** |
+|---|---|---|
+| Answers | What may this *person* do? | What may this *token* be used for? |
+| Example | `notices.manage`: manage site notices | `notices:read`: read them, `notices:write`: add and delete them |
+| Given by | Their role. Site owners change it on **People → Roles**. | Whoever creates the token, when they create it. |
+| Checked for | Everyone: the browser session and tokens. | Tokens only. A signed-in person in the admin passes every scope. |
+
+A token never has more power than the person it belongs to. It acts as its owner, so a request with a token passes only when the owner has the capability **and** the token has every scope the endpoint lists. That way a token you hand to a script that only reads notices (`notices:read`) cannot delete them, even though you could.
+
+Here is what happens to a request, in order:
+
+1. No session and no token: `401` with the problem type `unauthenticated`.
+2. The person (or the token's owner) lacks the capability: `403`, `forbidden`.
+3. A token without one of the scopes: `403`, `insufficient_scope`, with the missing ones under `required_scopes`.
+4. Too many requests from this person in the time window: `429`.
+5. The query and body are checked against the schemas: `422`, `validation`, with each problem, when they do not match.
+6. `handle()` runs.
+
+Two rules keep plugins safe by default. An endpoint must name a capability and at least one scope, or say `isPublic()`: Kestello refuses to register one that does neither ("declares neither a capability nor isPublic(): refused (deny by default)"). And a plugin's names start with its slug: capabilities with `notices.`, scopes with `notices:`.
+
+You declare both names in the provider, further down this page:
+
+```php
+$cms->auth->roles->capability('notices.manage', 'Manage site notices', grantTo: ['editor']);
+$cms->api->scope('notices:read', 'Read site notices');
+$cms->api->scope('notices:write', 'Add and delete site notices');
+```
+
+The endpoints below only refer to them. The [Permissions](/developers/permissions) page covers roles and capabilities in depth.
+
+### The parts of an endpoint
+
+Each endpoint is a class with short methods. Most are one line:
+
+| Method | What it says | In this tutorial |
+|---|---|---|
+| `route()` | The method and path, under `/api/v1`. A plugin's paths start with its slug. | `ApiRoute::get('/notices/notices')` |
+| `capability()` | The capability a person needs. | `'notices.manage'` |
+| `scopes()` | The scopes a token needs, all of them. | `['notices:read']` to list, `['notices:write']` to change |
+| `body()` | The shape of the JSON body, as a `Schema`. Unknown keys are refused. | the new notice's fields |
+| `resource()` | The class that decides which fields of a row are sent back. | `NoticeResource` |
+| `rateLimit()` | At most this many requests in this many seconds, per person (their tokens share the count). Without it, Kestello's default limits for reading and writing apply. | `[30, 60]` on create |
+| `summary()`, `tags()` | The name and group in the API explorer under **System → API**, and in the OpenAPI document. | `'List notices'`, `['notices']` |
+| `handle()` | The work. It runs only after every check above passed. | the query |
+
+### Write the endpoints
 
 1. Create `src/Api/NoticeResource.php`. A resource decides which fields leave the server, so a column you add later stays private until you list it here:
 
@@ -379,8 +430,8 @@ final class NoticesProvider extends PluginProvider
 
 What each part does:
 
-- **Capability.** `notices.manage` is declared and granted to the core `editor` role. Plugin capabilities must start with `<slug>.`. Administrators hold `*`, which covers it. Site owners can grant or revoke it on the **Roles** screen.
-- **Scopes.** A personal access token can only call an endpoint if it carries every scope the endpoint lists (or `admin`). Plugin scopes must start with `<slug>:`.
+- **Capability.** `notices.manage` is declared and granted to the core `editor` role. Administrators hold `*`, which covers it. Site owners can grant or revoke it on the **Roles** screen. See [Who may call an endpoint](#who-may-call-an-endpoint-capabilities-and-scopes).
+- **Scopes.** The names tokens can be given, with the description shown when someone creates a token. A token with the `admin` scope passes every scope check.
 - **Admin page.** An empty path gives `/admin/p/notices`. The component name must start with `@notices/`, and resolves to `resources/js/pages/admin/Notices.vue`. A person needs `admin.access` and `notices.manage` to open it.
 - **Settings tab.** The admin renders the form from the schema. Values are stored as `plugin.notices.display.<field>`, and the provider reads them back with `$this->setting('display.<field>')`. Saving the tab needs `settings.manage` as well as `notices.manage`, so by default administrators change it and editors do not.
 - **Shared page data.** The closure runs once per page render, as the plugin, and its result reaches the browser as `usePage().props.notices`. Never share secrets this way.
@@ -480,7 +531,7 @@ async function remove(row) {
 
 Servers never run Node.js, so you build the components on your machine and ship the output.
 
-1. From the repository root (the folder with `package.json`), build the plugin:
+1. From the root of the Kestello repository you set up in [Local development](/developers/local-development) (the folder with `package.json`), build the plugin:
 
    ```bash
    npm run build content/plugins/notices
@@ -493,6 +544,10 @@ Servers never run Node.js, so you build the components on your machine and ship 
    ```
 
 2. Rebuild after every change to a `.vue` file, then reload the page.
+
+::: tip Building for a site installed from a zip
+A site installed from a release zip has no build tools: it has no `package.json`, so `npm run build` there answers `Could not read package.json`. Build in the Kestello repository (it needs Node 22.12 or newer and `npm install` once), giving the plugin folder's full path, then copy the plugin, `assets/build/` included, to the site.
+:::
 
 The plugin has no `vite.config.js`, so the build uses Kestello's preset. Add one (start from the one in the [`hello` example](https://github.com/kestellohq/examples/tree/main/plugins/hello)) only if you need to change the Vite settings. `vue` and `@kestello/app`, `@kestello/sdk`, `@kestello/ui` are not bundled into your output: every package shares the one copy the site serves.
 
@@ -526,21 +581,97 @@ It refuses `eval()`, shell functions, backticks, a namespace outside the one in 
 
 2. Open `/admin/p/notices`. The **Notices** entry is in the **Plugins** group of the menu. Add a notice.
 
+   ![The Notices admin page from this tutorial, with the form to add a notice and the list of notices.](/screenshots/tutorial-notices.png)
+
 3. Open **Settings** and the **Notices** tab (`/admin/settings?tab=notices.display`) to change how many notices show.
 
-4. Try the API with a token. Create one for your user (the token is shown once):
+4. Try the API with a token. Create one for your user that may read and write notices. It is shown once:
 
    ```bash
-   php bin/cms token:create admin --name="notices test" --scopes=notices:read --days=1
+   php bin/cms token:create admin --name="notices test" --scopes=notices:read,notices:write --days=1
    ```
 
-   Then call the endpoint:
+   ```text
+     Token "notices test" created for admin (expires 2026-11-10)
+
+     <token>
+
+     Shown once. Use: Authorization: Bearer <token>
+   ```
+
+5. Add a notice. A body sent as JSON needs the `Content-Type` header:
+
+   ```bash
+   curl -X POST https://your-site.test/api/v1/notices/notices \
+     -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
+     -d '{"message": "Closed on 24 December. Fresh bread again from the 27th.", "tone": "warning"}'
+   ```
+
+   The answer is `201 Created` with the notice as `NoticeResource` shows it:
+
+   ```json
+   {
+       "data": {
+           "id": 1,
+           "message": "Closed on 24 December. Fresh bread again from the 27th.",
+           "tone": "warning",
+           "starts_at": null,
+           "ends_at": null,
+           "created_at": "2026-11-09T12:38:51Z"
+       }
+   }
+   ```
+
+6. List them:
 
    ```bash
    curl -H "Authorization: Bearer <token>" https://your-site.test/api/v1/notices/notices
    ```
 
-   A token without `notices:read` gets `403` with the problem type `insufficient_scope`.
+   ```json
+   {
+       "data": [
+           {
+               "id": 1,
+               "message": "Closed on 24 December. Fresh bread again from the 27th.",
+               "tone": "warning",
+               "starts_at": null,
+               "ends_at": null,
+               "created_at": "2026-11-09T12:38:51Z"
+           }
+       ],
+       "meta": {}
+   }
+   ```
+
+7. See the checks from [Who may call an endpoint](#who-may-call-an-endpoint-capabilities-and-scopes) refuse a request. Without a token, the answer is `401`:
+
+   ```json
+   {
+       "type": "urn:kestello:problem:unauthenticated",
+       "title": "Unauthenticated",
+       "status": 401,
+       "detail": "Authentication is required."
+   }
+   ```
+
+   With a token that lacks `notices:read`, for example one made with `--scopes=content:read`, the answer is `403` and names the scope it needs:
+
+   ```json
+   {
+       "type": "urn:kestello:problem:insufficient_scope",
+       "title": "Insufficient scope",
+       "status": 403,
+       "detail": "The token lacks a required scope.",
+       "required_scopes": [
+           "notices:read"
+       ]
+   }
+   ```
+
+   Kestello 0.1.0-rc.2 and earlier send this answer with the status line `401` (the body says `403`). Check `status` in the body, which is right in every version.
+
+   A body with a key the schema does not list, such as `{"id": 5, "message": "Hi"}`, is refused with `422` and `{"id": ["Unknown field."]}` under `errors`.
 
 ## Show the notices on the site
 

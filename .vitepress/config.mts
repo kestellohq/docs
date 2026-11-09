@@ -20,6 +20,9 @@ const guide = [
         items: [
             { text: 'Pages, posts and other content', link: '/guide/content' },
             { text: 'The visual editor', link: '/guide/visual-editor' },
+            { text: 'Reviews and checklists', link: '/guide/reviews' },
+            { text: 'Categories and tags', link: '/guide/categories-and-tags' },
+            { text: 'Search and sharing', link: '/guide/search-and-sharing' },
             { text: 'Media library', link: '/guide/media' },
             { text: 'Menus', link: '/guide/menus' },
             { text: 'Redirects', link: '/guide/redirects' },
