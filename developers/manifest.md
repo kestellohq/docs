@@ -97,7 +97,7 @@ Kestello compares the version in the file with the version recorded when the plu
 | `>=1.2 <2.0`, `>=1.2, <2.0` | Both (space or comma means AND) |
 | `^1.0 \|\| ^2.0` | Either (OR) |
 
-Pre-releases (`1.0.0-beta.1`) sort before their release.
+Pre-releases (`1.0.0-beta.1`) sort before their release. In `dependencies` that is strict: `^2.0` does not match `2.0.0-beta.1`. For `requires.core` a pre-release of Kestello counts as the version it leads to, so a plugin with `^0.1` runs on `0.1.0-rc.1` too and site owners can try a release candidate with their plugins.
 
 Use `^0.<minor>` before Kestello 1.0, since minors may break, and `^<major>.0` after. That is what `make:plugin` writes. `plugin:check` warns when `requires.core` is `*`.
 

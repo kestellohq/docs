@@ -337,7 +337,7 @@ When the update starts from the command line, the running PHP is the one running
 
 ## Releases of Kestello
 
-Kestello itself ships as two zips. `kestello-<version>.zip` is for new sites: a `kestello/` folder to upload and install (see [The install zip](#install-zip)). `kestello-core-<version>.zip` updates sites that already run. Everything in it is inside a `core/` folder, and it must hold `core/VERSION`, `core/core.json`, `core/bootstrap.php` and `core/src/Kernel.php`. Signing works exactly as for packages.
+Kestello itself ships as two zips, for every release and pre-release (`0.1.0-rc.1`). `kestello-<version>.zip` is for new sites: a `kestello/` folder to upload and install (see [The install zip](#install-zip)). `kestello-core-<version>.zip` updates sites that already run. Everything in it is inside a `core/` folder, and it must hold `core/VERSION`, `core/core.json`, `core/bootstrap.php` and `core/src/Kernel.php`. Signing works exactly as for packages.
 
 ### Build a release
 
@@ -401,6 +401,8 @@ After a successful update, Kestello keeps the running release, the one before it
 Official releases are GitHub releases of [kestellohq/cms](https://github.com/kestellohq/cms/releases). A maintainer pushes a `vX.Y.Z` tag, and the release workflow builds `kestello-core-X.Y.Z.zip`, signs it with the release key, checks it with `core:verify`, and publishes it with its `.sha256` file and `kestello.stub.php` (see [Editor setup](/developers/editor-setup)).
 
 Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **Site → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
+
+Pre-releases (a version with a hyphen, published as a GitHub pre-release) are offered when `release.prereleases` is on, or when the site already runs a pre-release of the same version: a site on `0.1.0-rc.1` gets `0.1.0-rc.2`, then `0.1.0`, and only releases after that. Their notes are the changelog's Unreleased section at the time, because a pre-release has no changelog section of its own.
 
 **Review the update** asks GitHub again where the zip is, downloads it, and throws it away unless its SHA-256 matches the published checksum. Then it goes through the same review and update as an uploaded zip. From the admin, the signature must come from a key in `release.keys`, made with `core:release --key`. Keys in `app.packages.trusted_keys` sign plugins and themes only, and a zip signed with `package:sign` is never accepted as a core release.
 

@@ -180,7 +180,7 @@ Twice a day, Kestello asks GitHub whether a new release is out. It only tells yo
 
 Under the facts in the **Kestello** box you see one of these:
 
-- **Kestello 1.5.0 is available.**, with the date it was published, a **Release page on GitHub** link and the release notes. A release marked **Pre-release** is a test version; you only see those if your site is set to show them (see the table below).
+- **Kestello 1.5.0 is available.**, with the date it was published, a **Release page on GitHub** link and the release notes. A release marked **Pre-release** is a test version; you only see those if your site is set to show them (see the table below), or if it already runs a pre-release of that version. A site running `0.1.0-rc.1` is offered `0.1.0-rc.2`, then `0.1.0`, and only finished versions after that.
 - **Kestello is up to date. Last checked 2 hours ago.**
 - **Kestello has not checked for new versions yet.** The first check runs within an hour of the scheduled task starting.
 
