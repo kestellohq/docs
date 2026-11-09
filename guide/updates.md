@@ -1,84 +1,16 @@
 # Updates
 
-This page covers updating plugins, themes and Kestello itself, and going back afterwards. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. If the server stops the update halfway, the site puts itself back on the next visit. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
+Updating usually takes about a minute, and you don't have to hold your breath. Before anything changes, Kestello backs up the database. After the new version is in, it checks that the site still works, and if it doesn't, it puts the old version back by itself. You'll see the result either way.
 
-Kestello looks for new versions of itself, and of plugins and themes that say where their updates are published, and shows them on **Site → Updates**, where you can review and apply one. For other plugins and themes, you get the new zip from whoever publishes it, and upload it.
+New versions of Kestello, and of plugins and themes that say where they publish updates, show up on **Site → Updates**. For other plugins and themes, you get the new zip from whoever publishes it and upload it.
 
-## Who can update
-
-| What | Permission needed | Who has it out of the box |
-|---|---|---|
-| Plugins | *Install, update, activate, deactivate and delete plugins* | **Administrator** |
-| Kestello itself | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
-| Plugins and themes from their publishers ([below](#from-the-publisher)), and their license keys | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
-| Themes with code | Someone who can run commands on the server | |
-
-Uploading and applying an update also asks you to confirm your password if you have not done so in the last 10 minutes.
-
-The same signature rules apply as for installing: from the admin, only zips signed by a publisher your site trusts are accepted, unless `app.packages.admin_unsigned` is on. The command line accepts unsigned zips. A zip whose seal is broken is always refused. See [Signed and unsigned plugins](/guide/plugins#signed-and-unsigned-plugins).
-
-## What happens during an update {#what-happens}
-
-When you start an update, Kestello works through these steps by itself:
-
-1. **Checks the zip.** It reads the new version, checks its signature and its code, and checks that it fits your site: the PHP version, PHP extensions, and the versions other active plugins require. If something does not fit, it stops here and nothing changes.
-2. **Backs up the database.** The backup appears under **Site → Backups** with the type **Before an update** and a note such as *Before updating Acme Shop 1.2.0 to 1.3.0*. It holds the database only; the old files are kept separately (see below).
-3. **Shows visitors a maintenance page.** Visitors get a page titled **Back in a moment** that says *The site is being updated. Please try again in a minute.* People who are signed in, the admin and the API keep working.
-4. **Puts the new files in place.** The old plugin or theme folder is moved aside, not deleted.
-5. **Checks the site on the new version.** Kestello starts the site fresh and checks that:
-   - the new version's database changes ran and the site records the new version number,
-   - the updated plugin or theme starts,
-   - every plugin that was running before the update still runs,
-   - the home page (`/`) and the status address (`/api/v1/status`) answer without a server error.
-6. **Finishes, or goes back.** If every check passed, the maintenance page goes away and you see that the update worked. If any check failed, Kestello puts the old files back, restores the database from the backup made in step 2, checks the site once more on the old version, and only then removes the maintenance page.
-
-The maintenance page from step 3 switches itself off after 30 minutes at most.
-
-### If the server stops the update halfway {#stopped-halfway}
-
-On shared hosting, the host may stop PHP in the middle of an update: a time limit, a memory limit, or a server restart. Kestello writes down each step before it takes it, so it knows where it was:
-
-- **For Kestello itself**, the file `core/current.php` only names the new release while the update is still running. Once the update process is gone, the next request already runs the old release, so a half-checked release is never what visitors get.
-- **On the next request** to the site (a visitor, you, or the scheduled task), Kestello finishes the job before anything else runs, and before any plugin loads:
-  - if the check had already passed, it keeps the new version;
-  - otherwise it puts the old files back and restores the database from the **Before an update** backup;
-  - then it removes the maintenance page and shows the page that was asked for.
-
-You do not need FTP or the command line for this. The audit log under **System → Audit log** records it as *Put back an update that stopped halfway*.
-
-Visitors see the maintenance page for as long as an update has not finished, however long that takes. You and other signed-in people can still use the admin.
-
-Often the host stops only the update itself, while the check it started on the new version keeps running for a while. Kestello waits for that check to end before it puts anything back, so the two never change the database at the same time. The check has a time limit of its own, and usually ends within a few minutes. If an update is still running after 15 minutes, **Site → Updates** shows a box titled **An update is taking unusually long**, and **System → Site Health** recommends a look. If the box is still there an hour later, ask your host to restart PHP for your site; the next request then puts the update back.
-
-If putting it back fails three times in a row, Kestello stops trying by itself and keeps visitors on the maintenance page. See [If going back did not finish](#incomplete-rollback).
-
-::: warning
-If an update goes back, the database returns to how it was at step 2. Anything someone saved in the admin while the update ran is lost. Background jobs waiting to run (emails, image sizes) and sign-ins are kept, so nobody is signed out. Updates usually take seconds to a few minutes, but avoid updating while editors are busy.
-:::
-
-Only one update runs at a time, and no backup or restore can start while an update runs. A new update cannot start while an earlier one that stopped halfway has not been put back.
-
-### Where the old version is kept
-
-- **Plugins and themes:** the old folder goes to `storage/app/backups/packages/`, named after the plugin, its old version and the date, for example `acme-shop-1.2.0-20261105-143012-a1b2c3`. Kestello keeps the newest three per plugin or theme.
-- **Kestello:** each release lives in its own folder under `core/releases/`, and the file `core/current.php` names the one that runs. Kestello keeps the running release, the one before it, and one more.
-- **The database:** in the **Before an update** backup. These count as automatic backups, so after each scheduled backup the oldest are removed once there are more than the number under **Keep** in the **Schedule** box on **Site → Backups**. See [Backups](/guide/backups).
-
-### How the check reaches the site
-
-Kestello checks the new version in a separate PHP process on the server when it can. On hosts that switch that off (the PHP function `proc_open` is disabled on some shared hosting), it requests the site over HTTP instead, at the site address from **Site → Settings**. You normally do not need to change anything. If the HTTP check cannot reach the site (see [If something goes wrong](#if-something-goes-wrong)), these settings in `config/app.php` help:
-
-| Setting | What it does |
-|---|---|
-| `app.updates.health` | `auto` (the default: a PHP process when possible, otherwise HTTP), `process` or `http`. |
-| `app.updates.php` | The PHP command-line program to use for the process check, for example `/usr/local/bin/php`. Empty: found from the running PHP. |
-| `app.updates.health_url` | The address the server uses to reach its own site for the HTTP check. Empty: the site address. |
+Read [Before you update](#before-you-update) once, then the part for what you're updating. The details of how an update works are further down, for when you're curious or something went wrong.
 
 ## Before you update
 
 1. Read the publisher's release notes for anything you must do first.
 2. Check **System → Site Health**. Fix critical problems before updating: the check after the update also fails on problems that were already there, such as a home page that already shows a server error.
-3. Pick a quiet moment (see the warning above).
+3. Pick a quiet moment. For a minute or so, visitors see a short **Back in a moment** page instead of the site.
 4. If you want a copy that includes files or lives off the server, make one under **Site → Backups** with **Back up now**. The automatic backup only covers the database.
 
 ## Update a plugin {#update-a-plugin}
@@ -260,6 +192,76 @@ php bin/cms core:update kestello-core-1.4.0.zip --downgrade
 ```
 
 This goes through the same backup and check. It does not undo database changes the newer version made, and an older version may not understand them. Ask the publisher before downgrading, and prefer restoring a backup when one from before the update is recent enough.
+
+## Who can update
+
+| What | Permission needed | Who has it out of the box |
+|---|---|---|
+| Plugins | *Install, update, activate, deactivate and delete plugins* | **Administrator** |
+| Kestello itself | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
+| Plugins and themes from their publishers ([see above](#from-the-publisher)), and their license keys | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
+| Themes with code | Someone who can run commands on the server | |
+
+Uploading and applying an update also asks you to confirm your password if you have not done so in the last 10 minutes.
+
+The same signature rules apply as for installing: from the admin, only zips signed by a publisher your site trusts are accepted, unless `app.packages.admin_unsigned` is on. The command line accepts unsigned zips. A zip whose seal is broken is always refused. See [Signed and unsigned plugins](/guide/plugins#signed-and-unsigned-plugins).
+
+## What happens during an update {#what-happens}
+
+When you start an update, Kestello works through these steps by itself:
+
+1. **Checks the zip.** It reads the new version, checks its signature and its code, and checks that it fits your site: the PHP version, PHP extensions, and the versions other active plugins require. If something does not fit, it stops here and nothing changes.
+2. **Backs up the database.** The backup appears under **Site → Backups** with the type **Before an update** and a note such as *Before updating Acme Shop 1.2.0 to 1.3.0*. It holds the database only; the old files are kept separately (see below).
+3. **Shows visitors a maintenance page.** Visitors get a page titled **Back in a moment** that says *The site is being updated. Please try again in a minute.* People who are signed in, the admin and the API keep working.
+4. **Puts the new files in place.** The old plugin or theme folder is moved aside, not deleted.
+5. **Checks the site on the new version.** Kestello starts the site fresh and checks that:
+   - the new version's database changes ran and the site records the new version number,
+   - the updated plugin or theme starts,
+   - every plugin that was running before the update still runs,
+   - the home page (`/`) and the status address (`/api/v1/status`) answer without a server error.
+6. **Finishes, or goes back.** If every check passed, the maintenance page goes away and you see that the update worked. If any check failed, Kestello puts the old files back, restores the database from the backup made in step 2, checks the site once more on the old version, and only then removes the maintenance page.
+
+The maintenance page from step 3 switches itself off after 30 minutes at most.
+
+### If the server stops the update halfway {#stopped-halfway}
+
+On shared hosting, the host may stop PHP in the middle of an update: a time limit, a memory limit, or a server restart. Kestello writes down each step before it takes it, so it knows where it was:
+
+- **For Kestello itself**, the file `core/current.php` only names the new release while the update is still running. Once the update process is gone, the next request already runs the old release, so a half-checked release is never what visitors get.
+- **On the next request** to the site (a visitor, you, or the scheduled task), Kestello finishes the job before anything else runs, and before any plugin loads:
+  - if the check had already passed, it keeps the new version;
+  - otherwise it puts the old files back and restores the database from the **Before an update** backup;
+  - then it removes the maintenance page and shows the page that was asked for.
+
+You do not need FTP or the command line for this. The audit log under **System → Audit log** records it as *Put back an update that stopped halfway*.
+
+Visitors see the maintenance page for as long as an update has not finished, however long that takes. You and other signed-in people can still use the admin.
+
+Often the host stops only the update itself, while the check it started on the new version keeps running for a while. Kestello waits for that check to end before it puts anything back, so the two never change the database at the same time. The check has a time limit of its own, and usually ends within a few minutes. If an update is still running after 15 minutes, **Site → Updates** shows a box titled **An update is taking unusually long**, and **System → Site Health** recommends a look. If the box is still there an hour later, ask your host to restart PHP for your site; the next request then puts the update back.
+
+If putting it back fails three times in a row, Kestello stops trying by itself and keeps visitors on the maintenance page. See [If going back did not finish](#incomplete-rollback).
+
+::: warning
+If an update goes back, the database returns to how it was at step 2. Anything someone saved in the admin while the update ran is lost. Background jobs waiting to run (emails, image sizes) and sign-ins are kept, so nobody is signed out. Updates usually take seconds to a few minutes, but avoid updating while editors are busy.
+:::
+
+Only one update runs at a time, and no backup or restore can start while an update runs. A new update cannot start while an earlier one that stopped halfway has not been put back.
+
+### Where the old version is kept
+
+- **Plugins and themes:** the old folder goes to `storage/app/backups/packages/`, named after the plugin, its old version and the date, for example `acme-shop-1.2.0-20261105-143012-a1b2c3`. Kestello keeps the newest three per plugin or theme.
+- **Kestello:** each release lives in its own folder under `core/releases/`, and the file `core/current.php` names the one that runs. Kestello keeps the running release, the one before it, and one more.
+- **The database:** in the **Before an update** backup. These count as automatic backups, so after each scheduled backup the oldest are removed once there are more than the number under **Keep** in the **Schedule** box on **Site → Backups**. See [Backups](/guide/backups).
+
+### How the check reaches the site
+
+Kestello checks the new version in a separate PHP process on the server when it can. On hosts that switch that off (the PHP function `proc_open` is disabled on some shared hosting), it requests the site over HTTP instead, at the site address from **Site → Settings**. You normally do not need to change anything. If the HTTP check cannot reach the site (see [If something goes wrong](#if-something-goes-wrong)), these settings in `config/app.php` help:
+
+| Setting | What it does |
+|---|---|
+| `app.updates.health` | `auto` (the default: a PHP process when possible, otherwise HTTP), `process` or `http`. |
+| `app.updates.php` | The PHP command-line program to use for the process check, for example `/usr/local/bin/php`. Empty: found from the running PHP. |
+| `app.updates.health_url` | The address the server uses to reach its own site for the HTTP check. Empty: the site address. |
 
 ## If going back did not finish {#incomplete-rollback}
 

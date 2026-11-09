@@ -1,6 +1,6 @@
 # Search and sharing
 
-This page covers what search engines and social networks show for your site: the title and description in search results, the picture in a shared link, and who runs the site. Kestello fills all of it in from your content, so you only change it when you want something different. For the search box visitors use on your own site, see [Site search](/guide/search).
+When your site shows up in Google, or someone shares a link to it, a title, a short description and often a picture appear. Kestello fills all of these in from your content, so most pages need nothing from you. This page shows where to change them when you want something different, and how to tell search engines who runs the site. For the search box visitors use on your own site, see [Site search](/guide/search).
 
 ## The fields of each entry
 

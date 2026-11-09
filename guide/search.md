@@ -1,6 +1,6 @@
 # Site search
 
-This page covers the search visitors use on your site: where it lives, what it finds and what it leaves out, which search engine answers it, and how to rebuild the search index. Read it when you add a search box to your site, or when search results are missing something or show something they should not.
+Visitors can search your site for anything public: a recipe, the opening hours, last spring's news. This page shows where search lives, how to put a search box on a page, what search finds and what it leaves out, and what to do when results are missing something or show something they shouldn't.
 
 ## How search works
 

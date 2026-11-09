@@ -1,6 +1,6 @@
 # Troubleshooting
 
-This page covers the problems site owners most often run into: an error page instead of the site, being locked out of the admin, emails that do not arrive, a site stuck on "Back in a moment", a plugin that broke the site, folder permission errors and pages that show old content. Each section says how to recognise the problem, where to look and what to do. Start with [Site Health](/guide/health) if you can still open the admin: it finds many of these problems for you.
+Something isn't working and you want it fixed. Each section below starts with what you see, such as an error page, a locked-out admin, emails that don't arrive or a site stuck on "Back in a moment", then where to look and what to do. If you can still open the admin, start with [Site Health](/guide/health): it finds many of these problems for you and says what to do.
 
 Several fixes need a command run on the server. On a VPS you run them over SSH from the site's root folder (the folder that holds `bin`, `config` and `core`). On shared hosting, look for **Terminal** or **SSH Access** in your control panel; if there is none, ask your host to run the command for you. All commands are listed in [Command line](/developers/cli).
 

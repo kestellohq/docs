@@ -1,6 +1,6 @@
 # Media
 
-This page covers the media library: uploading images and files, which kinds of files are allowed and how large they may be, what Kestello does to your images, cropping and turning them, the focal point and alt text, and deleting files. Read it before you upload the first photos for a new site, or when an upload is refused.
+Every photo and file on your site lives in the media library. Upload a picture once and use it on as many pages as you like; Kestello makes smaller copies for phones by itself, so you can upload the photo straight from your camera. This page shows how to upload, crop and turn pictures, choose the part that must always stay in view, and write the short description people who can't see the picture rely on. If an upload is refused, the reason is under [If something goes wrong](#if-something-goes-wrong).
 
 ## The media library
 

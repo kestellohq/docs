@@ -1,29 +1,8 @@
 # Backups
 
-This page covers making backups of your site, what they contain, how long they are kept, and how to restore one, either on the same site or on a new server. Read it before you change anything big (a redesign, a new plugin, an update), and before you move the site to another host.
+A backup is how you get back to yesterday: after a mistake, an update that went wrong, or a server that gave up. Kestello makes one every night by itself, and one before every update and every restore. This page shows how to make your own, how to keep a copy somewhere safe, and how to bring one back.
 
-Everything here happens under **Site → Backups**. People with the permission *Make and download backups (restoring needs an administrator)* can make, download and delete backups. Restoring a backup, or uploading one from another site, is for administrators only, because a backup holds the list of accounts: restoring it decides who can sign in.
-
-## What a backup contains
-
-A backup is one zip file. Its name starts with `kestello-backup-`, followed by your site's domain and the date and time, for example `kestello-backup-example-com-20261105-143012-a1b2c3.zip`. There is no limit on its size or on how many files it holds: a backup over 4 GB, or with more than 65,535 files, uses the ZIP64 format, which the zip tools built into Windows, macOS and Linux open.
-
-Inside it are up to three kinds of things:
-
-| Part | What it holds | Always included |
-|---|---|---|
-| **Database** | Every page, post, setting, menu, form submission, account and role, plus the tables of your plugins. | Yes |
-| **Files** | Uploads (`content/uploads` and the media library in `storage/app/media`), other files Kestello keeps under `storage/app`, theme fonts (`storage/fonts`), files visitors attached to forms (`storage/forms`) and plugin data (`storage/plugins`). | Only when you include files |
-| **Code** | The plugin and theme folders, `content/plugins` and `content/themes`. | Only when you include files |
-
-Some things are never in a backup, because they are short-lived or can be rebuilt: sign-in sessions, the cache, waiting and failed background jobs, password reset links and the search index (it is rebuilt after a restore). Older backups are never put inside new ones.
-
-Two more points worth knowing:
-
-- **Files on outside storage are not copied.** If you moved the media library to an S3-compatible bucket under **System → File storage**, the backup holds the database rows that point at those files, but not the files themselves. Use your storage provider's own versioning or copies for them.
-- **The database part works on any database type.** Rows are stored in a neutral format, not as MySQL or PostgreSQL commands, so a backup made on MySQL restores on PostgreSQL or SQLite, and the other way round. This is what makes moving a site between database types possible (see [Move a site to another server or database](#move-a-site)).
-
-A database-only backup is smaller and quicker. When you restore it, your files stay as they are.
+Everything here happens under **Site → Backups**. Administrators can do all of it. Editors can be allowed to make and download backups, but restoring stays with administrators, because a backup holds the list of accounts and restoring it decides who can sign in. The permission is *Make and download backups (restoring needs an administrator)* under **People → Roles**.
 
 ## Make a backup now
 
@@ -78,14 +57,48 @@ A backup that lives only on the same server as the site does not help if that se
 
 The file downloads under its own name. Keep it private: anyone who has it can read all of your site's content and settings.
 
-## Delete a backup
+## Store backups somewhere else
 
-1. In the row of the backup, choose the delete button (the bin).
-2. Confirm with **Delete backup**. You may be asked to confirm your password.
+By default backups are kept in `storage/app/backups` on the same server as the site. The bottom of the **Schedule** box says where they are. To have Kestello write every backup to an outside storage service instead (Amazon S3, Cloudflare R2, Backblaze B2, MinIO or any other S3-compatible service), point the backups disk at a bucket.
 
-::: danger
-A deleted backup is gone for good. There is no bin to restore it from.
-:::
+This is done in a configuration file, not in the admin:
+
+1. At your storage provider, create a private bucket for backups, and an access key that may read and write it.
+2. Open `config/storage.php` in your site's root folder. Create the file if it does not exist.
+3. Add a `backups` disk with your bucket's details:
+
+   ```php
+   <?php
+
+   declare(strict_types=1);
+
+   return [
+       'disks' => [
+           'backups' => [
+               'driver' => 's3',
+               'bucket' => 'my-site-backups',
+               'region' => 'auto',
+               'endpoint' => 'https://<account>.r2.cloudflarestorage.com',
+               'key' => 'your-access-key',
+               'secret' => 'your-secret-key',
+           ],
+       ],
+   ];
+   ```
+
+   For Amazon S3, leave out `endpoint` and set `region` to your bucket's region, such as `eu-central-1`. Some self-hosted services (MinIO, for example) also need `'path_style' => true`.
+
+4. If you have SSH access, check the connection:
+
+   ```bash
+   php bin/cms storage:test backups
+   ```
+
+5. Open **Site → Backups**. The bottom of the **Schedule** box now says **Backups are kept on the backups disk (s3).** Make a backup to check that it works.
+
+Backups already in `storage/app/backups` are not moved. Download the ones you want to keep before you switch.
+
+Restoring from an outside disk works the same as from the server: Kestello downloads the zip to `storage/tmp` first, then restores it.
 
 ## Restore a backup {#restore}
 
@@ -147,20 +160,23 @@ Kestello first shows when and where the backup was made, how many rows and which
 
 Run the command from the site's root folder, as the same user the web server runs PHP as, so the restored files belong to the right user. The [command-line reference](/developers/cli) lists the other `backup:` commands.
 
-## Restoring code from another site {#code-from-another-site}
+## When something has gone badly wrong {#worst-case}
 
-Plugin and theme folders are code that runs on your server. Kestello signs every backup it makes with the site's own key, and restores code from the admin only when the backup carries that signature. A backup from another site (an upload, or a zip made elsewhere) restores its database and its uploads from the admin, but not its plugin and theme folders.
+A page has gone, the site looks broken, or something was deleted that shouldn't have been. Take it one step at a time; most of these are fixed without a restore:
 
-To get the plugins and themes of the other site, choose one:
+1. **Don't delete anything yet**, including old backups.
+2. **Something deleted?** Look in the **Trash** tab of that content list first. Deleted entries wait there and come back with **Restore** (see [Trash and restore](/guide/content#trash-and-restore)).
+3. **Something changed for the worse?** Open the entry and go back to an earlier version under **Revisions** (see [Revisions](/guide/content#revisions)).
+4. **Broken right after an update?** Use the **Switch back to** button for the old version (see [Switch back after an update](/guide/updates#switch-back)). A plugin that broke the site is covered in [Troubleshooting](/guide/troubleshooting#plugin-broke-the-site).
+5. **Only then, restore** the newest backup from before the problem, as above. Kestello backs up the site as it is first, so even a restore can be undone.
+6. **The admin won't open at all?** Restore [from the command line](#restore-from-the-command-line), or ask your host or developer to.
 
-- **Install them first.** Install the same plugins and themes through **Plugins → Manage plugins** and **Appearance → Themes** (see [Plugins](/guide/plugins) and [Themes](/guide/themes)), then restore. Their data comes back with the database.
-- **Restore the code from the command line**, if you trust the site the backup came from:
+## Test your backups now and then
 
-  ```bash
-  php bin/cms backup:restore /path/to/kestello-backup-old-site.zip --with-code
-  ```
+A backup you have never tried is a hope, not a plan. A few times a year:
 
-Plugins are installed before the database is rebuilt, so their tables are created and filled in the same restore.
+- **Download the newest backup** and check it is where you keep your copies, off the server.
+- **Restore it somewhere else**, for example on a second Kestello site on a test address, as described in [Move a site to another server or database](#move-a-site). If the test site shows your pages and you can sign in, the backup works.
 
 ## Upload a backup from another site
 
@@ -214,48 +230,50 @@ You have two options:
 `config/app.php` holds the keys that protect your site. Never share it, and never put it anywhere the web can reach.
 :::
 
-## Store backups somewhere else
+## Restoring code from another site {#code-from-another-site}
 
-By default backups are kept in `storage/app/backups` on the same server as the site. The bottom of the **Schedule** box says where they are. To have Kestello write every backup to an outside storage service instead (Amazon S3, Cloudflare R2, Backblaze B2, MinIO or any other S3-compatible service), point the backups disk at a bucket.
+Plugin and theme folders are code that runs on your server. Kestello signs every backup it makes with the site's own key, and restores code from the admin only when the backup carries that signature. A backup from another site (an upload, or a zip made elsewhere) restores its database and its uploads from the admin, but not its plugin and theme folders.
 
-This is done in a configuration file, not in the admin:
+To get the plugins and themes of the other site, choose one:
 
-1. At your storage provider, create a private bucket for backups, and an access key that may read and write it.
-2. Open `config/storage.php` in your site's root folder. Create the file if it does not exist.
-3. Add a `backups` disk with your bucket's details:
+- **Install them first.** Install the same plugins and themes through **Plugins → Manage plugins** and **Appearance → Themes** (see [Plugins](/guide/plugins) and [Themes](/guide/themes)), then restore. Their data comes back with the database.
+- **Restore the code from the command line**, if you trust the site the backup came from:
 
-   ```php
-   <?php
+  ```bash
+  php bin/cms backup:restore /path/to/kestello-backup-old-site.zip --with-code
+  ```
 
-   declare(strict_types=1);
+Plugins are installed before the database is rebuilt, so their tables are created and filled in the same restore.
 
-   return [
-       'disks' => [
-           'backups' => [
-               'driver' => 's3',
-               'bucket' => 'my-site-backups',
-               'region' => 'auto',
-               'endpoint' => 'https://<account>.r2.cloudflarestorage.com',
-               'key' => 'your-access-key',
-               'secret' => 'your-secret-key',
-           ],
-       ],
-   ];
-   ```
+## What a backup contains
 
-   For Amazon S3, leave out `endpoint` and set `region` to your bucket's region, such as `eu-central-1`. Some self-hosted services (MinIO, for example) also need `'path_style' => true`.
+A backup is one zip file. Its name starts with `kestello-backup-`, followed by your site's domain and the date and time, for example `kestello-backup-example-com-20261105-143012-a1b2c3.zip`. There is no limit on its size or on how many files it holds: a backup over 4 GB, or with more than 65,535 files, uses the ZIP64 format, which the zip tools built into Windows, macOS and Linux open.
 
-4. If you have SSH access, check the connection:
+Inside it are up to three kinds of things:
 
-   ```bash
-   php bin/cms storage:test backups
-   ```
+| Part | What it holds | Always included |
+|---|---|---|
+| **Database** | Every page, post, setting, menu, form submission, account and role, plus the tables of your plugins. | Yes |
+| **Files** | Uploads (`content/uploads` and the media library in `storage/app/media`), other files Kestello keeps under `storage/app`, theme fonts (`storage/fonts`), files visitors attached to forms (`storage/forms`) and plugin data (`storage/plugins`). | Only when you include files |
+| **Code** | The plugin and theme folders, `content/plugins` and `content/themes`. | Only when you include files |
 
-5. Open **Site → Backups**. The bottom of the **Schedule** box now says **Backups are kept on the backups disk (s3).** Make a backup to check that it works.
+Some things are never in a backup, because they are short-lived or can be rebuilt: sign-in sessions, the cache, waiting and failed background jobs, password reset links and the search index (it is rebuilt after a restore). Older backups are never put inside new ones.
 
-Backups already in `storage/app/backups` are not moved. Download the ones you want to keep before you switch.
+Two more points worth knowing:
 
-Restoring from an outside disk works the same as from the server: Kestello downloads the zip to `storage/tmp` first, then restores it.
+- **Files on outside storage are not copied.** If you moved the media library to an S3-compatible bucket under **System → File storage**, the backup holds the database rows that point at those files, but not the files themselves. Use your storage provider's own versioning or copies for them.
+- **The database part works on any database type.** Rows are stored in a neutral format, not as MySQL or PostgreSQL commands, so a backup made on MySQL restores on PostgreSQL or SQLite, and the other way round. This is what makes moving a site between database types possible (see [Move a site to another server or database](#move-a-site)).
+
+A database-only backup is smaller and quicker. When you restore it, your files stay as they are.
+
+## Delete a backup
+
+1. In the row of the backup, choose the delete button (the bin).
+2. Confirm with **Delete backup**. You may be asked to confirm your password.
+
+::: danger
+A deleted backup is gone for good. There is no bin to restore it from.
+:::
 
 ## If something goes wrong
 

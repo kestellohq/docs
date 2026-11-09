@@ -1,6 +1,6 @@
 # Forms
 
-This page covers building forms that visitors fill in on your site, such as a contact form, a sign-up or an application: adding fields, putting the form on a page, getting each submission by email, reading and exporting what people sent, and how Kestello keeps spam out. Read it when you need a form on your site, or when submissions or their emails do not arrive.
+A contact form, a cake order, a job application: whenever you want visitors to send you something, you build a form. You choose the fields, put the form on a page, and each submission arrives by email and waits in the admin, where you can read it or export it. Spam is caught quietly in the background, and you can add a "not a robot" check for the forms that need it. If submissions or their emails don't arrive, [If something goes wrong](#if-something-goes-wrong) is at the bottom.
 
 ## How forms work
 
