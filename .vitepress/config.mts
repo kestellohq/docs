@@ -36,6 +36,7 @@ const guide = [
             { text: 'Webhooks', link: '/guide/webhooks' },
             { text: 'Backups', link: '/guide/backups' },
             { text: 'Updates', link: '/guide/updates' },
+            { text: 'Fleet', link: '/guide/fleet' },
             { text: 'Site Health', link: '/guide/health' },
             { text: 'Troubleshooting', link: '/guide/troubleshooting' },
             { text: 'Translating Kestello', link: '/guide/translating' },
