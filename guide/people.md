@@ -59,7 +59,7 @@ The capabilities Kestello itself defines:
 | *Edit and delete everyone's files* | Changing or removing any file in **Media**. |
 | *Change site settings* | **Site → Settings** (except the email and site address fields, which also need *Manage infrastructure...*), and clearing the page cache. |
 | *Install, update, activate, deactivate and delete plugins* | **Plugins → Manage plugins**. |
-| *Update Kestello itself* | Core updates under **Site → Updates**. |
+| *Update Kestello, and plugins and themes from their publishers* | Kestello updates, license keys, and updates of plugins and themes that say where their updates come from, under **Site → Updates**. |
 | *Make and download backups (restoring needs an administrator)* | **Site → Backups**, except restoring and uploading, which are for administrators only. |
 | *Read the audit log* | The record of who changed what. |
 | *Manage infrastructure, background jobs, scheduled tasks and Site Health* | **System → Site Health**, **Infrastructure**, **File storage**, **Background jobs**, **Scheduled tasks**, and the email and site address settings. |
@@ -74,7 +74,7 @@ The capabilities Kestello itself defines:
 Each content type adds six capabilities of its own, named after the type: for posts these are *Create posts*, *Edit posts*, *Edit others posts*, *Publish posts*, *Delete posts* and *Delete others posts*. Each taxonomy adds two: for categories, *Manage categories* and *Assign categories to entries*.
 
 ::: warning Capabilities that reach beyond content
-*Add code to every page of the site*, *Write custom CSS*, *Install, update, activate, deactivate and delete plugins* and *Update Kestello itself* let a person run code or change what every visitor's browser loads. Give them only to people you would trust with the server.
+*Add code to every page of the site*, *Write custom CSS*, *Install, update, activate, deactivate and delete plugins* and *Update Kestello, and plugins and themes from their publishers* let a person run code or change what every visitor's browser loads. Give them only to people you would trust with the server.
 :::
 
 ## Add a person

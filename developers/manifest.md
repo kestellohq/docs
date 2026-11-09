@@ -142,7 +142,7 @@ The contracts the package rebinds, as class names, for example `["Kestello\\Cont
 
 ### `updates`
 
-Where new versions of the package are published. Without it, the package is updated by uploading a zip. With it, sites look for new versions every 12 hours (`app.updates.check_every`) and offer them on **System → Updates**. See [Publish updates](/developers/packaging#publish-updates).
+Where new versions of the package are published. Without it, the package is updated by uploading a zip. With it, sites look for new versions every 12 hours (`app.updates.check_every`) and offer them on **Site → Updates**. See [Publish updates](/developers/packaging#publish-updates).
 
 ```json
 "updates": { "github": "acme/events" }

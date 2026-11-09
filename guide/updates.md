@@ -2,14 +2,15 @@
 
 This page covers updating plugins, themes and Kestello itself, and going back afterwards. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. If the server stops the update halfway, the site puts itself back on the next visit. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
 
-Kestello looks for new versions of itself and shows them on **Site → Updates**, where you can review and apply one. For plugins and themes it does not look yet: you get the new zip from whoever publishes the plugin or theme, and upload it.
+Kestello looks for new versions of itself, and of plugins and themes that say where their updates are published, and shows them on **Site → Updates**, where you can review and apply one. For other plugins and themes, you get the new zip from whoever publishes it, and upload it.
 
 ## Who can update
 
 | What | Permission needed | Who has it out of the box |
 |---|---|---|
 | Plugins | *Install, update, activate, deactivate and delete plugins* | **Administrator** |
-| Kestello itself | *Update Kestello itself* | **Administrator** |
+| Kestello itself | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
+| Plugins and themes from their publishers ([below](#from-the-publisher)), and their license keys | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
 | Themes with code | Someone who can run commands on the server | |
 
 Uploading and applying an update also asks you to confirm your password if you have not done so in the last 10 minutes.
@@ -105,7 +106,7 @@ php bin/cms package:update acme-shop-1.3.0.zip
 
 ## Updates from the publisher {#from-the-publisher}
 
-Some plugins and themes say where their new versions are published. For those, you don't need to download and upload a zip: Kestello looks for new versions every 12 hours and lists them under **System → Updates**, in the **Plugins and themes** table. The **Updates** column says, for each one:
+Some plugins and themes say where their new versions are published. For those, you don't need to download and upload a zip: Kestello looks for new versions every 12 hours and lists them under **Site → Updates**, in the **Plugins and themes** table. The **Updates** column says, for each one:
 
 - **By upload**: the plugin or theme does not say where its updates come from. Update it by uploading the new version, as above.
 - **1.3.0 available**: a new version is out. Choose **Review** in that row.
@@ -118,7 +119,7 @@ Choose **Check now** above the table to look again without waiting.
 
 ### Update from the Updates screen
 
-1. Open **System → Updates**.
+1. Open **Site → Updates**.
 2. In the row that says **1.3.0 available**, choose **Review**. Kestello downloads the new version and checks it. Nothing changes on the site yet.
 3. The box is titled **Update Acme Shop to 1.3.0?**. Read the release notes and the signature line. The signature must be from the same publisher as the version you have now.
 4. If a box titled **This update cannot be applied** appears, read its lines. Nothing has changed; see [If something goes wrong](#if-something-goes-wrong).
@@ -130,7 +131,7 @@ The update runs exactly as described in [What happens during an update](#what-ha
 
 A paid plugin or theme needs the license key you got when you bought it.
 
-1. Open **System → Updates**.
+1. Open **Site → Updates**.
 2. In its row, choose **Add license key**.
 3. Paste the key and choose **Save and check**.
 
@@ -147,7 +148,7 @@ php bin/cms package:license plugin:acme-shop
 How you update a theme depends on what kind it is:
 
 - **Themes made in the admin, or imported as a zip from Appearance → Themes** (themes without code): import the new zip under **Appearance → Themes** with **Import** and turn on **Replace an installed theme with the same name**. You see **Mytheme was updated.** This replaces the theme's files directly, without the backup and check described above. See [Themes](/guide/themes).
-- **Themes with code** (from a theme developer): the admin cannot update these. Someone with access to the server runs:
+- **Themes with code** (from a theme developer): if the theme says where its updates come from, update it on **Site → Updates** as described in [Updates from the publisher](#from-the-publisher). Otherwise the admin cannot update it, and someone with access to the server runs:
 
   ```bash
   php bin/cms package:update acme-theme-2.0.0.zip

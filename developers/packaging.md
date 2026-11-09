@@ -201,7 +201,7 @@ Method calls with the same names (`$this->exec()`, `Foo::system()`) are not flag
 
 ## Publish updates {#publish-updates}
 
-Name where your releases are in the manifest (`updates`, see [the manifest](/developers/manifest#updates)), and sites find them by themselves: every 12 hours, and when the administrator chooses **Check now** on **System → Updates**. They download the new zip only when the administrator chooses **Review**, check it like an upload, and apply it through the [update pipeline](#updating-a-package-on-a-site). A site offers the newest version above the installed one whose `requires.core` its Kestello meets, and pre-releases only when `app.updates.prereleases` is on.
+Name where your releases are in the manifest (`updates`, see [the manifest](/developers/manifest#updates)), and sites find them by themselves: every 12 hours, and when the administrator chooses **Check now** on **Site → Updates**. They download the new zip only when the administrator chooses **Review**, check it like an upload, and apply it through the [update pipeline](#updating-a-package-on-a-site). A site offers the newest version above the installed one whose `requires.core` its Kestello meets, and pre-releases only when `app.updates.prereleases` is on.
 
 Sign every release with the same key. From the admin, a site applies an update only when the key that signed the installed version signed it too (or a key that version listed under [`signing_keys`](/developers/manifest#signing-keys)). An update signed by another key is refused with "Acme Events 1.5.0 is not signed by the publisher of the installed version (key …).", even when the site trusts that other key.
 
@@ -246,7 +246,7 @@ With `"updates": {"url": "https://updates.acme.test/kestello/acme-events.json"}`
 
 ### License keys
 
-Add `"license": true` to `updates`. The administrator enters the key on **System → Updates**. Kestello then sends it with every request to the feed's host, and to the `download` address only when that is on the same host:
+Add `"license": true` to `updates`. The administrator enters the key on **Site → Updates**. Kestello then sends it with every request to the feed's host, and to the `download` address only when that is on the same host:
 
 ```text
 Authorization: Bearer <license key>

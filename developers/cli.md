@@ -70,6 +70,8 @@ See [Moving from WordPress](/guide/import-wordpress) for what comes over.
 | `package:sign <zip> --key=<file>` | Signs an existing package. |
 | `package:verify <zip>` | Checks a package's signature, manifest and code without installing it. |
 | `package:update <zip>` | Updates an installed plugin or theme: backup, swap, health check, automatic rollback. `--downgrade` to install an older version. |
+| `package:check-updates [<plugin:slug\|theme:slug>]` | Asks the update sources plugins and themes name (`updates` in their manifest) for new versions now, and prints what each one has. Installs nothing. Exits 1 when a source could not be checked. |
+| `package:license <plugin:slug\|theme:slug>` | Saves the license key a paid plugin or theme needs, read from what you type or pipe in so it stays out of the shell history. `--remove` forgets it. |
 | `core:release [<dir>]` | Builds a Kestello release zip from this core (or the core folder given). `--out=dist`, `--key=<file>`. |
 | `core:install-zip` | Builds `kestello-<version>.zip`, the folder people upload to install a new site. `--out=dist`. |
 | `core:update <zip>` | Updates Kestello itself: backup, switch release, health check, automatic switch back. `--downgrade`. |
