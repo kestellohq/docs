@@ -60,7 +60,7 @@ The quickest way to learn the editor is to build one page with it. This example 
 7. Click the first column. While it is empty, it says "Empty. Click to select it, then add a block."
 8. Choose **Add a block** in the bar, then **Text**. Because a column is selected, the text goes inside it. Type "Margit bakes the bread. Tom does the pastry and most of the talking."
 9. Click the second column and add a **Text** block the same way: "We use flour from a mill two valleys over, water from the tap and salt from the coast."
-10. Open **Layers** (the button with lines in the bar) and click the **Columns** row: the columns cover it on the page, so the layers are the easy way to reach it. Choose **Add a block after** on the block toolbar, type "Button" and choose **Button**. Type the button's words on the page: "Get in touch".
+10. Open **Layers** (the button with lines in the bar) and click the **Columns** row: the columns cover it on the page, and the layers reach it. Choose **Add a block after** on the block toolbar, type "Button" and choose **Button**. Type the button's words on the page: "Get in touch".
 11. In the **Block** tab, under **Link**, type "contact" and choose the Contact page from the list. Kestello fills in its address, `/contact`. You can also type an address yourself, such as `/contact` or `https://example.com`.
 12. Choose the phone in the preview widths. The two columns now sit one above the other, as they will on a visitor's phone.
 13. Choose **Publish**.
