@@ -153,6 +153,6 @@ These work in a checkout that was never installed.
 |---|---|
 | `make:plugin` | Scaffolds a plugin in `content/plugins/`. |
 | `make:theme` | Scaffolds a theme, or a child theme with `--parent=<slug>`. |
-| `make:migration`, `make:model`, `make:controller`, `make:middleware`, `make:request`, `make:command` | Create a class or file from a template inside a plugin. `--plugin=<slug>` is required. |
+| `make:migration`, `make:model`, `make:controller`, `make:middleware`, `make:command` | Create a class or file from a template inside a plugin. `--plugin=<slug>` is required. |
 | `hooks:list` | Lists the events and filters of core and the active plugins. `--events`, `--filters`, `--owner=<slug>`, `--deprecated`, `--json`, `--markdown`. See [Events and filters](/developers/events#declare-your-hooks). |
 | `test [path]` | Runs the test suite, a folder of it, or one `*Test.php` file. `--filter=Text` runs only the tests whose `Class::method` name contains that text. |
