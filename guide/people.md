@@ -314,6 +314,13 @@ php bin/cms token:create ana --name=deploy --scopes=content:read --days=90
 - **Failed sign-ins**: how many there were today and in the last 7 days, the network addresses with the most attempts, and the latest ones: when, which account, why (for example **Wrong password** or **No such account**) and from where. What was typed into the login field is never shown.
 - **Signed-in sessions**: everyone who is signed in, on which browser and device, from which address, and when they were last active. **Sign out** ends one session; **Everywhere** signs that person out on every device. Your own session is marked **This session**.
 - **Access tokens**: every token on the site, whose it is, what it **Can** do, when it was last used and when it expires. **Revoke** stops it working at once.
+- **Plugins, themes and updates**: who the site trusts to give it code.
+  - **Trusted publishers** are the publishers whose signed plugin and theme zips can be installed from the admin.
+  - **Kestello updates signed by** names the key that updates of Kestello itself must carry; with **No release key**, those updates can't be applied from the admin.
+  - The table lists every installed plugin and theme: who signed it, and where its new versions come from. **No signature on record** means it came as files, from the command line, or unsigned on a development site. **Key …, no longer trusted** means its publisher was removed from the trusted list; its next version can't be installed from the admin until they are trusted again.
+  - A warning at the top says when the admin also installs unsigned zips, which suits a development site but not a live one.
+
+  All of this comes from the server's config files (`app.packages.trusted_keys`, `app.packages.admin_unsigned` and `release.keys`), never from the admin, so someone with a stolen password can't add a publisher. See [Plugins](/guide/plugins).
 - **Recent account events**: the latest sign-ins, password and two-step changes, tokens made or revoked, and people and roles changed. **Open the audit log** shows the full history of sign-ins and accounts.
 
 If you think an account was taken over, sign that person out **Everywhere**, revoke their tokens, then set a new password for them (see [Set a new password for someone](#set-a-new-password-for-someone)).
