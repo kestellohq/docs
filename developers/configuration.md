@@ -177,7 +177,7 @@ Where Kestello's own updates come from. The defaults are in `core/config/release
 |---|---|---|---|
 | `release.repository` | string | `'kestellohq/cms'` | The GitHub repository whose releases are Kestello versions, as `owner/name`. |
 | `release.check_every` | int | `12` | Hours between scheduled checks. `0` turns them off; **Check now** and `core:check` still work. |
-| `release.prereleases` | bool | `false` | Also offer pre-releases, such as `1.6.0-beta.1`. For test sites. |
+| `release.prereleases` | bool | `false` | Also offer pre-releases, such as `1.6.0-beta.1`. For test sites. A site already running a pre-release is offered the later pre-releases of that version and the release itself without this. |
 | `release.keys` | list | official keys | The public keys official releases are signed with: `['name' => 'Kestello releases', 'public_key' => '<base64>']`. Trusted for core releases only, never for plugins. |
 
 ## `config/database.php`
