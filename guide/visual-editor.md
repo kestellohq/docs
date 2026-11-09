@@ -58,10 +58,16 @@ The quickest way to learn the editor is to build one page with it. This example 
 5. Under **Background image**, choose **Choose an image**, click the photo of the shop on the quay and choose **Use this file**. The photo fills the banner. **Shade** starts on **Dark**, which darkens the photo a little so the heading stays readable.
 6. With the cover still selected, choose **Add a block after** (the plus on the block toolbar). A small list opens. Type "Columns" and choose **Columns**. Two empty columns appear below the banner, side by side.
 7. Click the first column. While it is empty, it says "Empty. Click to select it, then add a block."
+
+   ![A new Columns block with two empty columns side by side, each with a dashed edge and the words "Empty. Click to select it, then add a block."](/screenshots/editor-empty-columns.png)
+
 8. Choose **Add a block** in the bar, then **Text**. Because a column is selected, the text goes inside it. Type "Margit bakes the bread. Tom does the pastry and most of the talking."
 9. Click the second column and add a **Text** block the same way: "We use flour from a mill two valleys over, water from the tap and salt from the coast."
 10. Open **Layers** (the button with lines in the bar) and click the **Columns** row: the columns cover it on the page, and the layers reach it. Choose **Add a block after** on the block toolbar, type "Button" and choose **Button**. Type the button's words on the page: "Get in touch".
 11. In the **Block** tab, under **Link**, type "contact" and choose the Contact page from the list. Kestello fills in its address, `/contact`. You can also type an address yourself, such as `/contact` or `https://example.com`.
+
+   ![A button selected on the page. In the Block tab, "visit" is typed under Link, and the list below it offers the Visit us page, with its address /visit-us.](/screenshots/editor-link-pages.png)
+
 12. Choose the phone in the preview widths. The two columns now sit one above the other, as they will on a visitor's phone.
 13. Choose **Publish**.
 

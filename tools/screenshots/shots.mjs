@@ -57,6 +57,37 @@ export const SHOTS = [
     { name: 'editor-phone', open: editor(async (page) => button(page, 'Phone').click()) },
     { name: 'editor-form', open: editor(async (page) => button(page, 'Edit as a form instead').click()) },
 
+    {
+        // A new Columns block after the heading: empty columns show where to click
+        name: 'editor-empty-columns',
+        open: editor(async (page) => {
+            await selectHeading(page);
+            await button(page, 'Add a block after').click();
+            await page.keyboard.type('Columns');
+            await page.getByRole('option', { name: /^Columns/ }).first().click();
+            await canvas(page).locator('[data-block="core/column"]:empty').first().waitFor(); // the hint is drawn by CSS, not text
+            await page.mouse.move(0, 0);
+        }),
+    },
+    {
+        // The Home page's "Find us" button, its Link field offering pages as you type
+        name: 'editor-link-pages',
+        open: async (page) => {
+            await page.addInitScript(() => localStorage.clear());
+            await go('/admin/content/page')(page);
+            await page.getByRole('link', { name: 'Home', exact: true }).first().click();
+            await canvas(page).getByText('Find us', { exact: true }).waitFor({ timeout: 30_000 });
+            await canvas(page).getByText('Find us', { exact: true }).click();
+            await tab(page, 'Block').click();
+            const link = page.getByRole('combobox', { name: /^Link/ });
+            await link.fill('');
+            await link.pressSequentially('visit', { delay: 40 });
+            await page.getByRole('option', { name: /Visit us/ }).waitFor();
+            await page.mouse.move(0, 0);
+        },
+        keepFocus: true,
+    },
+
     // Reviews (guide/reviews.md): needs prepare.mjs, which adds Ines's post in review
     { name: 'reviews-waiting', open: go('/admin') },
     {
@@ -97,6 +128,28 @@ export const SHOTS = [
 
     // Site
     { name: 'settings', open: go('/admin/settings'), target: () => 'content' },
+    {
+        // The sample site hides itself from search engines; show the switch as a new site has it (not saved)
+        name: 'settings-reading',
+        open: async (page) => {
+            await go('/admin/settings?tab=reading')(page);
+            const hide = page.getByLabel('Hide the site from search engines');
+            if (await hide.isChecked()) await hide.click();
+        },
+        target: () => 'content',
+    },
+    { name: 'settings-accounts', open: go('/admin/settings?tab=accounts'), target: () => 'content' },
+    {
+        // An analytics tag typed in, not saved
+        name: 'settings-code',
+        open: async (page) => {
+            await go('/admin/settings?tab=snippets')(page);
+            await page
+                .getByLabel('In the head')
+                .fill('<script defer data-domain="larkspur.example" src="https://analytics.example/script.js"></script>');
+        },
+        target: () => 'content',
+    },
     { name: 'updates', open: go('/admin/system/updates'), target: () => 'content' },
     { name: 'backups', open: go('/admin/system/backups'), target: () => 'content' },
     {

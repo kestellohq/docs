@@ -21,7 +21,7 @@ try {
             page.setDefaultTimeout(15_000);
             try {
                 await shot.open(page);
-                await shoot(page, shot.name, shot.target ? shot.target(page) : null);
+                await shoot(page, shot.name, shot.target ? shot.target(page) : null, { keepFocus: !!shot.keepFocus });
                 if (shot.after) await shot.after(page); // put the site back for the next shots
                 error = null;
             } catch (e) {

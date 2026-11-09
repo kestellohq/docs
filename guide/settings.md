@@ -10,6 +10,8 @@ Each tab has its own save button at the bottom, such as **Save general** or **Sa
 
 The name, address and clock of your site.
 
+![The General tab of Site → Settings: Site name, Tagline, Site address, Timezone and Language.](/screenshots/settings.png)
+
 | Setting | What it is for | Default |
 |---|---|---|
 | **Site name** | Shown in the browser tab, in emails and in the admin. | The name given at installation |
@@ -24,12 +26,14 @@ Changing **Site address** needs the permission *Manage infrastructure, backgroun
 
 What visitors and search engines see.
 
+![The Reading tab: Post addresses, Home page, Entries in feeds, the Hide the site from search engines switch, and robots.txt additions.](/screenshots/settings-reading.png)
+
 | Setting | What it is for | Default |
 |---|---|---|
 | **Post addresses** | The pattern of each post's address: its name alone (`/blog/sample-post`), or with the year, month or day in front (`/blog/2026/11/sample-post`). Old addresses keep working: they redirect to the new pattern. See [Post addresses](/guide/content#post-addresses). | `/blog/sample-post` |
 | **Home page** | The page shown at your site's address. **The theme's home page** uses whatever your theme puts there; choose one of your pages to show that instead. Its own address then redirects to the home page. See [The home page](/guide/content#the-home-page). | The theme's home page |
 | **Entries in feeds** | How many of the newest entries feed readers get. | 10 |
-| **Hide the site from search engines** | For a site that isn't ready: every page asks search engines not to list it. Visitors can still open it. Turn it off at launch (see [Going live](/guide/going-live)). | Off |
+| **Hide the site from search engines** | For a site that isn't ready: every page asks search engines not to list it, and `robots.txt` turns them away. Visitors can still open it. Turn it off at launch (see [Going live](/guide/going-live)). | Off |
 | **robots.txt additions** | Extra lines for `robots.txt`, the file that tells search engines where they may look. Kestello's own lines come first: the admin and the API are always excluded, and the sitemap is listed. Most sites leave this empty. | Empty |
 
 Sites with other dated content types, such as events, get an **addresses** setting for each of them too.
@@ -56,11 +60,13 @@ This tab needs the permission *Manage infrastructure, background jobs, scheduled
 
 Whether people can create an account on the site themselves. You can always add people yourself under **People**. Details are in [Let people create their own account](/guide/people#sign-up).
 
+![The Accounts tab: Who can create an account set to "Nobody: you add people yourself", Allowed email domains, Role for new accounts set to User, and the two switches for sign-in providers.](/screenshots/settings-accounts.png)
+
 | Setting | What it is for | Default |
 |---|---|---|
 | **Who can create an account** | **Nobody: you add people yourself**, **Anyone**, or **Only people with an address at the domains below**. Signing up by email proves the address with a link before the account exists. | Nobody |
 | **Allowed email domains** | For the last choice above: the domains, separated by commas, such as `example.com, example.org`. | Empty |
-| **Role for new accounts** | What new accounts may do. Administrator is never given this way. **User** may only sign in and look after their own profile. | **User** |
+| **Role for new accounts** | What new accounts may do. Administrator, and roles that may manage people, roles, security or the system, are never offered. **User** may only sign in and look after their own profile. | **User** |
 | **Connect provider sign-ins by email** | When someone signs in with a provider such as Google that confirmed their email, connect it to the account with that address. Leave it off unless you trust every provider you use. | Off |
 | **Trust the provider's two-step check** | Skip Kestello's two-step code when the provider says it already asked for a second factor. | Off |
 
@@ -96,6 +102,8 @@ Pages for visitors who aren't signed in are kept ready, so they open fast, and r
 ## Code
 
 HTML added to every public page, such as an analytics script or a tag that proves to Google or another service that the site is yours. It is never added to the admin or the sign-in pages.
+
+![The Code tab with an analytics script pasted under In the head, and empty boxes for the start and the end of the body.](/screenshots/settings-code.png)
 
 | Setting | Where the code goes |
 |---|---|

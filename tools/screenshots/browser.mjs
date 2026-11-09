@@ -45,7 +45,8 @@ export async function settle(page) {
  * the page, 'content' for an admin screen's own area (no menu, cut off below what it shows),
  * or nothing for the whole viewport.
  */
-export async function shoot(page, name, target = null) {
+/** keepFocus: leave the focused field focused, for a list that shows only while typing. */
+export async function shoot(page, name, target = null, { keepFocus = false } = {}) {
     if (target === 'content') {
         await settle(page);
         target = null;
@@ -78,7 +79,7 @@ export async function shoot(page, name, target = null) {
     const path = join(OUT, `${name}.png`);
     mkdirSync(dirname(path), { recursive: true });
     await settle(page);
-    await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
+    if (!keepFocus) await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
     await hidePaths(page);
     if (target) {
         await target.screenshot({ path, animations: 'disabled' });

@@ -390,7 +390,7 @@ By default only people who manage accounts can add new ones. To let visitors cre
 |---|---|
 | **Who can create an account** | **Nobody: you add people yourself** (the default), **Anyone**, or **Only people with an address at the domains below**. |
 | **Allowed email domains** | For the last choice: the part after the @, separated by commas, such as `example.org, example.net`. |
-| **Role for new accounts** | What new accounts may do. **User** can sign in and change their own profile. Administrator is never given this way. |
+| **Role for new accounts** | What new accounts may do. **User** can sign in and change their own profile. Administrator, and roles that may manage people, roles, security or the system, are never offered: a stranger with one could take over the site. |
 
 Keep **Role for new accounts** on **User** unless you mean it: every person who signs up gets that role.
 
