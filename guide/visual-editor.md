@@ -57,11 +57,11 @@ The quickest way to learn the editor is to build one page with it. This example 
 4. Select the cover itself, not its heading: choose **Select Cover**, the first button on the block toolbar, or click **Cover** in the line under the page. The **Block** tab now shows the cover's settings.
 5. Under **Background image**, choose **Choose an image**, click the photo of the shop on the quay and choose **Use this file**. The photo fills the banner. **Shade** starts on **Dark**, which darkens the photo a little so the heading stays readable.
 6. With the cover still selected, choose **Add a block after** (the plus on the block toolbar). A small list opens. Type "Columns" and choose **Columns**. Two empty columns appear below the banner, side by side.
-7. Open **Layers** (the button with lines in the bar) and click the first **Column** row. Empty columns are hard to click on the page; the layers reach them.
+7. Click the first column. While it is empty, it says "Empty. Click to select it, then add a block."
 8. Choose **Add a block** in the bar, then **Text**. Because a column is selected, the text goes inside it. Type "Margit bakes the bread. Tom does the pastry and most of the talking."
-9. Open **Layers** again, click the second **Column** row, and add a **Text** block the same way: "We use flour from a mill two valleys over, water from the tap and salt from the coast."
-10. In **Layers**, click the **Columns** row. Choose **Add a block after** on the block toolbar, type "Button" and choose **Button**. Type the button's words on the page: "Get in touch".
-11. In the **Block** tab, under **Link**, type `/contact`, the address of the Contact page. You can see any page's address on its **Page** tab, next to **Address**.
+9. Click the second column and add a **Text** block the same way: "We use flour from a mill two valleys over, water from the tap and salt from the coast."
+10. Open **Layers** (the button with lines in the bar) and click the **Columns** row: the columns cover it on the page, so the layers are the easy way to reach it. Choose **Add a block after** on the block toolbar, type "Button" and choose **Button**. Type the button's words on the page: "Get in touch".
+11. In the **Block** tab, under **Link**, type "contact" and choose the Contact page from the list. Kestello fills in its address, `/contact`. You can also type an address yourself, such as `/contact` or `https://example.com`.
 12. Choose the phone in the preview widths. The two columns now sit one above the other, as they will on a visitor's phone.
 13. Choose **Publish**.
 
@@ -115,6 +115,7 @@ Some everyday changes:
 - **Turn text into a heading or a list.** Click the block's name on the toolbar and choose from **Turn into**. The words come along.
 - **Change a heading's level.** Use **Heading level** on the toolbar.
 - **Make words bold, italic or a link.** Select the words, then choose **Bold**, **Italic** or **Link** on the toolbar.
+- **Point a button at a page.** Select the button, and under **Link** in the **Block** tab type part of the page's title. Choose the page from the list, and its address is filled in.
 - **Move a block.** Choose **Move up** or **Move down** on the toolbar, or hold **Drag to move** and drop the block where you want it.
 - **Copy or remove a block.** Open **More** (the three dots at the end of the toolbar) and choose **Duplicate** or **Remove**.
 
@@ -127,7 +128,7 @@ The toolbar moves out of the way of the text you are reading. To keep it in one 
 There are three ways, depending on what you start with:
 
 - **Two blocks already on the page.** Hold **Drag to move** on one and drop it at the left or right side of the other. Kestello puts the two in columns. Drop more blocks at the side to make up to four columns.
-- **An empty row of columns.** Add a **Columns** block. It starts with two empty columns. **Layout** in the **Block** tab offers **Two equal**, **Wide, narrow**, **Narrow, wide**, **Three equal** and **Four equal**. Then select each column in **Layers** and add blocks to it, as in the [example](#example-build-an-about-page).
+- **An empty row of columns.** Add a **Columns** block. It starts with two empty columns. **Layout** in the **Block** tab offers **Two equal**, **Wide, narrow**, **Narrow, wide**, **Three equal** and **Four equal**. Then click each column (an empty one says "Empty. Click to select it, then add a block.") and add blocks to it, as in the [example](#example-build-an-about-page).
 - **A photo next to some words.** Add a **Media and text** block. **Image on the** chooses **Left** or **Right**.
 
 For buttons, use **Buttons**: it holds several **Button** blocks in a row.

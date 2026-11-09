@@ -64,7 +64,7 @@ Whether people can create an account on the site themselves. You can always add 
 | **Connect provider sign-ins by email** | When someone signs in with a provider such as Google that confirmed their email, connect it to the account with that address. Leave it off unless you trust every provider you use. | Off |
 | **Trust the provider's two-step check** | Skip Kestello's two-step code when the provider says it already asked for a second factor. | Off |
 
-This tab needs the permission *Create, edit and delete users* instead, because opening sign-up hands out accounts.
+This tab needs the permission *Create, edit and delete users* as well, because opening sign-up hands out accounts.
 
 ## Media
 
@@ -105,7 +105,7 @@ HTML added to every public page, such as an analytics script or a tag that prove
 
 Paste the code exactly as the service gives it to you. Scripts get the site's security stamp (a nonce) by themselves; attributes such as `onclick` don't run.
 
-This tab needs the permission *Add code to every page of the site* instead. Code here runs for every visitor, so give it only to people you trust with the whole site.
+This tab needs the permission *Add code to every page of the site* as well. Code here runs for every visitor, so give it only to people you trust with the whole site.
 
 ## Settings from plugins
 
