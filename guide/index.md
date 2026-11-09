@@ -51,5 +51,7 @@ If you have used WordPress, most ideas carry over: pages, posts, media, themes, 
 1. Check that your hosting meets the [requirements](/guide/requirements).
 2. [Install Kestello](/guide/installation).
 3. Spend [your first hour](/guide/first-steps) setting the basics up.
+4. Bring your old site over, from [WordPress](/guide/import-wordpress) or [Squarespace, Wix or anywhere else](/guide/moving-from-other-sites).
+5. Launch with the [going live](/guide/going-live) checklist.
 
-After that, the guide follows the admin: [your content](/guide/content), [media](/guide/media), [menus](/guide/menus) and [forms](/guide/forms) for everyday work, and [backups](/guide/backups), [updates](/guide/updates) and [Site Health](/guide/health) for keeping the site in good shape. When something is not working, start with [troubleshooting](/guide/troubleshooting).
+After that, the guide follows the admin: [your content](/guide/content), [media](/guide/media), [menus](/guide/menus) and [forms](/guide/forms) for everyday work, and [backups](/guide/backups), [updates](/guide/updates) and [Site Health](/guide/health) for keeping the site in good shape. When something is not working, start with [troubleshooting](/guide/troubleshooting). A word you don't know is probably in [Words you'll meet](/guide/glossary).

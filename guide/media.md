@@ -85,6 +85,16 @@ Copies are made in the background, or the first time a page asks for one, so a n
 
 All of this needs an image library on the server (Imagick or GD). **System → Site Health** has an **Image processing** check that says which one Kestello uses and which formats it can write. Without one, images are served as uploaded: no smaller sizes, no WebP or AVIF, and large photos are not scaled down. Hidden information is still removed from JPEG, PNG and WebP files, except from photos the camera saved sideways, which stay as they are.
 
+## Good pictures for the web
+
+You don't need to prepare photos before uploading: Kestello turns them the right way up, removes hidden details such as where they were taken, scales very large ones down and makes smaller copies for phones. A few habits still make a real difference:
+
+- **Upload the photo as it came from the camera or phone**, as long as it is under the size limit. Kestello makes the smaller copies itself, and a good original gives it the most to work with.
+- **Use JPEG for photos and PNG for logos and screenshots.** Phones usually send a JPEG when you upload straight from the phone. Photos copied to a computer first can be `.heic` files, which aren't accepted: export them as JPEG, or set your phone to save the most compatible format.
+- **Choose landscape photos for wide spaces** such as a cover at the top of a page. A tall phone photo in a wide space gets cropped; [set the focal point](#set-the-focal-point) so the important part stays in view.
+- **Name files for people**, such as `rye-loaf.jpg` rather than `IMG_4032.jpg`. The name becomes the picture's title in the library, so you can find it later.
+- **Write alt text that says what the picture shows**, as you would describe it over the phone. "Sourdough loaves cooling on a wooden rack" helps someone who can't see the picture; "bread" or "image1" doesn't. A logo's alt text is the business name.
+
 ## Alt text, title and caption
 
 Open an image in the library to edit its details:
