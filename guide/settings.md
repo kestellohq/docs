@@ -60,7 +60,7 @@ Whether people can create an account on the site themselves. You can always add 
 |---|---|---|
 | **Who can create an account** | **Nobody: you add people yourself**, **Anyone**, or **Only people with an address at the domains below**. Signing up by email proves the address with a link before the account exists. | Nobody |
 | **Allowed email domains** | For the last choice above: the domains, separated by commas, such as `example.com, example.org`. | Empty |
-| **Role for new accounts** | What new accounts may do. Administrator is never given this way. **User** may only sign in and look after their own profile. | **User** |
+| **Role for new accounts** | What new accounts may do. Administrator, and roles that may manage people, roles, security or the system, are never given this way. **User** may only sign in and look after their own profile. | **User** |
 | **Connect provider sign-ins by email** | When someone signs in with a provider such as Google that confirmed their email, connect it to the account with that address. Leave it off unless you trust every provider you use. | Off |
 | **Trust the provider's two-step check** | Skip Kestello's two-step code when the provider says it already asked for a second factor. | Off |
 
