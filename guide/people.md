@@ -6,6 +6,8 @@ This page covers everyone who can sign in to your site: adding accounts, choosin
 
 Every person who signs in has an **account**: a username, an email address and a password. Each account has exactly one **role**. A role is a named set of **capabilities**, and a capability is one thing a person may do, such as "Upload files" or "Change site settings".
 
+![The People screen listing each person with their role, status, last sign-in and when they joined.](/screenshots/people-list.png)
+
 You manage this under **People** in the admin menu:
 
 | Screen | What you do there |
@@ -155,6 +157,8 @@ When a person's page is out of your reach, its fields are shown but disabled.
 
 You need the capability *Create and edit roles and what they may do*.
 
+![The Roles screen: the roles on the left and, for the selected role, what it may do, grouped by area.](/screenshots/people-roles.png)
+
 1. Open **Roles**.
 2. Pick the role in the list on the left. Each entry shows how many people have it, and a badge: **Everything** for administrators, **Custom** for roles you created, **Changed** for built-in roles you have edited.
 3. Tick or untick capabilities. A capability that differs from the role's defaults is marked **added** or **removed**.
@@ -196,6 +200,8 @@ This protects you if you leave a signed-in browser unattended.
 ## Two-step sign-in
 
 With two-step sign-in, signing in needs your password and a six-digit code from an authenticator app on your phone (for example 1Password, Google Authenticator or Authy). Someone who steals your password still cannot get in.
+
+![The Security screen: who uses two-step sign-in, failed sign-ins today, signed-in sessions and access tokens.](/screenshots/security.png)
 
 Everyone with an account can turn it on for themselves. Administrators are expected to use it: their **Sign-in & security** tab shows "Your role is expected to use two-step sign-in. Turn it on now." until they do. (The roles this applies to come from the config key `auth.two_factor_roles`, default `['admin']`.) Kestello does not yet force anyone to turn it on.
 
@@ -261,6 +267,8 @@ Reset emails go through the mail settings under **Site → Settings → Email**.
 1. Open **Your profile**.
 2. Under **Account**, change **Email** and choose **Save profile**. You may be asked to [confirm your password](#confirming-your-password).
 3. Open the link Kestello emails to the new address.
+
+![Your profile on the Account tab: Username, Email and About you, with your role and last sign-in on the right.](/screenshots/profile.png)
 
 Until you open the link, your account keeps the old address, and your profile says which address is waiting. The link works once, for 24 hours. Your old address gets an email saying a change was asked for, so you would notice if someone else did it. Once the new address is confirmed, password reset links sent to the old address stop working.
 
@@ -332,6 +340,8 @@ When sessions are kept in files, the list of sessions can't be shown. Switch ses
 ## The audit log {#audit-log}
 
 **System → Audit log** lists who did what and when: sign-ins and failed sign-ins, password and two-step changes, people and roles added or changed, settings saved, plugins and themes switched, backups, updates and more. Only people whose role has **Read the audit log** see it; on a new site that is administrators.
+
+![The Audit log: a Show filter, then each event with when it happened, who did it, what it was and where from.](/screenshots/audit-log.png)
 
 Each row shows when it happened, who did it, what happened in plain words and the network address it came from. Use **Area** to show one part of the site, such as **Sign-in and accounts** or **Plugins**. Choose a person's name to show only what they did. **Details** opens everything recorded for that row. **Load more** goes further back.
 

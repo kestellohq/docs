@@ -24,6 +24,8 @@ You only see the screens your account is allowed to use. As the first administra
 
 ## 1. Check the overview
 
+![The Overview: a greeting with what needs you, cards for Site health, Background jobs, Scheduler and the Kestello version, and Waiting on you below them.](/screenshots/admin-overview.png)
+
 Open **Overview**. The line at the top sums up the site's state:
 
 - **Your site is running well. Nothing needs you.** Carry on.
@@ -35,6 +37,8 @@ The same checks, with details, are under **System → Site Health**.
 ## 2. Settings
 
 Open **Site → Settings**. The settings are split into groups.
+
+![Site → Settings on the General tab: Site name, Tagline, Site address, Timezone and Language.](/screenshots/settings.png)
 
 ### General
 

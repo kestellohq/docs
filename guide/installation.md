@@ -65,11 +65,15 @@ Open your site's address in a browser. Kestello sees that it is not installed ye
 
 Kestello checks the PHP version, a database driver, the required PHP extensions, and the folders it writes to. Kestello creates any of those folders that are missing, because some file managers leave empty folders out when they unzip.
 
+![The installer's Server check: "Your server is ready" with the list of checks that passed.](/screenshots/install-1-server-check.png)
+
 When everything passes, you see **Your server is ready** and can continue. Otherwise the problems are listed first, each with what to do about it, and the checks that passed are folded away under **checks passed**. PHP versions and extensions are usually changed in the control panel (look for **PHP Selector**, **PHP Version** or **PHP Extensions**); the table under [Requirements](/guide/requirements) explains each one. After fixing something, choose **Check again**.
 
 ### Step 2: Database
 
 Choose the database type. Only types whose PHP extension is installed are offered.
+
+![The installer's Database step with SQLite chosen and the file name filled in.](/screenshots/install-2-database.png)
 
 - **MySQL / MariaDB** or **PostgreSQL**: enter the host, the port (leave it empty for the usual one), the database name, the user and the password from step 1.
 - **SQLite**: enter only a name. The database is created as a file in `storage/database/`, outside the folder visitors can reach.
@@ -86,9 +90,13 @@ Choose **Connect and continue**. Kestello connects with these details before it 
 | Time zone | Where you are. Dates in the admin, scheduled publishing and nightly tasks follow this clock. |
 | What is this site for? | **A website** for your own site. **A public demo** to let others try Kestello: there is no admin step, everyone signs in as `demo`, and the site resets every hour. See [Public demo](/guide/demo). |
 
+![The installer's Your site step: Site name, Tagline, Site address, Time zone, and the choice between A website and A public demo.](/screenshots/install-3-your-site.png)
+
 ### Step 4: Your admin account
 
 A public demo skips this step: its only account is `demo`.
+
+![The installer's Administrator account step: Username, Email address, Password and Repeat the password.](/screenshots/install-4-administrator.png)
 
 This is the first account and it has full access. Choose:
 
@@ -101,6 +109,8 @@ If the password is refused, the username and email address stay filled in, so yo
 ### Step 5: Install
 
 A summary of your choices, with a **Change** link to the step each one came from. Check it, then choose **Install Kestello**. Kestello writes its configuration files to `config/` (the database details and secret key, plus commented files for scheduled tasks, background jobs, accounts and the audit log, each option at its default), creates the database tables and your account. If anything fails, it removes the configuration files again and shows the error, so you can correct the details and try again. Tables it already created are reused on the next attempt.
+
+![Kestello is installed: the site's address, then Sign in, Add a cron job with the command and a Copy button, and Before you go live.](/screenshots/install-6-complete.png)
 
 When it is done you see **Kestello is installed**, your site's address, and three things to do next: sign in, add the cron job for background tasks (the page shows the exact command for your server, with a **Copy** button), and the checks before you go live. Sign in with the username or email address and the password from step 4. The sign-in page is always at `/login`.
 

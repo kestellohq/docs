@@ -1,7 +1,15 @@
 # Pages, posts and other content
 
-This page covers everything you write in Kestello: pages, posts and any content types your site adds. It explains how to create and edit entries, how the block editor works, what each status means, how scheduling, revisions and the trash work, how addresses are made, how categories and tags behave, and how to choose the page visitors see first. Read it before you start adding content to a new site, or when something you published does not show up where you expected.
+Everything you write in Kestello is an **entry**: a page, a post, or an entry of a content type your site adds, such as an event. This page covers the life of an entry: creating it, saving and publishing it, scheduling it, going back to an earlier version, and its address.
 
+![The list of posts on a bakery site, with each post's status, author and date.](/screenshots/content-posts.png)
+
+| To do this | Read |
+|---|---|
+| Write and lay out a page | [The visual editor](/guide/visual-editor) |
+| Have an editor approve entries before they go live | [Reviews and checklists](/guide/reviews) |
+| Sort posts into sections and keywords | [Categories and tags](/guide/categories-and-tags) |
+| Change what Google and shared links show | [Search and sharing](/guide/search-and-sharing) |
 ## Content types
 
 Every piece of content in Kestello is an **entry** of some **content type**. A content type decides which fields an entry has and where its public address lives. Two types are built in:
@@ -11,9 +19,11 @@ Every piece of content in Kestello is an **entry** of some **content type**. A c
 | **Pages** | Standalone pages such as About or Contact. Pages can be nested under each other. | At the top of the site: `/about`, `/about/team` | **Content**, built with the block editor |
 | **Posts** | Dated articles listed on the blog. | Under `/blog`: `/blog/hello-world` | **Content**, a formatted text field, plus **Featured image** and **Excerpt** |
 
-Each type has its own screen under **Content** in the admin menu: **Content → Pages**, **Content → Posts**, and one entry for each type your site adds. Categories and tags (see [Categories and tags](#categories-and-tags)) sit in the same group.
+Each type has its own screen under **Content** in the admin menu: **Content → Pages**, **Content → Posts**, and one entry for each type your site adds. Categories and tags (see [Categories and tags](/guide/categories-and-tags)) sit in the same group.
 
 ### Your own content types
+
+![System → Content types: the types built here and the ones from the theme and plugins.](/screenshots/content-types.png)
 
 A site can have more types, such as events, team members or products. They come from two places:
 
@@ -22,7 +32,7 @@ A site can have more types, such as events, team members or products. They come 
 
 Building content types needs the permission *Build content types, fields and taxonomies*, which administrators have. Editors and authors only see the types; they cannot change them.
 
-On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site. Its **Before publishing** card sets what an entry must have before it goes live; see [Before publishing](#before-publishing).
+On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site. Its **Before publishing** card sets what an entry must have before it goes live; see [Before publishing](/guide/reviews#before-publishing).
 
 ## Find your way around a content list
 
@@ -81,7 +91,7 @@ What you can do with an entry depends on your role. The built-in roles work like
 | **Author** | Yes | Their own | No | Their own |
 | **Contributor** | Yes | No | No | No |
 
-Pages (and any other type whose entries can have a parent) are for editors only by default. On posts, a contributor saves drafts and submits them for review; see [Reviews](#reviews). Once an entry is published, only someone who may publish can change it. Roles can be changed under **People → Roles**; see [People, roles and sign-in](/guide/people).
+Pages (and any other type whose entries can have a parent) are for editors only by default. On posts, a contributor saves drafts and submits them for review; see [Reviews](/guide/reviews). Once an entry is published, only someone who may publish can change it. Roles can be changed under **People → Roles**; see [People, roles and sign-in](/guide/people).
 
 ## The block editor
 
@@ -103,110 +113,12 @@ Blocks that hold other blocks (**Group**, **Columns**) show their own **Add to**
 | Status | Who sees it | How it gets there |
 |---|---|---|
 | **Draft** | Only people who can edit it in the admin. | **Save draft**, or **Unpublish (back to draft)**. |
-| **In review** | Only people who can edit it in the admin. | **Submit for review**. See [Reviews](#reviews). |
+| **In review** | Only people who can edit it in the admin. | **Submit for review**. See [Reviews](/guide/reviews). |
 | **Scheduled** | Only the admin, until its time comes. Then it becomes **Published** by itself. | **Schedule**, with a date in the future. |
 | **Published** | Everyone, at its address. | **Publish**. |
 | **Private** | Not shown on the public site. | The editor has no button for this. Entries can get it from a plugin or the Kestello API. |
 
 A draft never needs its required fields filled in. Kestello only checks them when you publish; the field editor calls these **Required to publish**. A title is needed too: publishing without one shows **Add a title before publishing.**
-
-## Reviews
-
-People who may write but not publish, such as contributors, send their work to an editor for review. The editor publishes it, or sends it back saying what to change. Everyone involved is told at each step.
-
-### Submit for review
-
-1. Write the entry and choose **Submit for review**. Like publishing, this needs a title and every field marked **Required to publish**.
-2. The status changes to **In review**. If the entry is assigned to someone, they are told; otherwise everyone who may publish it is.
-
-While it waits you can keep editing it: **Save changes** keeps it in review. **Withdraw (back to draft)** takes it out of review.
-
-### Review an entry
-
-Entries waiting for review are under **In review** at the top of the content list, and on the **Overview** in **Waiting on you** (see [What waits on you](#waiting-on-you)). Open one and choose:
-
-- **Approve and publish** to publish it. If **Publish on** is in the future, the button says **Approve and schedule** instead.
-- **Request changes** to send it back. Write what should change and choose **Send back**. The entry becomes a draft again, and the person who submitted it is told, with your note.
-- **Save without deciding** to save your own edits and leave it in review.
-
-Either way, the person who submitted it hears what you decided.
-
-### Comments
-
-The **Review** card in the editor's sidebar holds the conversation about an entry: comments, and the review steps between them, such as "eddie asked for changes" with the note. Type in **Add a comment** and choose **Comment**, or press Ctrl+Enter (Cmd+Enter on a Mac).
-
-Comments are only seen in the admin, never on the site. Anyone who can open the entry may comment. A comment reaches the entry's author, the person it is assigned to and everyone who wrote on it before. You can delete your own comments; editors can delete anyone's. The review steps stay.
-
-To bring someone else in, name them with @ and their username, for example `@maria could you check the dates?`. As you type after the @, a list of people who may edit entries of this type appears: use the arrow keys and Enter (or click) to pick one. Everyone named is told "eddie mentioned you on the post …", in the bell and by email, once even if they would have heard about the comment anyway. Someone who can't open the entry, such as an author named on another person's post, isn't told. Up to 10 people can be named in one comment.
-
-### Assign an entry
-
-Under **Assigned to** in the **Review** card, pick the person who should look after the entry. They are told, and when it is submitted for review only they are, instead of every editor. Only people who may edit entries of that type are listed. The content list shows who each entry is assigned to.
-
-### Notifications
-
-Review steps and comments arrive in the bell at the top of the admin, and by email. To choose which you get by email, open your profile, then **Notifications**, and change **Reviews** or **Editorial comments**.
-
-Submissions, decisions and assignments are recorded in the [audit log](/guide/people#audit-log).
-
-### What waits on you {#waiting-on-you}
-
-The **Overview** shows **Waiting on you** above everything else when there is something for you to do, most urgent first:
-
-- **Changes requested**: your entries a reviewer sent back, until you submit them again.
-- **Assigned to you**: entries assigned to you that are not published yet.
-- **Waiting for review**: other people's entries in review that you may publish.
-
-Each entry is listed once, with when it started waiting on you. Choose its title to open it. When nothing waits, the card isn't shown.
-
-## Before publishing {#before-publishing}
-
-A content type can have a checklist of what its entries must, or should, have before they are published, such as a featured image or at least one category. Nothing is on the list until someone adds it, so the built-in types have none.
-
-### Set up the checklist
-
-1. Open **System → Content types** and the type.
-2. In **Before publishing**, choose **Add a check** and pick one:
-
-   | Check | Done when |
-   |---|---|
-   | **Has an excerpt** | The excerpt is filled in. Only for types with **A short summary field**. |
-   | **Has a featured image** | The type's first image field has an image. |
-   | **Has a term of a taxonomy** | At least one term of the taxonomy you choose, such as a category. |
-   | **Has a minimum number of words** | The text of the entry, the same text site search reads, has at least that many words. |
-   | **Has a search description** | **Search description** under **Search and sharing** is filled in. |
-
-   Plugins can add checks of their own; they appear in the same list.
-3. Set **Level**: **Required** holds publishing back until the check is done, **Recommended** only shows it in the editor.
-4. Choose **Save**.
-
-### In the editor
-
-While a type has a checklist, the editor's sidebar shows a **Before publishing** card under the publish card. It is checked as you type, so you see an item turn done before you save. The top line says how many required items publishing waits for.
-
-Choosing **Publish** or **Schedule** while a required item is not done keeps the entry as it was and names what is missing, for example "Before publishing: Has a featured image." Saving a draft and **Submit for review** always work, so a contributor can hand in an entry for an editor to finish.
-
-The checklist applies when an entry is about to go live. An entry that is already published, or a check added after it was published, does not stop you from saving changes to it. If a check comes from a plugin that is no longer active, it shows as not available and never holds publishing back.
-
-### For developers
-
-Types declared in code get a checklist with `checklist()`, and a plugin can add a check of its own, named after the plugin:
-
-```php
-$cms->content->type('acme-recipe')
-    ->label('Recipe', 'Recipes')
-    ->checklist([
-        ['check' => 'featured_image', 'level' => 'required'],
-        ['check' => 'terms', 'taxonomy' => 'acme-cuisine'],          // recommended
-        ['check' => 'words', 'min' => 150],
-        ['check' => 'acme.tested', 'level' => 'required'],
-    ]);
-
-$cms->content->checks->define('acme.tested', 'Tested in our kitchen',
-    fn (array $entry, array $item): bool => !empty($entry['data']['tested_on']));
-```
-
-A check gets the entry as `['title', 'excerpt', 'data', 'terms' => [taxonomy => count]]`, with the unsaved values while someone types. The editor asks `POST /api/v1/content/{type}/checklist`; a refused publish answers `422` with the missing items under `checklist`. **View as PHP** on a type built in the admin includes its checklist.
 
 ## Schedule an entry
 
@@ -348,88 +260,6 @@ A page can be nested at most 25 levels deep, and it cannot be placed inside itse
 A page is only public when every page above it is published too. If you unpublish, schedule or trash a parent page, all of its sub-pages disappear from the site, the sitemap, site search and menus, even the published ones. Publish or restore the parent and they come back.
 :::
 
-## Categories and tags
-
-Posts can be sorted with **categories** (broad sections, which can be nested) and **tags** (free keywords). Each has its own screen: **Content → Categories** and **Content → Tags**.
-
-### Assign them while writing
-
-In the post editor, the **Categories** card in the sidebar lists what exists. Tick the ones that apply. To add a new one, type it in the box at the bottom of the card and choose **Add**. In the **Tags** card, type to find a tag; for a new one, choose **Add** followed by its name. Either way, a new one is marked **new** and created when you save the post.
-
-Authors and contributors can pick categories and tags, and can add new tags while writing. Only editors can add new categories, and only editors can rename or delete either.
-
-### Manage the list
-
-1. Open **Content → Categories** (or **Content → Tags**).
-2. On the left, fill in **Name**. **Address** is made from the name if you leave it empty. For categories you can also pick a **Parent**. **Description** is optional; some themes show it on the category page.
-3. Choose **Add category** (or **Add tag**).
-4. To change one, select its name in the list on the right, edit it on the left and choose **Save**.
-5. To delete one, use the bin icon. Posts that used it lose it; the posts themselves stay. Sub-categories of a deleted category move up a level.
-
-The **Published** column counts the published posts that use each one.
-
-### Category and tag pages
-
-Each category and tag has a public page listing its posts, at `/category/news` or `/tag/recipes`.
-
-A category or tag that is used only by drafts, scheduled posts or trashed posts has no public page yet: its address shows "not found", it is left out of the sitemap, and the list in the admin does not link to it. It appears as soon as one post that uses it is published.
-
-Changing the address of a category or tag does not add a redirect. If the old address was shared, add one yourself under **Site → Redirects**.
-
-## Search and sharing
-
-Every entry of a public type has a **Search and sharing** section, on the type's tab in the visual editor and in the sidebar of the form view:
-
-- **Search title**: shown as the title in search engine results, in link previews and on the browser tab, in place of the entry's title. The page itself still shows its title. Use it for a title written for search, such as "Rye bread in three days" for a post called "Rye". Left empty, the title is used.
-- **Search description**: shown under the title in search engine results and in link previews on social networks, up to 300 characters. Left empty, Kestello uses the excerpt, or the first lines of the text. On a page built from blocks, that is the text every visitor sees; blocks shown only to signed-in people, to some roles or for a limited time are left out.
-- **Sharing image**: the picture shown when someone shares a link to the entry on a social network or in a chat. Left empty, the featured image (the first image field of the type) is used. Pages have no image field by default, so choose a sharing image to give a page a picture in link previews.
-- **Canonical address**: only for text you first published somewhere else, such as an article you also wrote on Medium. Enter the full address there, starting with `https://`. Search engines then list that address instead of this page, and the entry is left out of the sitemap. Leave it empty for everything else: every page already names its own address.
-- **Hide from search engines**: the entry stays public, but it is left out of the sitemap and search engines are asked not to list it.
-
-### Checks while you edit
-
-The **Checks** tab of the visual editor also looks at these fields as you type, before you save:
-
-- a title, or search title, longer than about 60 characters, which search results cut off;
-- no search description and no excerpt, so search engines pick lines from the page themselves;
-- a search description longer than about 160 characters;
-- a page hidden from search engines;
-- a canonical address that sends search engines to another page.
-
-They are advice: you can publish with any of them.
-
-### Titles and the default image for the whole site
-
-**Site → Settings → Search and sharing** sets how every page's title is written:
-
-- **Page titles**: the pattern for every page, `{title} {sep} {site}` to begin with, which gives "Rye - Bakery". `{title}` is the page's title, or its search title when it has one. `{site}` is the site name, `{tagline}` the tagline and `{sep}` the separator.
-- **Home page title**: the pattern for the home page, `{site}` to begin with. For "Bakery - Bread, daily." use `{site} {sep} {tagline}`.
-- **Separator**: what `{sep}` becomes, such as `-`, `|` or `·`.
-- **Default sharing image**: the picture in link previews of pages that have no sharing image and no featured image, such as your logo.
-
-When a placeholder is empty, such as a tagline you never set, its separator is left out too, so a title never ends in a stray `-`. The admin keeps its own titles.
-
-### Who is behind the site
-
-The same tab tells search engines who runs the site, for the panel some of them show next to results:
-
-- **The site belongs to**: an organization or business, or a person.
-- **Name**: left empty, the site name is used.
-- **Logo or photo**: a square logo for an organization, a photo for a person, at least 112 pixels wide.
-- **Profiles on other sites**: one address per line, such as your LinkedIn, Mastodon or GitHub page. Only addresses starting with `https://` or `http://` are used.
-
-### What search engines get
-
-Without anything to set up, every public page gives search engines:
-
-- its title, description, canonical address and sharing picture, for search results and link previews;
-- a description of the page in schema.org terms (JSON-LD): the site and who runs it, the page, an article with its author and dates for posts, and the trail of pages leading to it;
-- a place in the sitemap at `/sitemap.xml`, which `robots.txt` points to.
-
-Pages hidden from search engines, and every page while the whole site is hidden, get none of the description and stay out of the sitemap.
-
-To hide the whole site from search engines while you build it, use **Hide the site from search engines** on the **Reading** tab of **Site → Settings**.
-
 ## The home page
 
 By default, your theme decides what visitors see at your site's address, often a list of the newest posts. To show one of your pages instead:
@@ -450,13 +280,9 @@ If the chosen page is later unpublished or trashed, the theme's home page comes 
 
 **"Pick a date in the future to schedule."** The **Publish on** time had already passed when you saved a scheduled entry. Pick a later time, or choose **Publish** to publish now.
 
-**"You can't publish posts; save it as a draft or submit it for review."** Your role may create entries but not publish them. Choose **Submit for review**.
 
-**"Add a title before submitting it for review."** A submission needs a title, like a published entry.
 
-**"Only an entry in review can be sent back."** Someone else already published it or sent it back. Reload the page.
 
-**"This person cannot edit posts."** You tried to assign the entry to someone whose role may not edit that type. Pick someone from the list, or change their role.
 
 **"This post is published; only someone who can publish may change it."** Once an entry is live, only people who may publish can edit it. Contributors see **You can read this post but not change it.**
 
@@ -484,6 +310,9 @@ If the chosen page is later unpublished or trashed, the theme's home page comes 
 
 ## Related pages
 
+- [Reviews and checklists](/guide/reviews): approval before publishing.
+- [Categories and tags](/guide/categories-and-tags): sorting posts.
+- [Search and sharing](/guide/search-and-sharing): titles and descriptions for search engines and shared links.
 - [The visual editor](/guide/visual-editor): adding, arranging and styling blocks.
 - [Media](/guide/media): images and files for your entries.
 - [Menus](/guide/menus): add your pages and categories to the site's navigation.

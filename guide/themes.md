@@ -31,6 +31,8 @@ Administrators have all three.
 2. On the theme you want, choose **Use this theme**.
 3. If you signed in more than ten minutes ago, Kestello asks you to **Confirm your password**. Enter it and continue.
 
+![The Themes screen with the active Base theme.](/screenshots/appearance-themes.png)
+
 You see **The site now uses** followed by the theme's name. Visitors get the new theme straight away: Kestello empties the page cache when the theme changes. If a message says **The site switches to** a theme **with the next page load**, the switch is saved and the next page anyone opens uses it.
 
 ::: warning
@@ -42,6 +44,8 @@ If you want to keep your current look and try a variation of it, make a new them
 ## Change colours, fonts and shapes
 
 **Appearance → Styles** shows the settings the active theme offers, with a live preview of your real site next to them. Nothing changes for visitors until you choose **Publish**. You can reach the same screen from the active theme's card with **Change its styles**.
+
+![The Styles screen: style presets and colour settings on the left, a preview of the site on the right.](/screenshots/appearance-styles.png)
 
 What you see in the left column depends on the theme. Base, for example, offers groups such as **Enamel**, **Wall and text**, **Type** and **Shape and rhythm**. If a theme offers no settings, the screen says **This theme declares no styles to change (no styles.json).**
 
@@ -107,6 +111,8 @@ Kestello checks custom CSS before it publishes it, so that it cannot run scripts
 Comments (`/* ... */`) are allowed.
 
 ## Change page layouts: templates, parts and patterns
+
+![The Templates screen with the Templates, Parts and Patterns tabs.](/screenshots/appearance-templates.png)
 
 **Appearance → Templates** holds the block layouts of the active theme. Blocks are the same building pieces you use in the content editor (headings, text, images, columns and so on). The screen has three tabs:
 

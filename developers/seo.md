@@ -2,7 +2,7 @@
 
 This page covers what Kestello tells search engines about each page, and the hooks a plugin or theme uses to change it: the head tags, the structured data (JSON-LD), links to other languages and the sitemap. Read it before writing an SEO plugin, or when a theme needs something search engines should see.
 
-Site owners set titles, descriptions and the rest in the admin; that side is in the guide under [Search and sharing](/guide/content#search-and-sharing).
+Site owners set titles, descriptions and the rest in the admin; that side is in the guide under [Search and sharing](/guide/search-and-sharing).
 
 ## What every public page gets
 

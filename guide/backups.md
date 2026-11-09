@@ -33,6 +33,8 @@ A database-only backup is smaller and quicker. When you restore it, your files s
 4. Optionally write a **Note**, such as "before the redesign". It is shown next to the backup in the list, and makes it easier to find the right one later.
 5. Choose **Back up**.
 
+![The Backups screen: the automatic backup schedule and the list of backups with Restore, download and delete.](/screenshots/backups.png)
+
 When it is done you see **The backup is ready.** and the backup appears at the top of the list. Large sites with many uploads can take several minutes; keep the page open until it finishes.
 
 The list shows, for each backup:

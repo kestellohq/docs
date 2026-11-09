@@ -8,6 +8,8 @@ You need the permission **Set up webhooks that send site events to other service
 
 The receiving service gives you an address to send to. It starts with `https://`.
 
+![The Webhooks screen with Add webhook.](/screenshots/webhooks.png)
+
 1. Go to **System → Webhooks** and click **Add webhook**.
 2. Give it a **Name** you will recognise later, such as "Netlify rebuild".
 3. Paste the **Address**.

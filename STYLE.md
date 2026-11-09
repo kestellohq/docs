@@ -40,3 +40,11 @@ Headings are sentence case ("Restore a backup", not "Restore A Backup") and say 
 - Commands go in `bash` code blocks, prefixed with nothing (no `$`). Output, when shown, goes in a separate `text` block.
 - Use tables for reference material (settings, commands, fields), not for steps.
 - Use `::: tip` for a helpful shortcut, `::: warning` for something that can lose data or lock someone out, `::: danger` only for things that cannot be undone.
+
+## Screenshots
+
+- Show the screen the reader is about to use, once, where the task starts: after the first paragraph of the section, or before a lead-in that ends with a colon. Not one per step.
+- Take them with the scripts in `tools/screenshots/` from the sample bakery site, never by hand, so they can be taken again after a release. See `tools/screenshots/README.md`.
+- Alt text says what the picture shows, with the labels a reader will look for: "The Backups screen: the schedule at the top and the list of backups below it." Not "Screenshot".
+- When the text explains a screen part by part, mark the parts with numbers (`mark()`) and use the same numbers in a list under the picture.
+- The text must make sense without the picture. Never write "click the button shown above".

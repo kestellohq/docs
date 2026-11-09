@@ -15,7 +15,11 @@ Editors and administrators can build forms and read submissions. The permission 
 3. Under **Start with**, choose **A contact form** (name, email and message fields, ready to use) or **Almost nothing** (one field to build on).
 4. Choose **Create**. The form opens in the form builder.
 
+![The Forms screen listing the Contact form, whether it is open and how many submissions it received.](/screenshots/forms-list.png)
+
 ## Add and change fields
+
+![The form editor: Add a field on the left, the form in the middle and the selected field's settings on the right.](/screenshots/forms-editor.png)
 
 The form builder has three parts:
 
