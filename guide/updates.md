@@ -2,14 +2,15 @@
 
 This page covers updating plugins, themes and Kestello itself, and going back afterwards. Every update with code follows the same safe path: a database backup first, a short maintenance page for visitors, a check of the site on the new version, and an automatic return to the old version if the check fails. If the server stops the update halfway, the site puts itself back on the next visit. Read it before your first update, and keep the last part in mind for the rare case where going back does not finish.
 
-Kestello looks for new versions of itself and shows them on **Site → Updates**, where you can review and apply one. For plugins and themes it does not look yet: you get the new zip from whoever publishes the plugin or theme, and upload it.
+Kestello looks for new versions of itself, and of plugins and themes that say where their updates are published, and shows them on **Site → Updates**, where you can review and apply one. For other plugins and themes, you get the new zip from whoever publishes it, and upload it.
 
 ## Who can update
 
 | What | Permission needed | Who has it out of the box |
 |---|---|---|
 | Plugins | *Install, update, activate, deactivate and delete plugins* | **Administrator** |
-| Kestello itself | *Update Kestello itself* | **Administrator** |
+| Kestello itself | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
+| Plugins and themes from their publishers ([below](#from-the-publisher)), and their license keys | *Update Kestello, and plugins and themes from their publishers* | **Administrator** |
 | Themes with code | Someone who can run commands on the server | |
 
 Uploading and applying an update also asks you to confirm your password if you have not done so in the last 10 minutes.
@@ -103,12 +104,51 @@ php bin/cms package:update acme-shop-1.3.0.zip
   Updated acme-shop 1.2.0 → 1.3.0. Backup: …
 ```
 
+## Updates from the publisher {#from-the-publisher}
+
+Some plugins and themes say where their new versions are published. For those, you don't need to download and upload a zip: Kestello looks for new versions every 12 hours and lists them under **Site → Updates**, in the **Plugins and themes** table. The **Updates** column says, for each one:
+
+- **By upload**: the plugin or theme does not say where its updates come from. Update it by uploading the new version, as above.
+- **1.3.0 available**: a new version is out. Choose **Review** in that row.
+- **Up to date, checked 2 hours ago**: there is nothing new.
+- **Needs a license key**: it is a paid plugin or theme, and Kestello needs your license key to look for updates. See [Add a license key](#license-key).
+- A message such as "The license key for Acme Shop was refused: Your license expired on 1 March." with a **Renew** link: see [If something goes wrong](#if-something-goes-wrong).
+- **2.0.0 needs Kestello ^0.2**: a newer version is out, but it needs a newer Kestello. Update Kestello first.
+
+Choose **Check now** above the table to look again without waiting.
+
+### Update from the Updates screen
+
+1. Open **Site → Updates**.
+2. In the row that says **1.3.0 available**, choose **Review**. Kestello downloads the new version and checks it. Nothing changes on the site yet.
+3. The box is titled **Update Acme Shop to 1.3.0?**. Read the release notes and the signature line. The signature must be from the same publisher as the version you have now.
+4. If a box titled **This update cannot be applied** appears, read its lines. Nothing has changed; see [If something goes wrong](#if-something-goes-wrong).
+5. Choose **Update to 1.3.0**. Wait; do not close the box while it works.
+
+The update runs exactly as described in [What happens during an update](#what-happens): a backup first, a check of the site, and the old version back by itself if anything is wrong.
+
+### Add a license key {#license-key}
+
+A paid plugin or theme needs the license key you got when you bought it.
+
+1. Open **Site → Updates**.
+2. In its row, choose **Add license key**.
+3. Paste the key and choose **Save and check**.
+
+Kestello saves the key and looks for updates with it at once. The key is stored encrypted, and from then on the row shows only its last four characters, as in **Key …4f2a**. It is sent only to that plugin's or theme's own update server, never anywhere else. To change or remove it, choose **Key …4f2a**, then paste a new key and choose **Save and check**, or choose **Remove key**.
+
+From the command line, `package:license` reads the key from what you type, so it does not stay in the shell history:
+
+```bash
+php bin/cms package:license plugin:acme-shop
+```
+
 ## Update a theme
 
 How you update a theme depends on what kind it is:
 
 - **Themes made in the admin, or imported as a zip from Appearance → Themes** (themes without code): import the new zip under **Appearance → Themes** with **Import** and turn on **Replace an installed theme with the same name**. You see **Mytheme was updated.** This replaces the theme's files directly, without the backup and check described above. See [Themes](/guide/themes).
-- **Themes with code** (from a theme developer): the admin cannot update these. Someone with access to the server runs:
+- **Themes with code** (from a theme developer): if the theme says where its updates come from, update it on **Site → Updates** as described in [Updates from the publisher](#from-the-publisher). Otherwise the admin cannot update it, and someone with access to the server runs:
 
   ```bash
   php bin/cms package:update acme-theme-2.0.0.zip
@@ -285,6 +325,18 @@ If a plugin was suspended along the way, see [When a plugin breaks the site](/gu
 **"The plugin acme-extras stopped running: …"** The update made another plugin stop working, so it was rolled back. That plugin probably needs an update for the new version too.
 
 **"/ answered 500: …"** The home page showed a server error on the new version, so it was rolled back. Send the message to the publisher.
+
+**"Acme Shop needs a license key to look for updates."** Add it as described in [Add a license key](#license-key).
+
+**"The license key for Acme Shop was refused: …"** The publisher's server did not accept the key, and its own reason follows. A **Renew** link appears when the publisher gave one on its own website. Check the key, or renew the license, then choose **Save and check** again.
+
+**"The update feed of Acme Shop could not be reached: …"** Your server could not reach the publisher's update server. It may be down for a while; the next check tries again. Some hosts block outgoing connections; ask your host to allow HTTPS to the publisher's address.
+
+**"The update feed is for another package, not the plugin "acme-shop"."** The publisher's server answered for another plugin. Tell the publisher.
+
+**"Acme Shop 1.3.0 is not signed by the publisher of the installed version (key …). A developer can replace it from the command line."** The new version was signed by someone other than the publisher of the version you have. Kestello refuses it, even when that other publisher is one your site trusts, so nobody can replace a plugin they did not make. Ask the publisher. If they moved to a new signing key, a release signed with their old key has to announce the new one first.
+
+**"The download of Acme Shop 1.3.0 does not match its published checksum, so it was thrown away. Try again later."** The file that arrived is not the one published. Nothing changed. Choose **Review** again later.
 
 ## Next
 

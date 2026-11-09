@@ -140,6 +140,34 @@ A list of `.css` files added to every page rendered in the theme. Each entry is 
 
 The contracts the package rebinds, as class names, for example `["Kestello\\Contracts\\Mail\\Transport"]`. The `mail-log` example plugin uses it. The list is shown to the site owner before installing. It does not do the rebinding: the provider does that in `register()`.
 
+### `updates`
+
+Where new versions of the package are published. Without it, the package is updated by uploading a zip. With it, sites look for new versions every 12 hours (`app.updates.check_every`) and offer them on **Site → Updates**. See [Publish updates](/developers/packaging#publish-updates).
+
+```json
+"updates": { "github": "acme/events" }
+```
+
+```json
+"updates": { "url": "https://updates.acme.test/kestello/acme-events.json", "license": true }
+```
+
+| Key | Rules |
+|---|---|
+| `github` | A GitHub repository, `owner/name`. Its releases are the versions. Takes no `license`. |
+| `url` | An `https` address on port 443, with no user name, password or `#fragment`: your update feed. |
+| `license` | `true` when the feed needs a license key. The site's administrator enters it; Kestello sends it only to the feed's host. Default `false`. |
+
+Exactly one of `github` and `url`. Any other key is refused.
+
+### `signing_keys`
+
+Key ids (16 hexadecimal characters, as `package:keygen` prints them) that may sign the next versions of this package, besides the key that signed this one. Sites refuse an update from the admin unless the key that signed the installed version, or one it listed here, signed it. List your new key here in a release signed with your old key before you switch keys. At most 10.
+
+```json
+"signing_keys": ["3f8a1c0d9b7e6a52"]
+```
+
 ### `permissions`
 
 `permissions` is an object of lists. It is shown to the site owner before the package is installed, on the **Plugins** screen and by `plugin:install`. Where Kestello can enforce a permission at run time, it does:

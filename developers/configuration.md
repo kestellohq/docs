@@ -124,6 +124,8 @@ Every update of a plugin, theme or Kestello itself checks the site after the new
 | `app.updates.health` | string | `'auto'` | `auto`: a fresh PHP process when `proc_open` works, otherwise an HTTP request. `process`: always the PHP process. `http`: always the HTTP request. |
 | `app.updates.php` | string or null | `null` | The PHP command line binary for the process check, such as `/usr/bin/php8.5`. `null` finds it from the running PHP. |
 | `app.updates.health_url` | string or null | `null` | The address at which the server can reach its own site for the HTTP check. `null` uses `app.url`. Set it when the server cannot reach its public address, for example `http://127.0.0.1`. |
+| `app.updates.check_every` | int | `12` | Hours between checks of the update sources plugins and themes name (`updates` in their manifest). `0` turns the scheduled check off; **Check now** still works. |
+| `app.updates.prereleases` | bool | `false` | Also offer plugin and theme pre-releases, such as `1.3.0-beta.1`. |
 
 ### Server-side rendering
 
