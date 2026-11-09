@@ -13,6 +13,7 @@ const guide = [
             { text: 'Installing Kestello', link: '/guide/installation' },
             { text: 'Your first hour', link: '/guide/first-steps' },
             { text: 'Moving from WordPress', link: '/guide/import-wordpress' },
+            { text: 'Moving from another site', link: '/guide/moving-from-other-sites' },
             { text: 'Going live', link: '/guide/going-live' },
         ],
     },
@@ -34,6 +35,7 @@ const guide = [
     {
         text: 'Running the site',
         items: [
+            { text: 'Settings', link: '/guide/settings' },
             { text: 'Themes and design', link: '/guide/themes' },
             { text: 'People and roles', link: '/guide/people' },
             { text: 'Plugins', link: '/guide/plugins' },
@@ -45,6 +47,7 @@ const guide = [
             { text: 'Troubleshooting', link: '/guide/troubleshooting' },
             { text: 'Translating Kestello', link: '/guide/translating' },
             { text: 'Public demo', link: '/guide/demo' },
+            { text: "Words you'll meet", link: '/guide/glossary' },
         ],
     },
 ];
