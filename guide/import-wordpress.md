@@ -1,10 +1,99 @@
 # Moving from WordPress
 
-This page covers bringing a WordPress site into Kestello: what comes over, how to run the import, how to read its report, and what to do when something is left behind. Read it when you have a WordPress site to replace with Kestello, your own or one you are moving for a client, before you switch the domain over.
+You have a WordPress site and you want it here: the posts, the pages, the pictures, the menus, and the old addresses that Google and your customers already know. Kestello reads the export file WordPress makes and rebuilds the site from it, with a redirect from every old address to its new one.
 
-The import happens under **Site → Import**. Administrators can use it. To let another role import, give it the permission *Import a site from WordPress* under **People → Roles**.
+Your WordPress site is not changed by any of this. Kestello only reads the export and downloads the files it lists, so the old site keeps running until you decide to switch, and you can import as often as you like.
+
+::: tip How long it takes
+Exporting from WordPress takes a minute. The import itself usually takes minutes, not hours: most of the time goes on downloading pictures, so a site with many images takes longer than one with many posts. Leave yourself an afternoon for checking the result and switching over.
+:::
+
+## Before you start
+
+You need:
+
+- **An administrator account on the WordPress site.** Only administrators see **Tools → Export** there.
+- **An administrator account here**, or a role with the permission *Import a site from WordPress* under **People → Roles**.
+- **The WordPress site still online.** The export file holds your text, not your pictures; Kestello downloads those from the old site. If it is already gone, see [Large sites and old sites that are offline](#large-sites-and-old-sites-that-are-offline).
+
+Then:
+
+1. In WordPress, open **Tools → Export**, choose **All content** and choose **Download Export File**. You get an `.xml` file, usually in your **Downloads** folder, named after your site and the date.
+2. Here, make a backup under **Site → Backups**, so you can go back to how this site was before the import.
+3. Write down the five or ten pages people use most on the old site: the home page, opening hours, the contact page, your most-read post. You will check them after the import.
+
+## Run the import
+
+1. Open **Site → Import**.
+2. Under **WordPress export file**, choose the file you downloaded, or drop it on the field, then choose **Read the file**.
+
+   ![The Import screen: two steps to export from WordPress, then a field to choose or drop the export file, and a Read the file button under it.](/screenshots/import.png)
+
+3. Nothing is imported yet. You now see what will come over: how many posts and pages, files, categories and tags, menus and redirects, and how many are skipped. Under the table, each reason for skipping is listed with a few examples, such as **In the WordPress trash.** or **This site has no content type "portfolio".**
+
+   ![The review before importing Margit's Bakery: 12 posts and pages, 1 file, 8 categories and tags, 1 menu and 21 redirects to import, two authors to match, and the two options, with Import and Cancel at the bottom.](/screenshots/import-review.png)
+
+4. Under **Authors**, choose whose name each WordPress author's posts carry here. People who already have an account here are matched by email address first, then by username. Anyone without a match is credited to **Me, the person importing** until you choose someone else.
+5. Under **Options**, leave both on unless you have a reason not to:
+   - **Copy files from the old site** brings the pictures and documents into the media library. Turn it off only when the old site is offline; images then keep pointing at it.
+   - **Redirect old addresses** sends visitors and search engines from each old address to the same page here. A redirect never hides a page of this site: it only applies where nothing else lives at that address.
+6. Choose **Import**. If this is not the site you meant, choose **Cancel**: nothing has changed.
+
+A progress bar shows how far it is and which part it is on: categories and tags, files, posts and pages, links between posts, menus, then redirects. To stop it, choose **Stop**. What was imported so far stays.
+
+::: warning Keep the screen open on shared hosting
+On a site without a background worker (most shared hosting), the import runs while the **Site → Import** screen is open. Closing it pauses the import, and opening it again carries on where it stopped. When a background worker runs, you can close the screen and come back later. **System → Background jobs** shows whether one runs.
+:::
+
+## Read the report
+
+When the import is done, the heading tells you how it went:
+
+- Your site's name followed by **is here**: everything that could come over did.
+- **Imported, with some things left behind**: most of it came over, and the items that didn't are listed with the reason next to each.
+- **The import was stopped**: you chose **Stop**. **Try again** carries on with the rest.
+- **The import stopped by itself**: something went wrong that was not about one item, such as the server running out of disk space. The reason is shown. Fix it, then choose **Try again**.
+
+The table counts, for each kind of item, what was **New**, **Updated**, **Unchanged**, **Kept as edited**, **Skipped** and **Failed**. Under it:
+
+- **Not imported** lists each item that failed, with the reason, such as **The old site no longer has this file (404).**
+- **Kept as edited here** lists items you changed on this site after an earlier import (see [Import the same site again](#import-the-same-site-again)).
+- **Changed on the way** lists posts that came over with a change worth a look, such as a new address or being made private, and how often something in a post could not be carried over exactly, such as **An embed from twitter.com became a link.**
+- **Skipped** lists what was left out and why.
+
+Failed items are not lost for good. When the cause is fixed, for example when the old site is back online, choose **Try again**. Posts that used a file or page that failed are updated to use it once it comes over, including their featured image, unless you edited them here in between.
+
+Earlier imports stay listed under **Earlier imports**, with their report. **Forget** removes an import and its report from the list. What it imported stays.
+
+## Check the imported site
+
+The import gets the content across; only you know what the site should look like. Before you tell anyone about the new site, go through this list:
+
+1. **Open the pages you wrote down.** Compare each with the old site: the text, the pictures, the links.
+2. **Look at a few posts of each kind**: an old one, a recent one, one with a gallery, one with a video.
+3. **Replace plugin shortcodes.** Anything in square brackets, such as `[contact-form-7 id="12"]`, was a plugin's feature in WordPress and is plain text here. The report lists each one under **Changed on the way**, as **The shortcode [contact-form-7] belongs to a WordPress plugin: kept as text.** Replace each with what Kestello has, for example a [form](/guide/forms).
+4. **Check the menus** under [Menus](/guide/menus). Links to posts, pages and categories point at the imported ones; links to anything that was skipped need a new target.
+5. **Try a few old addresses.** Type an old address after this site's address, for example `/2023/03/baking-through-the-night/`, and check that it lands on the right post. Every redirect is listed under [Redirects](/guide/redirects).
+6. **Pick the look** under [Themes and design](/guide/themes). The import brings content, not the WordPress theme.
+
+## Switch over to Kestello
+
+When the new site looks right, move your domain to it. Do it in this order, so your site stays reachable the whole time:
+
+1. **Keep the old site running.** Don't cancel the WordPress hosting yet.
+2. **Point the domain at this site.** In your domain's DNS settings, or your host's control panel, change where the domain points. Your host can tell you the exact value. The change can take from a few minutes to a day to reach everyone; until then some visitors still see the old site, which is why it stays online.
+3. **Turn on HTTPS** for the domain in your host's control panel, then make sure **Site address** on the **General** tab of **Site → Settings** is the real domain and starts with `https://`.
+4. **Let search engines in.** If you hid the site while building it, turn off **Hide the site from search engines** on the **Reading** tab of **Site → Settings**.
+5. **Try the old addresses again**, this time on the real domain.
+6. **Wait a few weeks, then cancel the old hosting.** Keep the WordPress export file and a backup of the old site somewhere safe, in case you ever need something from it.
+
+::: tip Will I lose my place in Google?
+The redirects tell search engines that each page has moved, not gone, so your pages keep their place. It is normal to see the numbers move a little for a few weeks while search engines visit the new addresses.
+:::
 
 ## What comes over
+
+The details, for when you want to know exactly what to expect.
 
 | From WordPress | Here |
 |---|---|
@@ -18,15 +107,17 @@ The import happens under **Site → Import**. Administrators can use it. To let 
 
 Text written in the block editor becomes Kestello blocks: paragraphs, headings, lists, quotes, images, galleries, buttons, columns, groups, embeds from YouTube and Vimeo, and the rest of the common blocks. Posts written in the classic editor are converted the same way. When a block cannot be rebuilt here without losing something, its HTML is kept as it was, so no text is lost. Links inside posts that pointed at the old site are changed to point at the imported pages and files.
 
-Some things do not come over, and the import says so each time:
+### What stays behind
 
-- **Comments.** Kestello has no visitor comments. The review step shows how many the export holds.
+The review and the report list each of these every time, so nothing disappears without you knowing:
+
+- **Comments.** Kestello has no visitor comments. The review shows how many the export holds.
 - **Post types and taxonomies this site does not have.** A plugin's custom post type, such as a portfolio, is skipped unless this site has a content type with the same name. The same goes for taxonomies other than categories and tags.
 - **Passwords on posts.** A password-protected post becomes private, since Kestello has no post passwords.
-- **Plugin features inside posts.** A shortcode such as `[contact-form-7]` stays as text, so you can find it and replace it with a Kestello form. Scripts and embedded frames from other sites are left out. An embed from a site other than YouTube or Vimeo becomes a link.
+- **Plugin features inside posts.** A shortcode such as `[contact-form-7]` stays as text, so you can find it and replace it. Scripts and embedded frames from other sites are left out. An embed from a site other than YouTube or Vimeo becomes a link.
 - **Things WordPress keeps for itself.** Revisions, items in the WordPress trash, automatic drafts, theme settings and widgets, and the users' passwords.
 
-A few things change on the way:
+### What changes on the way
 
 - Addresses are written in plain letters: a post at `/здраво/` is at `/zdravo` here, and the old address redirects to it.
 - A post whose address is already taken by Kestello, such as `admin`, gets a number added (`admin-2`). The report lists each one.
@@ -35,60 +126,9 @@ A few things change on the way:
 - A video in a **Media & Text** block becomes a link next to the text, and the video behind a **Cover** is left out, since covers here take an image.
 - Social icons become a list of links.
 
-## Before you start
-
-1. In WordPress, open **Tools → Export**, choose **All content** and choose **Download Export File**. You get an `.xml` file.
-2. Keep the WordPress site online while you import. The files in its media library are downloaded from it.
-3. Make a backup of this site under **Site → Backups**, so you can go back to how it was.
-
-The export file holds the text of your site, not the files. If the old site is already offline, you can still import its files from a copy of its `wp-content/uploads` folder with the command line (see [Large sites and old sites that are offline](#large-sites-and-old-sites-that-are-offline)).
-
-## Run the import
-
-1. Open **Site → Import**.
-2. Under **WordPress export file**, choose the file you downloaded, then choose **Read the file**. Nothing is imported yet.
-3. Check what will come over. The table lists, for posts and pages, files, files linked from posts, categories and tags, menus and redirects, how many will be imported and how many are skipped. Under it, each reason for skipping is listed with a few examples, such as **In the WordPress trash.** or **This site has no content type "portfolio".**
-4. Under **Authors**, choose whose name each WordPress author's posts carry here. People are matched by email address first, then by username. Authors with no match are credited to **Me, the person importing**. To credit them to someone else, choose that person in the list.
-5. Under **Options**, decide:
-   - **Copy files from the old site**: on by default. Turn it off when the old site is offline. Images then keep pointing at the old site.
-   - **Redirect old addresses**: on by default. A redirect only applies where nothing else lives at that address, so it never hides a page of this site.
-6. Choose **Import**.
-
-![The Import screen: the steps to export from WordPress and a field to upload the export file.](/screenshots/import.png)
-
-A progress bar shows how far it is and which part it is on: categories and tags, files, posts and pages, links between posts, menus and redirects.
-
-How long it takes depends mostly on how many files are downloaded.
-
-::: warning
-On a site without a background worker (most shared hosting), the import runs while the **Site → Import** screen is open. Closing it pauses the import; opening it again carries on where it stopped. When a background worker runs, you can leave the screen. **System → Background jobs** shows whether one runs.
-:::
-
-To stop an import, choose **Stop**. What was imported stays.
-
-## Read the report
-
-When the import is done, you see one of these:
-
-- Your site's name followed by **is here**: everything that could come over did.
-- **Imported, with some things left behind**: some items could not be imported. The reason is next to each.
-- **The import was stopped**: you chose **Stop**. **Try again** carries on with the rest.
-- **The import stopped by itself**: something went wrong that was not about one item, such as the server running out of disk space. The reason is shown. Fix it, then choose **Try again**.
-
-The table counts, for each kind of item, what was **New**, **Updated**, **Unchanged**, **Kept as edited**, **Skipped** and **Failed**. Under it:
-
-- **Not imported** lists each item that failed, with the reason, such as **The old site no longer has this file (404).**
-- **Kept as edited here** lists items you changed on this site after an earlier import (see [Import the same site again](#import-the-same-site-again)).
-- **Changed on the way** lists posts that came over with a change worth knowing, such as a new address or being made private, and how often something in a post could not be carried over exactly, such as **An embed from twitter.com became a link.**
-- **Skipped** lists what was left out and why.
-
-To try the failed items again, for example after the old site is back online, choose **Try again**. Posts that used a file or page that failed before are updated to use it once it comes over, including their featured image, unless you edited them here in between.
-
-Earlier imports are listed under **Earlier imports**, with their report. **Forget** removes an import and its report from the list. What it imported stays.
-
 ## Import the same site again
 
-You can import the same WordPress site again, for example to bring over posts written since the first import. Running it again updates instead of copying:
+You can import the same WordPress site again, for example to bring over posts written on the old site while you were building the new one. Running it again updates instead of copying:
 
 - Posts, pages, categories, files and menus that came over before are updated with any changes from WordPress, and left alone when nothing changed. Files are not downloaded again.
 - Anything you changed on this site since the last import is kept as you left it, and listed under **Kept as edited here**. Publishing a scheduled post does not count as a change.
@@ -97,19 +137,22 @@ You can import the same WordPress site again, for example to bring over posts wr
 - Anything you deleted on this site is not brought back.
 - New posts and files are added.
 
-Make a new export in WordPress each time: Kestello recognises the site by its address, not by the file.
+Make a new export in WordPress each time. Kestello recognises the site by its address, not by the file.
 
 ## Large sites and old sites that are offline
 
-The upload is limited by the server's largest upload (shown under the file field as **Up to** a size). For a larger export, or to take the files from a copy of the uploads folder, use the command line on the server. Copy the export, and the `wp-content/uploads` folder if the old site is offline, to the server, then run:
+The largest file you can upload is set by your server and shown under the file field, for example **Up to 2 MB.** A site with a few hundred posts usually fits. For a larger export, or to take the pictures from a copy of the uploads folder, use the command line on the server. Copy the export, and the `wp-content/uploads` folder if the old site is offline, to the server, then run:
 
 ```bash
 bin/cms import:wordpress export.xml --uploads=/path/to/uploads
 ```
 
-It shows the same review, asks before importing, and prints the same report. Files are taken from the uploads folder when they are there, and downloaded from the old site otherwise. The options are listed in [Command line](/developers/cli#import).
+It shows the same review, asks before importing, and prints the same report. Files are taken from the uploads folder when they are there, and downloaded from the old site otherwise. The options are listed in [Command line](/developers/cli#import). If you don't have command-line access, your host or developer can run it for you.
 
 ## If something goes wrong
+
+**This file can't be used here. Choose one of these: XML.**
+The file you chose is not an `.xml` file. The WordPress export always is: look for the newest `.xml` file in your **Downloads** folder.
 
 **This is not a WordPress export. Make one in WordPress under Tools → Export → All content.**
 The file is not the one WordPress makes under **Tools → Export**. Some backup plugins make other kinds of `.xml` files; use the export from **Tools → Export**.
@@ -135,9 +178,9 @@ A post or file made the server stop three times in a row, usually by running out
 **Another import is running. Wait for it to finish, or stop it.**
 Only one import runs at a time. Open **Site → Import** to see it.
 
-## Next steps
+### Still stuck?
 
-- Check the imported posts and pages, and replace any shortcodes that stayed as text.
-- Pick or adjust a theme under [Themes and design](/guide/themes).
-- Review the menus under [Menus](/guide/menus) and the redirects under [Redirects](/guide/redirects).
-- When it looks right, point the domain at this site.
+- **The problem is on the WordPress side**, for example you can't find **Tools → Export**, the export is empty, or the old site is down: your old host, or whoever built the WordPress site, can help.
+- **The problem is with the import here**: see [When you ask for help](/guide/troubleshooting#when-you-ask-for-help) for what to include, so someone can help on the first reply.
+
+Next up: [Themes and design](/guide/themes), to give the imported content its new look.

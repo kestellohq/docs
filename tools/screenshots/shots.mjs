@@ -1,5 +1,6 @@
 // Every screenshot the docs use, in one list. Each entry opens a screen in the sample bakery
 // site and says what to capture. Names are the file names under public/screenshots/.
+import { fileURLToPath } from 'node:url';
 import { BASE, mark, settle } from './browser.mjs';
 
 const go = (path) => async (page) => {
@@ -98,7 +99,32 @@ export const SHOTS = [
     { name: 'settings', open: go('/admin/settings'), target: () => 'content' },
     { name: 'updates', open: go('/admin/system/updates'), target: () => 'content' },
     { name: 'backups', open: go('/admin/system/backups'), target: () => 'content' },
-    { name: 'import', open: go('/admin/system/import'), target: () => 'content' },
+    {
+        name: 'import',
+        open: async (page) => {
+            await go('/admin/system/import')(page);
+            const leftOpen = page.getByRole('button', { name: 'Cancel', exact: true }); // a review left open shows instead of the upload
+            if (await leftOpen.isVisible()) await leftOpen.click();
+            await page.locator('.k-file').waitFor();
+        },
+        target: () => 'content',
+    },
+    {
+        // A small WordPress export of the bakery's "old site", read but not imported
+        name: 'import-review',
+        open: async (page) => {
+            await go('/admin/system/import')(page);
+            const leftOpen = page.getByRole('button', { name: 'Cancel', exact: true }); // from a run that stopped halfway
+            if (await leftOpen.isVisible()) await leftOpen.click();
+            await page.locator('.k-file__input').setInputFiles(fileURLToPath(new URL('./fixtures/margit-bakery.WordPress.xml', import.meta.url)));
+            await page.getByRole('button', { name: 'Read the file' }).click();
+            await page.getByRole('button', { name: 'Import', exact: true }).waitFor();
+            await page.setViewportSize({ width: 1280, height: 1500 }); // the whole review, down to the Import button
+            await page.mouse.move(0, 0);
+        },
+        target: () => 'content',
+        after: (page) => page.getByRole('button', { name: 'Cancel', exact: true }).click(),
+    },
     { name: 'plugins', open: go('/admin/system/plugins'), target: () => 'content' },
 
     // System

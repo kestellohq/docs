@@ -1,6 +1,6 @@
 # Menus
 
-This page covers building the menus visitors use to find their way around your site: creating a menu, adding pages, posts, categories and your own links, nesting items, and putting the menu in the places your theme offers. Read it when you set up a new site, or when a page you added to a menu does not show up.
+Menus are how visitors find their way around your site: the links across the top, and often a few more at the bottom. You build each menu from your pages, posts and categories, add your own links, nest items under each other, and put the menu where your theme offers a place for it. If a page you added doesn't show up, see [If something goes wrong](#if-something-goes-wrong).
 
 ## How menus work
 

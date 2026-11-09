@@ -1,6 +1,8 @@
 # Pages, posts and other content
 
-Everything you write in Kestello is an **entry**: a page, a post, or an entry of a content type your site adds, such as an event. This page covers the life of an entry: creating it, saving and publishing it, scheduling it, going back to an earlier version, and its address.
+Most days in Kestello you'll be writing pages and posts: a new opening-hours page, a post about Saturday's rye bread, a correction to the About page. This page follows one of them from the first draft to the live site and back: creating it, publishing or scheduling it, finding an older version, and changing its address.
+
+Kestello calls each page, post or other item an **entry**, and you'll see that word on a few buttons.
 
 ![The list of posts on a bakery site, with each post's status, author and date.](/screenshots/content-posts.png)
 
@@ -10,29 +12,10 @@ Everything you write in Kestello is an **entry**: a page, a post, or an entry of
 | Have an editor approve entries before they go live | [Reviews and checklists](/guide/reviews) |
 | Sort posts into sections and keywords | [Categories and tags](/guide/categories-and-tags) |
 | Change what Google and shared links show | [Search and sharing](/guide/search-and-sharing) |
-## Content types
 
-Every piece of content in Kestello is an **entry** of some **content type**. A content type decides which fields an entry has and where its public address lives. Two types are built in:
-
-| Type | What it is for | Where it lives | Main field |
-|---|---|---|---|
-| **Pages** | Standalone pages such as About or Contact. Pages can be nested under each other. | At the top of the site: `/about`, `/about/team` | **Content**, built with the block editor |
-| **Posts** | Dated articles listed on the blog. | Under `/blog`: `/blog/hello-world` | **Content**, a formatted text field, plus **Featured image** and **Excerpt** |
-
-Each type has its own screen under **Content** in the admin menu: **Content → Pages**, **Content → Posts**, and one entry for each type your site adds. Categories and tags (see [Categories and tags](/guide/categories-and-tags)) sit in the same group.
-
-### Your own content types
-
-![System → Content types: the types built here and the ones from the theme and plugins.](/screenshots/content-types.png)
-
-A site can have more types, such as events, team members or products. They come from two places:
-
-- **Built in the admin**, under **System → Content types**. **New content type** asks for a name, then you add the fields it needs. Types built here work like the built-in ones: the editor, search and public pages all follow them.
-- **From the theme or a plugin.** These are listed on the same screen under **From the theme and plugins**. They are defined in code, so you cannot change them in the admin.
-
-Building content types needs the permission *Build content types, fields and taxonomies*, which administrators have. Editors and authors only see the types; they cannot change them.
-
-On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site. Its **Before publishing** card sets what an entry must have before it goes live; see [Before publishing](/guide/reviews#before-publishing).
+::: warning Update changes the live page straight away
+A published page has no separate working copy. Visitors see nothing of your changes while you work, but **Update** puts all of them on the site at once. So finish the change, check it with [Preview](#preview-before-publishing), then choose **Update**. If it turns out wrong, [go back to the earlier version](#go-back-to-an-earlier-version) under **Revisions**.
+:::
 
 ## Find your way around a content list
 
@@ -70,7 +53,7 @@ How you save depends on the status:
 - **Published**: **Update** saves your changes to the live page. **Unpublish (back to draft)** takes it off the site.
 - **Scheduled**: **Update schedule** and **Unpublish (back to draft)**.
 
-There is no separate working copy of a published entry. **Update** changes the live page straight away. If you want to rework a published page without visitors seeing the half-finished state, unpublish it first, or make your changes in a new draft and copy them over.
+**Update** changes the live page straight away (see the note at the top of this page).
 
 If you try to leave the editor with unsaved changes, the browser asks you to confirm.
 
@@ -272,6 +255,32 @@ The chosen page then lives at `/`. Its own address, such as `/welcome`, redirect
 
 If the chosen page is later unpublished or trashed, the theme's home page comes back until you publish it again or pick another.
 
+## Content types
+
+You won't need this section to write pages and posts. Read it when your site needs a new kind of content, such as events or team members.
+
+Every entry belongs to a **content type**. A content type decides which fields an entry has and where its public address lives. Two types are built in:
+
+| Type | What it is for | Where it lives | Main field |
+|---|---|---|---|
+| **Pages** | Standalone pages such as About or Contact. Pages can be nested under each other. | At the top of the site: `/about`, `/about/team` | **Content**, built with the block editor |
+| **Posts** | Dated articles listed on the blog. | Under `/blog`: `/blog/hello-world` | **Content**, built with the block editor, plus **Featured image** and **Excerpt** |
+
+Each type has its own screen under **Content** in the admin menu: **Content → Pages**, **Content → Posts**, and one entry for each type your site adds. Categories and tags (see [Categories and tags](/guide/categories-and-tags)) sit in the same group.
+
+### Your own content types
+
+![System → Content types: the types built here and the ones from the theme and plugins.](/screenshots/content-types.png)
+
+A site can have more types, such as events, team members or products. They come from two places:
+
+- **Built in the admin**, under **System → Content types**. **New content type** asks for a name, then you add the fields it needs. Types built here work like the built-in ones: the editor, search and public pages all follow them.
+- **From the theme or a plugin.** These are listed on the same screen under **From the theme and plugins**. They are defined in code, so you cannot change them in the admin.
+
+Building content types needs the permission *Build content types, fields and taxonomies*, which administrators have. Editors and authors only see the types; they cannot change them.
+
+On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site. Its **Before publishing** card sets what an entry must have before it goes live; see [Before publishing](/guide/reviews#before-publishing).
+
 ## If something goes wrong
 
 **"Add a title before publishing."** You chose **Publish** or **Schedule** on an entry without a title. Drafts may be untitled; published entries may not.
@@ -279,10 +288,6 @@ If the chosen page is later unpublished or trashed, the theme's home page comes 
 **"One field needs attention." or "3 fields need attention."** Some fields are not valid. The editor scrolls to the first one and shows the problem under each field. Required fields are only checked when publishing.
 
 **"Pick a date in the future to schedule."** The **Publish on** time had already passed when you saved a scheduled entry. Pick a later time, or choose **Publish** to publish now.
-
-
-
-
 
 **"This post is published; only someone who can publish may change it."** Once an entry is live, only people who may publish can edit it. Contributors see **You can read this post but not change it.**
 

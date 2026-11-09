@@ -22,6 +22,7 @@ try {
             try {
                 await shot.open(page);
                 await shoot(page, shot.name, shot.target ? shot.target(page) : null);
+                if (shot.after) await shot.after(page); // put the site back for the next shots
                 error = null;
             } catch (e) {
                 error = e;

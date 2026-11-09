@@ -1,6 +1,6 @@
 # Redirects
 
-This page covers sending visitors from addresses that no longer exist to the right place: the redirects Kestello adds by itself when a page moves, redirects you add by hand (for one address or a whole section), the list of addresses visitors asked for that found nothing, and how Kestello stops redirects from going in circles. Read it when you move or rename pages, when you move a site to Kestello from somewhere else, or when old links show "not found".
+When a page moves, its old address shouldn't lead nowhere. A redirect sends visitors, and search engines, from the old address to the new one. Kestello adds one by itself whenever you change a page's address, and you can add your own, for one address or a whole section. It also lists the addresses people tried that found nothing, so you can see which old links still need a home.
 
 ## What a redirect does
 

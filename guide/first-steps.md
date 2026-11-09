@@ -124,5 +124,8 @@ Open **Content → Pages** and create a page. Give it a title, write in the edit
 
 ## What to read next
 
-- [Requirements](/guide/requirements), if Site Health pointed at something about the server.
-- [Installing Kestello](/guide/installation#background-tasks), to set up the cron job if you have not yet.
+- [Pages, posts and other content](/guide/content), to write and publish your first pages.
+- [The visual editor](/guide/visual-editor), to lay them out.
+- [Moving from WordPress](/guide/import-wordpress), if you have an old site to bring over.
+- [Going live](/guide/going-live), the checklist for launch day.
+- [Requirements](/guide/requirements) and [the cron job](/guide/installation#background-tasks), if Site Health pointed at something about the server.

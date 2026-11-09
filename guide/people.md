@@ -1,6 +1,6 @@
 # People, roles and sign-in
 
-This page covers everyone who can sign in to your site: adding accounts, choosing what each person may do, pausing or removing access, and keeping accounts safe with good passwords and two-step sign-in. Read it when you add someone to the site, when a person leaves, or when someone cannot get in.
+Everyone who signs in to your site has an account, and a role that decides what they may do: an editor can publish, a contributor can only write drafts for someone to check. This page shows how to add someone in a minute, choose the right role, pause or remove access when a person leaves, and keep every account safe with a good password and two-step sign-in.
 
 ## Accounts and roles
 
