@@ -22,7 +22,7 @@ A site can have more types, such as events, team members or products. They come 
 
 Building content types needs the permission *Build content types, fields and taxonomies*, which administrators have. Editors and authors only see the types; they cannot change them.
 
-On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site.
+On **System → Content types**, each type's **Public pages** card decides whether entries get public addresses at all. A type with an empty **Address** is for editors only: its entries never appear on the site. Its **Before publishing** card sets what an entry must have before it goes live; see [Before publishing](#before-publishing).
 
 ## Find your way around a content list
 
@@ -158,6 +158,55 @@ The **Overview** shows **Waiting on you** above everything else when there is so
 - **Waiting for review**: other people's entries in review that you may publish.
 
 Each entry is listed once, with when it started waiting on you. Choose its title to open it. When nothing waits, the card isn't shown.
+
+## Before publishing {#before-publishing}
+
+A content type can have a checklist of what its entries must, or should, have before they are published, such as a featured image or at least one category. Nothing is on the list until someone adds it, so the built-in types have none.
+
+### Set up the checklist
+
+1. Open **System → Content types** and the type.
+2. In **Before publishing**, choose **Add a check** and pick one:
+
+   | Check | Done when |
+   |---|---|
+   | **Has an excerpt** | The excerpt is filled in. Only for types with **A short summary field**. |
+   | **Has a featured image** | The type's first image field has an image. |
+   | **Has a term of a taxonomy** | At least one term of the taxonomy you choose, such as a category. |
+   | **Has a minimum number of words** | The text of the entry, the same text site search reads, has at least that many words. |
+   | **Has a search description** | **Search description** under **Search and sharing** is filled in. |
+
+   Plugins can add checks of their own; they appear in the same list.
+3. Set **Level**: **Required** holds publishing back until the check is done, **Recommended** only shows it in the editor.
+4. Choose **Save**.
+
+### In the editor
+
+While a type has a checklist, the editor's sidebar shows a **Before publishing** card under the publish card. It is checked as you type, so you see an item turn done before you save. The top line says how many required items publishing waits for.
+
+Choosing **Publish** or **Schedule** while a required item is not done keeps the entry as it was and names what is missing, for example "Before publishing: Has a featured image." Saving a draft and **Submit for review** always work, so a contributor can hand in an entry for an editor to finish.
+
+The checklist applies when an entry is about to go live. An entry that is already published, or a check added after it was published, does not stop you from saving changes to it. If a check comes from a plugin that is no longer active, it shows as not available and never holds publishing back.
+
+### For developers
+
+Types declared in code get a checklist with `checklist()`, and a plugin can add a check of its own, named after the plugin:
+
+```php
+$cms->content->type('acme-recipe')
+    ->label('Recipe', 'Recipes')
+    ->checklist([
+        ['check' => 'featured_image', 'level' => 'required'],
+        ['check' => 'terms', 'taxonomy' => 'acme-cuisine'],          // recommended
+        ['check' => 'words', 'min' => 150],
+        ['check' => 'acme.tested', 'level' => 'required'],
+    ]);
+
+$cms->content->checks->define('acme.tested', 'Tested in our kitchen',
+    fn (array $entry, array $item): bool => !empty($entry['data']['tested_on']));
+```
+
+A check gets the entry as `['title', 'excerpt', 'data', 'terms' => [taxonomy => count]]`, with the unsaved values while someone types. The editor asks `POST /api/v1/content/{type}/checklist`; a refused publish answers `422` with the missing items under `checklist`. **View as PHP** on a type built in the admin includes its checklist.
 
 ## Schedule an entry
 
