@@ -199,6 +199,101 @@ php bin/cms package:verify dist/acme-events-1.4.0.zip
 
 Method calls with the same names (`$this->exec()`, `Foo::system()`) are not flagged; only plain function calls are.
 
+## Publish updates {#publish-updates}
+
+Name where your releases are in the manifest (`updates`, see [the manifest](/developers/manifest#updates)), and sites find them by themselves: every 12 hours, and when the administrator chooses **Check now** on **System → Updates**. They download the new zip only when the administrator chooses **Review**, check it like an upload, and apply it through the [update pipeline](#updating-a-package-on-a-site). A site offers the newest version above the installed one whose `requires.core` its Kestello meets, and pre-releases only when `app.updates.prereleases` is on.
+
+Sign every release with the same key. From the admin, a site applies an update only when the key that signed the installed version signed it too (or a key that version listed under [`signing_keys`](/developers/manifest#signing-keys)). An update signed by another key is refused with "Acme Events 1.5.0 is not signed by the publisher of the installed version (key …).", even when the site trusts that other key.
+
+### From GitHub releases
+
+With `"updates": {"github": "acme/events"}`, a release counts when it is published (not a draft), its tag is `v<version>`, and it carries two assets: `<slug>-<version>.zip` and `<slug>-<version>.zip.sha256`, exactly as `package:build` writes them to `dist/`. Releases without both are skipped. For `acme-events` 1.5.0:
+
+```bash
+php bin/cms package:build ../acme-events --key=acme.key
+gh release create v1.5.0 dist/acme-events-1.5.0.zip dist/acme-events-1.5.0.zip.sha256 --notes-file NOTES.md
+```
+
+The release notes are shown to the administrator, as Markdown. GitHub allows each server 60 checks an hour without a token, shared with Kestello's own update check.
+
+### From your own feed
+
+With `"updates": {"url": "https://updates.acme.test/kestello/acme-events.json"}`, Kestello requests that address (`Accept: application/json`, at most 1 MB, 10 seconds) and expects:
+
+```json
+{
+    "format": 1,
+    "type": "plugin",
+    "slug": "acme-events",
+    "links": ["account.acme.test"],
+    "releases": [
+        {
+            "version": "1.5.0",
+            "published_at": "2026-11-20T10:00:00Z",
+            "requires": { "core": "^0.1", "php": ">=8.4" },
+            "notes": "### Fixed\n\n- Ticket counts on sold-out events.",
+            "download": "https://cdn.acme.test/acme-events-1.5.0.zip?expires=1763640000&sig=…",
+            "sha256": "9b1c…64 hexadecimal characters"
+        }
+    ]
+}
+```
+
+- `type` and `slug` must be the package's, or the whole feed is refused: "The update feed is for another package, not the plugin "acme-events"."
+- A release is skipped when its `version` is not semver, its `download` is not `https`, or `sha256` is not 64 hexadecimal characters. At most 100 releases.
+- `download` may be a short-lived signed address. Kestello asks the feed again right before downloading and never stores it.
+- `links` lists other hosts of yours that may appear as a renew link (below). Optional.
+
+### License keys
+
+Add `"license": true` to `updates`. The administrator enters the key on **System → Updates**. Kestello then sends it with every request to the feed's host, and to the `download` address only when that is on the same host:
+
+```text
+Authorization: Bearer <license key>
+X-Kestello-Site: https://client.example
+```
+
+Without a key, Kestello does not request the feed at all. The key is never put in an address, so it stays out of your server's access logs; never ask for it in the query string.
+
+Answer `401`, `402` or `403` when the key is wrong or expired. The body may say why and where to renew:
+
+```json
+{ "error": "Your license expired on 1 March.", "renew_url": "https://account.acme.test/renew" }
+```
+
+The administrator sees "The license key for Acme Events was refused: Your license expired on 1 March." `error` is shown as plain text, up to 300 characters. `renew_url` is shown as a **Renew** link only when it is `https` on the feed's own host or a host in the feed's `links`.
+
+A feed can be a small script that checks the key against your license provider, then answers with the releases the key may download. This one reads keys from a file, to show the shape:
+
+```php
+<?php
+// https://updates.acme.test/kestello/acme-events.json
+$key = preg_match('/^Bearer (.+)$/', $_SERVER['HTTP_AUTHORIZATION'] ?? '', $m) ? $m[1] : '';
+$licenses = json_decode(file_get_contents(__DIR__ . '/licenses.json'), true); // {"<key>": {"expires": "2027-03-01"}}
+$license = $licenses[$key] ?? null;
+
+header('Content-Type: application/json');
+if ($license === null || $license['expires'] < date('Y-m-d')) {
+    http_response_code(403);
+    echo json_encode(['error' => $license === null ? 'This license key is not known.' : "Your license expired on {$license['expires']}.", 'renew_url' => 'https://updates.acme.test/renew']);
+    exit;
+}
+echo file_get_contents(__DIR__ . '/acme-events.json');
+```
+
+On a server, check sources and save a key with:
+
+```bash
+php bin/cms package:check-updates plugin:acme-events
+php bin/cms package:license plugin:acme-events
+```
+
+```text
+  plugin:acme-events: 1.5.0 is available.
+```
+
+`package:license` reads the key from what you type or pipe in; `--remove` forgets it.
+
 ## Updating a package on a site
 
 When a site already has your plugin or theme, a newer zip goes through the update pipeline instead of a plain install. In the admin, uploading a newer version of an active plugin under **Plugins → Manage plugins** offers the update. On the server:
