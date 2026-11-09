@@ -123,7 +123,7 @@ While it waits you can keep editing it: **Save changes** keeps it in review. **W
 
 ### Review an entry
 
-Entries waiting for review are under **In review** at the top of the content list. Open one and choose:
+Entries waiting for review are under **In review** at the top of the content list, and on the **Overview** in **Waiting on you** (see [What waits on you](#waiting-on-you)). Open one and choose:
 
 - **Approve and publish** to publish it. If **Publish on** is in the future, the button says **Approve and schedule** instead.
 - **Request changes** to send it back. Write what should change and choose **Send back**. The entry becomes a draft again, and the person who submitted it is told, with your note.
@@ -137,6 +137,8 @@ The **Review** card in the editor's sidebar holds the conversation about an entr
 
 Comments are only seen in the admin, never on the site. Anyone who can open the entry may comment. A comment reaches the entry's author, the person it is assigned to and everyone who wrote on it before. You can delete your own comments; editors can delete anyone's. The review steps stay.
 
+To bring someone else in, name them with @ and their username, for example `@maria could you check the dates?`. As you type after the @, a list of people who may edit entries of this type appears: use the arrow keys and Enter (or click) to pick one. Everyone named is told "eddie mentioned you on the post …", in the bell and by email, once even if they would have heard about the comment anyway. Someone who can't open the entry, such as an author named on another person's post, isn't told. Up to 10 people can be named in one comment.
+
 ### Assign an entry
 
 Under **Assigned to** in the **Review** card, pick the person who should look after the entry. They are told, and when it is submitted for review only they are, instead of every editor. Only people who may edit entries of that type are listed. The content list shows who each entry is assigned to.
@@ -146,6 +148,16 @@ Under **Assigned to** in the **Review** card, pick the person who should look af
 Review steps and comments arrive in the bell at the top of the admin, and by email. To choose which you get by email, open your profile, then **Notifications**, and change **Reviews** or **Editorial comments**.
 
 Submissions, decisions and assignments are recorded in the [audit log](/guide/people#audit-log).
+
+### What waits on you {#waiting-on-you}
+
+The **Overview** shows **Waiting on you** above everything else when there is something for you to do, most urgent first:
+
+- **Changes requested**: your entries a reviewer sent back, until you submit them again.
+- **Assigned to you**: entries assigned to you that are not published yet.
+- **Waiting for review**: other people's entries in review that you may publish.
+
+Each entry is listed once, with when it started waiting on you. Choose its title to open it. When nothing waits, the card isn't shown.
 
 ## Schedule an entry
 
