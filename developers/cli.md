@@ -138,6 +138,7 @@ These work in a checkout that was never installed.
 | Command | What it does |
 |---|---|
 | `token:create <user>` | Creates a personal access token for the API. `--name=`, `--scopes=a,b`, `--days=`. The token is shown once. |
+| `user:create <username> <email>` | Creates an account, for example the first administrator of a site set up by a script. `--role=admin` (the default is `user`, the least role), `--generate` makes the password and prints it once. Otherwise it asks for the password twice without showing it, or reads it from standard input when piped. The same rules as adding a person in the admin: a free username and email, the password rules, a role that exists. |
 | `user:password <username\|email>` | Sets a user's password when email cannot be used. Asks for it twice without showing it, or reads it from standard input when piped. `--generate` makes one and prints it once. A password given as an argument is refused, so it does not end up in the shell history. |
 | `demo:snapshot` | On a [public demo](/guide/demo): takes the snapshot every hourly reset goes back to, from the site as it is now, and sets the `demo` account's password back to `demo`. |
 | `demo:reset` | On a public demo: puts the site back to its snapshot now. Everyone is signed out. |
