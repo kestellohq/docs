@@ -95,6 +95,7 @@ const developers = [
             { text: 'TypeScript client', link: '/developers/typescript-client' },
             { text: 'Webhooks', link: '/developers/webhooks' },
             { text: 'Packaging and signing', link: '/developers/packaging' },
+            { text: 'Reading the registry', link: '/developers/registry' },
             { text: 'Configuration reference', link: '/developers/configuration' },
             { text: 'Deployment', link: '/developers/deployment' },
         ],
