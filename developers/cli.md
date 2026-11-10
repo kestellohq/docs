@@ -48,7 +48,7 @@ See [Moving from WordPress](/guide/import-wordpress) for what comes over.
 
 | Command | What it does |
 |---|---|
-| `site:seed <folder>` | Fills an empty site from a seed folder: pages built from blocks, media, menus, settings and the front page. `--dry-run` does the whole seed and rolls it back, so it finds every problem a real run would and writes nothing. `--as=<username>` names the administrator it runs as (needed when the site has more than one). |
+| `site:seed <folder>` | Fills an empty site from a seed folder: pages built from blocks, media, menus, settings and the front page. `--dry-run` does the whole seed and rolls it back, so it finds every problem a real run would and writes nothing. `--as=<username>` names the administrator it runs as (needed when the site has more than one). `--update` brings a site that has content in line with the seed instead: pages with the seed's addresses are updated (a new revision, the same page), menus with the seed's names get its items, settings are written, and files it added before are reused. Pages, menus and files the seed doesn't name are left alone. |
 
 A seed keeps a site's starting content in its repository, such as an agency's starter site or the product pages of a site whose copy is edited in the admin later. It only goes into a site without pages or posts.
 
