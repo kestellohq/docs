@@ -294,6 +294,7 @@ These are all the environment variables Kestello reads.
 | `KESTELLO_<SUBSYSTEM>_<OPTION>` | infrastructure, layer 1 | One driver option, the option name in capitals: `KESTELLO_CACHE_HOST`, `KESTELLO_CACHE_PASSWORD`, `KESTELLO_SESSION_URL`, `KESTELLO_QUEUE_PREFIX`, `KESTELLO_SEARCH_LANGUAGE`. A hyphen in a subsystem name becomes `_`. Only options the driver declares are picked up. |
 | `KESTELLO_PLATFORM_LOCKED` | infrastructure | `1`, `true`, `yes` or `on` makes **System → Infrastructure** read-only, like `admin_editable => false`. |
 | `KESTELLO_SSR_URL` | `core/config/app.php` | Default for `app.ssr.url`. |
+| `KESTELLO_STORAGE` | `Paths` | The folder for everything Kestello writes (cache, sessions, logs, uploaded files, backups), instead of the site's `storage/`: an absolute path, or one relative to the site. For a throwaway test run beside a development site, or a host that keeps the site's folder read-only. |
 | `SSR_HOST` | `core/ssr/server.mjs` | Address the SSR process listens on. Default `127.0.0.1`. |
 | `SSR_PORT` | `core/ssr/server.mjs` | Port the SSR process listens on. Default `13714`. |
 | `KESTELLO_ROOT` | `core/ssr/server.mjs` | The site's root folder. The SSR process only loads built files under it. Default: the current folder. |
