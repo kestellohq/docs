@@ -162,7 +162,7 @@ A user account was created: by an admin, by email sign-up or by signing in with 
 | Property | Type | Description |
 |---|---|---|
 | `$userId` | `int` | The new user. |
-| `$via` | `string` | `admin`, `email` for email sign-up, or `external:<provider>` for an account created at sign-in. |
+| `$via` | `string` | `admin`, `cli` (user:create), `email` for email sign-up, or `external:<provider>` for an account created at sign-in. |
 
 ### Background jobs
 
@@ -419,6 +419,21 @@ A notification was delivered on one channel.
 | `$type` | `string` | The notification type. |
 | `$channel` | `string` | `database`, `mail`, or a channel a plugin added. |
 
+### Plugins and themes
+
+#### RegistryRefreshed
+
+`Kestello\Cms\Events\RegistryRefreshed`, since 0.1.0.
+
+The site's copy of the plugin and theme registry changed: a refresh brought a new list, and these packages, organisations or advisories are new, different or gone. For a plugin that shows the registry (the Registry reader) and keeps or caches its own copy: update only what changed. Not dispatched when a refresh fails or finds nothing new.
+
+| Property | Type | Description |
+|---|---|---|
+| `$packages` | `list<string>` | Slugs of packages added, changed or no longer listed. |
+| `$organisations` | `list<string>` | Ids of organisations added, changed or no longer listed. |
+| `$advisories` | `bool` | Whether the advisories changed. |
+| `$serial` | `int` | The new list's serial. |
+
 ### System
 
 #### KernelBooted
@@ -479,7 +494,7 @@ Whether someone may create an account, by email sign-up or by signing in with a 
 
 Since 0.1.0. The value is `string`.
 
-The role of an account someone creates for themselves. admin and unknown roles become user.
+The role of an account someone creates for themselves. admin, roles with a sensitive capability and unknown roles become user.
 
 | Argument | Description |
 |---|---|

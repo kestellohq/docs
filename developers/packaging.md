@@ -127,7 +127,7 @@ return [
 [kestello] app.packages.trusted_keys: an entry is not a base64 Ed25519 public key and is ignored.
 ```
 
-There is no package registry yet, so this list is the only source of trust.
+Packages installed from the Kestello registry (**Plugins → Add new**, or `registry:install` on the command line) don't need this list: the registry vouches for them, through keys its root keys certify. For anything else, this list is the only source of trust. To show what the registry lists on a site, see [Reading the registry](/developers/registry).
 
 ### Who may install what
 
