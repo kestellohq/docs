@@ -55,6 +55,8 @@ The database connection and the secret key are read before the database is, so t
 
 ### `storage/`
 
+The folder can live elsewhere: set `KESTELLO_STORAGE` to its path (see [Environment variables](/developers/configuration#environment-variables)).
+
 | Folder | What is in it |
 |---|---|
 | `storage/app/` | The local storage disks: `media` (the media library, served at `/uploads`), `public` (served at `/files`), `private` and `backups`. |
