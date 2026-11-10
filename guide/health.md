@@ -225,6 +225,18 @@ Kestello writes a small test file to every storage disk (where uploads and backu
 
 **Fix**: open **Plugins → Manage plugins** to see which plugin is affected. See [Plugins](/guide/plugins) for how suspension works and how to bring a plugin back once it is fixed.
 
+### Security advisories {#core-advisories}
+
+Compares the security advisories in the [plugin and theme registry](/guide/plugins) with the Kestello version you run and the plugins and themes you installed from the registry. A plugin or theme you uploaded as a zip is not checked, because it can share a name with an unrelated package in the registry.
+
+- **Passed**: "No security advisory applies to this Kestello version or to the plugins and themes installed from the registry."
+- **Passed**: "The plugin and theme registry is turned off", or "Security advisories are checked once the site has read the plugin and theme registry." Nothing is checked yet.
+- **Recommended**: "A security advisory applies to this site." followed by each package, its version, the advisory and its severity. Shown when every advisory that applies is low or medium.
+- **Critical**: the same, when any advisory that applies is high or critical. Administrators get an [email alert](#email-alerts).
+- **Recommended**: "Security advisories could not be checked:" followed by the reason.
+
+Each line ends with "Update to … or later.", or "No fixed version yet: consider deactivating it." An **Open Updates** button opens **Site → Updates**. **Fix**: install the update. Without a fixed version, deactivate the plugin or theme until there is one.
+
 ### Page cache {#core-page-cache}
 
 Kestello can keep finished pages ready for visitors who are not signed in, which makes the site much faster.

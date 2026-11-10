@@ -142,6 +142,32 @@ $cms->filters->add('sitemap.urls', function (array $urls, string $file): array {
 
 `robots.txt` has its own filter, `robots.txt`, and lists the sitemap.
 
+## Feeds of your own
+
+Core writes the site feed and each type's and term's feed. A plugin or theme with a list of its own, such as events or releases, writes its feed with `Kestello\Cms\Site\Feed`, the same writer core uses:
+
+```php
+use Kestello\Cms\Site\Feed;
+
+$cms->routes->get('/events.atom', function () {
+    $feed = new Feed('Upcoming events', '/events', '/events.atom', 'Concerts and talks.');
+    foreach (Event::query()->upcoming()->limit(50)->get() as $event) {
+        $feed->add($event->title, "/events/{$event->slug}", $event->published_at, summary: $event->summary, id: "urn:acme-events:{$event->id}");
+    }
+
+    return $feed->atom();      // or ->rss()
+});
+```
+
+- `new Feed($title, $home, $self, $description = '', $id = null)`: `$home` is the page the feed belongs to, `$self` the feed's own address.
+- `add($title, $url, $published, $updated = null, $summary = '', $html = '', $author = null, $id = null)` adds one item. Add them newest first.
+- Addresses are paths on the site or absolute http(s) addresses; paths are put under the site address. Anything else throws `InvalidArgumentException`.
+- Titles and summaries are written as text. `$html` is sent as the item's content, so it must be safe to show.
+- Without an `$id`, an item's id is made from the site's host, its date and its address. Give items a lasting id of their own when their address can change, or readers show them again as new.
+- `atom()` and `rss()` return the response: cached for 5 minutes and marked `noindex`. `atomXml($base)` and `rssXml($base)` return the document with paths under `$base`, for tests.
+
+Core does not add a `link rel="alternate"` for your feed; add one to your page's head with [`seo.head`](#change-the-head-tags) when you want browsers and readers to find it.
+
 ## Settings that change the output
 
 Under **Site → Settings → Search and sharing**, stored as site settings:
