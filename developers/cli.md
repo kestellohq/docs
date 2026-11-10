@@ -88,7 +88,8 @@ A page:
             "items": [
                 { "page": "about" },
                 { "url": "https://shop.acme.test/", "label": "Shop" },
-                { "archive": "post", "label": "News" }
+                { "archive": "post", "label": "News" },
+                { "url": "/workshop", "label": "Workshop", "children": [{ "page": "chairs" }, { "page": "tables" }] }
             ]
         }
     ],
@@ -96,7 +97,7 @@ A page:
 }
 ```
 
-`front_page` and `page` name a page by its file name without `.json`. A menu whose location the active theme lacks is still made; place it under **Appearance → Menus**.
+`front_page` and `page` name a page by its file name without `.json`. Any item can hold `children`, a list of items under it, up to four levels. A menu whose location the active theme lacks is still made; place it under **Appearance → Menus**.
 
 Everything goes through the same checks as the admin, in one transaction. When something fails, the command names the file and the problem, and the site is left as it was, with no pages and no files.
 
