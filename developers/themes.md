@@ -218,7 +218,7 @@ What you can import:
 | Module | Gives you |
 |---|---|
 | `vue` | Vue 3, served from the site as one pinned file. |
-| `@kestello/app` | `usePage`, `useRouter`, `useForm`, `Link`, `Head`, `KImage` (responsive media library images), `BlockTree` (renders a block tree). |
+| `@kestello/app` | `usePage`, `useRouter`, `useForm`, `Link`, `Head`, `KImage` (responsive media library images; `dark` takes a second image for dark mode), `BlockTree` (renders a block tree). |
 | `@kestello/ui` | The admin UI kit. |
 | `@kestello/sdk` | A client for the REST API. |
 
