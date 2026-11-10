@@ -44,6 +44,62 @@ A restore replaces the whole database. Everyone is signed out, and anything chan
 
 See [Moving from WordPress](/guide/import-wordpress) for what comes over.
 
+### Seed a site from files
+
+| Command | What it does |
+|---|---|
+| `site:seed <folder>` | Fills an empty site from a seed folder: pages built from blocks, media, menus, settings and the front page. `--dry-run` does the whole seed and rolls it back, so it finds every problem a real run would and writes nothing. `--as=<username>` names the administrator it runs as (needed when the site has more than one). |
+
+A seed keeps a site's starting content in its repository, such as an agency's starter site or the product pages of a site whose copy is edited in the admin later. It only goes into a site without pages or posts.
+
+```
+seed/
+  site.json          settings, the front page, menus, alt text for media
+  pages/<key>.json   one page each
+  media/<file>       images and files
+```
+
+A page:
+
+```json
+{
+    "title": "About us",
+    "slug": "about-us",
+    "seo": { "description": "Who we are and where to find us." },
+    "blocks": [
+        { "type": "core/heading", "props": { "text": "About us", "level": "1" }, "children": [] },
+        { "type": "core/image", "props": { "image": "@media:team.jpg" }, "children": [] }
+    ]
+}
+```
+
+`slug` defaults to the file name. `status` (`published` or `draft`) and `template` are optional. Blocks are stored as in a page's body, in the same shape as a theme's pattern files. `"@media:<file>"` anywhere in `blocks` or `seo` becomes the id of that file in `media/`.
+
+`site.json`, every part optional:
+
+```json
+{
+    "settings": { "general": { "site_name": "Acme", "site_description": "Furniture, made to order." } },
+    "front_page": "home",
+    "menus": [
+        {
+            "name": "Main",
+            "location": "primary",
+            "items": [
+                { "page": "about" },
+                { "url": "https://shop.acme.test/", "label": "Shop" },
+                { "archive": "post", "label": "News" }
+            ]
+        }
+    ],
+    "media": { "team.jpg": { "alt": "The team outside the workshop" } }
+}
+```
+
+`front_page` and `page` name a page by its file name without `.json`. A menu whose location the active theme lacks is still made; place it under **Appearance → Menus**.
+
+Everything goes through the same checks as the admin, in one transaction. When something fails, the command names the file and the problem, and the site is left as it was, with no pages and no files.
+
 ## Plugins and themes
 
 | Command | What it does |
