@@ -447,6 +447,8 @@ The page answers the same way whether or not an address already has an account, 
 
 Sign-up only works when the site's email reaches people. Before you open it, send a test email from **Site → Settings**, **Email**.
 
+Each new account is announced to everyone whose role includes *Create, edit and delete users*: in the bell at the top of the admin and by email, with a link to the new person's profile, where you can change their role or delete the account. This covers accounts made with the sign-up form and by [signing in with a provider](#sign-in-with-google-or-other-providers), not the ones you add yourself. To stop the emails, open your profile, then **Notifications**, and change **New sign-ups**.
+
 Who can do this: people whose role includes both *Change site settings* (to open **Site → Settings**) and *Create, edit and delete users* (for the **Accounts** settings). On a new site, that is administrators.
 
 ## Sign in with Google or other providers {#sign-in-with-google-or-other-providers}
