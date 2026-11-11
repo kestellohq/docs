@@ -1,10 +1,15 @@
 import DefaultTheme from 'vitepress/theme';
 import type { Theme } from 'vitepress';
 import './kestello.css';
+import Flow from './components/Flow.vue';
+import Layers from './components/Layers.vue';
 
 export default {
     extends: DefaultTheme,
-    enhanceApp() {
+    enhanceApp({ app }) {
+        // diagrams any page can use: <Flow :steps="…" /> and <Layers :layers="…" /> (see STYLE.md)
+        app.component('Flow', Flow);
+        app.component('Layers', Layers);
         if (typeof window === 'undefined') {
             return;
         }

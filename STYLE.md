@@ -48,3 +48,12 @@ Headings are sentence case ("Restore a backup", not "Restore A Backup") and say 
 - Alt text says what the picture shows, with the labels a reader will look for: "The Backups screen: the schedule at the top and the list of backups below it." Not "Screenshot".
 - When the text explains a screen part by part, mark the parts with numbers (`mark()`) and use the same numbers in a list under the picture.
 - The text must make sense without the picture. Never write "click the button shown above".
+
+## Diagrams
+
+Draw a diagram when the text describes an order of steps, or layers that sit on each other, and a reader would otherwise hold it all in their head. Two components are available on every page (`.vitepress/theme/components/`):
+
+- `<Flow :steps="…" />`: steps in order. Up to four sit in a row of cards; more, or `vertical`, become a timeline. Mark the step the page is about with `tone: 'brand'`, optional ones with `tone: 'muted'`, and where it can stop with `note`.
+- `<Layers :layers="…" />`: what sits on what, the top one winning, such as where an email's look comes from.
+
+Put the data in a `<script setup>` block at the top of the page, so the Markdown stays readable. Every label comes from the code or the admin, like any other fact. Give each diagram a `caption` that says what it shows. The text must still make sense without it: a diagram sums up, it never holds a fact the text leaves out.

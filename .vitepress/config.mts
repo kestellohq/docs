@@ -36,6 +36,7 @@ const guide = [
         text: 'Running the site',
         items: [
             { text: 'Settings', link: '/guide/settings' },
+            { text: 'Emails', link: '/guide/emails' },
             { text: 'Themes and design', link: '/guide/themes' },
             { text: 'People and roles', link: '/guide/people' },
             { text: 'Plugins', link: '/guide/plugins' },
@@ -74,6 +75,7 @@ const developers = [
             { text: 'Migrations', link: '/developers/migrations' },
             { text: 'Admin pages', link: '/developers/admin-pages' },
             { text: 'Events and filters', link: '/developers/events' },
+            { text: 'Emails', link: '/developers/emails' },
             { text: 'Hook reference', link: '/developers/hooks' },
             { text: 'Settings', link: '/developers/settings' },
             { text: 'Background jobs', link: '/developers/jobs' },

@@ -52,6 +52,18 @@ After saving, use **Send a test email** to check that a message reaches you.
 
 This tab needs the permission *Manage infrastructure, background jobs, scheduled tasks and Site Health* as well. Password reset links travel through the mail server, so whoever sets it could read them.
 
+## Emails
+
+How every email the site sends looks: the logo at the top and a line at the foot. Colours and the font come from your theme. What each email says is changed under **Site → Emails**, explained in [Emails](/guide/emails).
+
+| Setting | What it is for | Default |
+|---|---|---|
+| **Show a logo** | Show a logo at the top of every email. Without one, the site name is shown at the foot only. | On |
+| **Email logo** | The picture to use. Left empty, the **Logo or photo** from **Search and sharing** is used. It is shown 40 pixels tall. | Empty |
+| **Footer text** | A line under the site name in every email, such as a postal address. | Empty |
+
+This tab needs the permission *Change how the site's emails look and what they say*.
+
 ## Accounts
 
 Whether people can create an account on the site themselves. You can always add people yourself under **People**. Details are in [Let people create their own account](/guide/people#sign-up).
