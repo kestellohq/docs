@@ -55,5 +55,11 @@ Draw a diagram when the text describes an order of steps, or layers that sit on 
 
 - `<Flow :steps="…" />`: steps in order. Up to four sit in a row of cards; more, or `vertical`, become a timeline. Mark the step the page is about with `tone: 'brand'`, optional ones with `tone: 'muted'`, and where it can stop with `note`.
 - `<Layers :layers="…" />`: what sits on what, the top one winning, such as where an email's look comes from.
+- `<States :states="…" :moves="…" />`: a lifecycle, such as an entry's statuses. Each state lists where it can go next, labelled with the admin's buttons.
+- `<Decide :tree="…" />`: a question and where each answer leads, ending in outcomes that can link to the section explaining them.
+- `<Timeline :points="…" />`: points in time, such as retries or nightly tasks. Times come from the code's constants.
+- `<Compare :columns="…" />`: two or three cases side by side, such as before and after. Add `arrow` when one becomes the other.
+
+`Flow` steps can also carry `fail`: what happens instead when that step fails.
 
 Put the data in a `<script setup>` block at the top of the page, so the Markdown stays readable. Every label comes from the code or the admin, like any other fact. Give each diagram a `caption` that says what it shows. The text must still make sense without it: a diagram sums up, it never holds a fact the text leaves out.

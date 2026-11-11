@@ -3,13 +3,18 @@ import type { Theme } from 'vitepress';
 import './kestello.css';
 import Flow from './components/Flow.vue';
 import Layers from './components/Layers.vue';
+import States from './components/States.vue';
+import Decide from './components/Decide.vue';
+import Timeline from './components/Timeline.vue';
+import Compare from './components/Compare.vue';
 
 export default {
     extends: DefaultTheme,
     enhanceApp({ app }) {
-        // diagrams any page can use: <Flow :steps="…" /> and <Layers :layers="…" /> (see STYLE.md)
-        app.component('Flow', Flow);
-        app.component('Layers', Layers);
+        // diagrams any page can use (see STYLE.md, "Diagrams")
+        for (const [name, component] of Object.entries({ Flow, Layers, States, Decide, Timeline, Compare })) {
+            app.component(name, component);
+        }
         if (typeof window === 'undefined') {
             return;
         }

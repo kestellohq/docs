@@ -24,10 +24,13 @@ export interface FlowStep {
     tone?: 'brand' | 'muted';
     /** a side note under the step, such as where it can stop */
     note?: string;
+    /** what happens instead when this step fails: "If it fails: …" */
+    fail?: string;
 }
 
-const props = defineProps<{ steps: FlowStep[]; caption?: string; vertical?: boolean }>();
-const column = computed(() => props.vertical || props.steps.length > 4);
+const props = withDefaults(defineProps<{ steps: FlowStep[]; caption?: string; vertical?: boolean; failLabel?: string }>(), { failLabel: 'If it fails:' });
+// a failure branch needs the room of a timeline
+const column = computed(() => props.vertical || props.steps.length > 4 || props.steps.some((s) => s.fail));
 </script>
 
 <template>
@@ -39,6 +42,7 @@ const column = computed(() => props.vertical || props.steps.length > 4);
                     <strong class="k-flow__title">{{ step.title }}</strong>
                     <span v-if="step.text" class="k-flow__text">{{ step.text }}</span>
                     <span v-if="step.note" class="k-flow__note">{{ step.note }}</span>
+                    <span v-if="step.fail" class="k-flow__fail"><span class="k-flow__fail-label">{{ failLabel }}</span> {{ step.fail }}</span>
                 </span>
             </li>
         </ol>
@@ -106,6 +110,21 @@ const column = computed(() => props.vertical || props.steps.length > 4);
 }
 .dark .k-flow__step.is-brand .k-flow__n {
     color: var(--vp-c-bg);
+}
+.k-flow__fail {
+    justify-self: start;
+    margin-top: 6px;
+    padding: 3px 9px;
+    border-left: 2px solid var(--vp-c-danger-1);
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--vp-c-text-2);
+    background: var(--vp-c-danger-soft);
+}
+.k-flow__fail-label {
+    font-weight: 600;
+    color: var(--vp-c-danger-1);
 }
 .k-flow__step.is-muted .k-flow__n {
     border-style: dashed;
