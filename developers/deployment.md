@@ -1,8 +1,49 @@
+<script setup>
+const topology = [
+    { title: 'Answers visitors', text: 'nginx or Apache with the document root at public/, PHP-FPM, and the optional SSR process on 127.0.0.1.', items: ['`public/index.php`', '`core/current.php`', '`app.ssr.url`'] },
+    { title: 'Works in the background', text: 'Cron runs the scheduler every minute; an optional worker runs jobs as they come.', items: ['`schedule:run`', '`queue:work`', '`queue.worker`'] },
+    { title: 'Holds the state', text: 'The database, the optional Redis for cache, sessions and the queue, and the storage disks.', items: ['`config/database.php`', '`config/platform.php`', '`config/storage.php`'] },
+];
+const background = {
+    question: 'Can the server keep a process running (systemd, supervisor)?',
+    answers: [
+        { label: 'Yes', result: 'Cron runs schedule:run every minute, queue:work picks up jobs within seconds, and queue.worker is daemon.', tone: 'brand', link: '#queue-workers' },
+        { label: 'No', next: {
+            question: 'Can you add a cron job?',
+            answers: [
+                { label: 'Yes', result: 'Cron runs schedule:run every minute. Its queue.work task works the queue for up to 50 seconds.', link: '#cron' },
+                { label: 'No', next: {
+                    question: 'Can an outside cron service call the site?',
+                    answers: [
+                        { label: 'Yes', result: 'bin/cms cron:token turns on POST /system/cron for it.', link: '#cron' },
+                        { label: 'No', result: 'The web runner runs due tasks after a page is sent, at most once a minute.', tone: 'muted', link: '#cron' },
+                    ],
+                } },
+            ],
+        } },
+    ],
+};
+const sharing = [
+    { title: 'Shared by every server', tone: 'brand', text: 'The database, sessions and cache (Redis or the database), media and backups (an S3 disk or a shared storage/app), and the same code from your deploy.' },
+    { title: 'Kept per server', text: 'Compiled infrastructure settings, maintenance mode, and files changed by an update from the admin.', items: ['`storage/framework/platform.php`', '`storage/framework/maintenance.json`'] },
+];
+const coreSwitch = [
+    { title: 'Unpack', text: 'The release goes to core/releases/0.2.0/, next to the running one.' },
+    { title: 'Trial pointer', text: 'core/current.php names 0.2.0 only while the updater holds the update lock.', note: 'If PHP stops here, the next request loads the old release.' },
+    { title: 'Probe', text: 'A fresh process boots 0.2.0 and requests / and /api/v1/status.', fail: 'current.php names the old release again and the database backup is restored.' },
+    { title: 'Commit', text: 'current.php names 0.2.0 for good, and older release folders are deleted.', tone: 'brand' },
+];
+</script>
+
 # Deployment
 
 This page covers running Kestello on a server you control: the web server, PHP-FPM, file permissions, cron, queue workers, Redis, HTTPS behind a proxy, several servers sharing one database, backups that leave the server, monitoring, and the release folders that core updates use. Read it when you move a site from your machine or shared hosting to a VPS or a cluster. For shared hosting, the [installation guide](/guide/installation) is enough.
 
 The examples assume the site lives in `/var/www/kestello`, PHP 8.5 runs as `www-data`, and you deploy as a separate user called `deploy`. Change these to match your server.
+
+A production site has three kinds of parts: what answers visitors, what works in the background, and what holds the state. The sections below set up each one.
+
+<Compare :columns="topology" caption="The parts of a production site and the settings that join them" />
 
 ## Checklist
 
@@ -204,7 +245,13 @@ sudo crontab -u www-data -e
 
 Each task's time slot is claimed in the database, so a slot runs once even when cron fires on several servers or together with the web runner. Running the same cron line on every server is safe.
 
-Without cron, the **web runner** runs due tasks after a page response has been sent, at most once a minute. `cron.web_runner` controls it: `auto` (the default) runs only while no real cron or pinger has run in the last 5 minutes, `true` always, `false` never. `cron.web_runner_seconds` (default `20`, between 5 and 55) limits each run. Once a real cron job runs, `auto` stops by itself. Where you cannot run cron at all, `bin/cms cron:token` turns on `POST /system/cron` for an external cron service; it prints the token to send in `Authorization: Bearer <token>`.
+Without cron, the **web runner** runs due tasks after a page response has been sent, at most once a minute. `cron.web_runner` controls it: `auto` (the default) runs only while no real cron or pinger has run in the last 5 minutes, `true` always, `false` never. `cron.web_runner_seconds` (default `20`, between 5 and 55) limits each run. Once a real cron job runs, `auto` stops by itself.
+
+Where you cannot run cron at all, `bin/cms cron:token` turns on `POST /system/cron` for an external cron service; it prints the token to send in `Authorization: Bearer <token>`. The endpoint runs the scheduler at most once every 50 seconds.
+
+Which of these runs your background work depends on what the server lets you do:
+
+<Decide :tree="background" caption="How background work runs on your server" />
 
 See [Configuration](/developers/configuration) for where these keys live.
 
@@ -349,7 +396,11 @@ Behind a load balancer, CDN or reverse proxy that terminates TLS, two things nee
 
 ## Several servers, one database
 
-Kestello can run on several web servers behind a load balancer, sharing one database. What has to be shared:
+Kestello can run on several web servers behind a load balancer, sharing one database. Some state must be shared, and some stays on each server by design:
+
+<Compare :columns="sharing" caption="What several servers share, and what each keeps for itself" />
+
+What has to be shared:
 
 | What | How |
 |---|---|
@@ -410,7 +461,7 @@ sudo -u www-data php bin/cms health --only=core.database,core.queue,core.schedul
 | `0` | Nothing critical. Recommendations may be listed. |
 | `2` | At least one check is critical. |
 
-Check ids include `core.database`, `core.drivers`, `core.queue`, `core.scheduler`, `core.storage`, `core.writable`, `core.disk-space`, `core.backups`, `core.https`, `core.debug`, `core.app-key`, `core.php-version`, `core.php-extensions`, `core.php-limits`, `core.extensions` and `core.page-cache`; plugins add their own. `--json` prints the full report with each check's `id`, `status`, `message` and `details`.
+Check ids include `core.database`, `core.drivers`, `core.queue`, `core.scheduler`, `core.storage`, `core.writable`, `core.disk-space`, `core.backups`, `core.https`, `core.debug`, `core.app-key`, `core.php-version`, `core.php-extensions`, `core.php-limits`, `core.private-files`, `core.mail`, `core.update-stopped`, `core.advisories`, `core.extensions`, `core.page-cache`, `media.images` and `search`; plugins add their own. `--json` prints the full report with each check's `id`, `status`, `message` and `details`.
 
 A cron line for a monitor that only needs the exit code:
 
@@ -432,7 +483,9 @@ core/
     └── 0.2.0/
 ```
 
-`core/current.php` names the running release. `public/index.php` and `bin/cms` read it on every request. A core update unpacks the new release next to the others and renames a new `current.php` over the old one, so the switch is atomic and a failed update switches back the same way. After a successful update, the running release, the previous one and one more are kept; older folders are deleted.
+`core/current.php` names the running release. `public/index.php` and `bin/cms` read it on every request. A core update unpacks the new release next to the others and renames a new `current.php` over the old one, so the switch is atomic and a failed update switches back the same way. While the new release is checked, `current.php` is a trial pointer: it names the new release only while the updater holds the update lock, so if PHP is stopped halfway, the next request loads the release that ran before. After a successful update, the running release, the previous one and one more are kept; older folders are deleted.
+
+<Flow :steps="coreSwitch" caption="How a core update switches release folders" />
 
 ```bash
 sudo -u www-data php bin/cms core:update --status
@@ -454,7 +507,7 @@ When you run PHP-FPM with `opcache.validate_timestamps=0`, reload PHP-FPM after 
 
 ## Server-side rendering
 
-The optional SSR process (`node core/ssr/server.mjs`) is a long-running Node.js 24 or newer process. Run it under systemd like a worker, bound to localhost, and point `app.ssr.url` (or `KESTELLO_SSR_URL`) at it:
+The optional SSR process (`node core/ssr/server.mjs`) is a long-running Node.js 22.15 or newer process. Run it under systemd like a worker, bound to localhost (`SSR_HOST`, default `127.0.0.1`; `SSR_PORT`, default `13714`), and point `app.ssr.url` (or `KESTELLO_SSR_URL`) at it:
 
 ```ini
 # /etc/systemd/system/kestello-ssr.service
@@ -473,7 +526,9 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-It needs `npm install` in the site root for Vue's server renderer. Restart it after deploys that change components. If it is down, pages render in the browser; see [Frontend](/developers/frontend).
+It loads Vue's server renderer from `node_modules/` in the site root (`KESTELLO_ROOT`). In a checkout, run `npm install` there. A site installed from the install zip has no `package.json`: run `npm install vue@3.5.45` in its root, the version in `core/resources/assets/vendor/`. Kestello waits for a page at most `app.ssr.timeout` seconds (default `1.5`). If the process is down or slow, pages render in the browser; see [Frontend](/developers/frontend).
+
+A plugin or theme rebuilt while the process runs is picked up on the next render. Kestello itself is not: restart the process after a core update. On a site that runs from release folders, the running release's renderer is `core/releases/<version>/ssr/server.mjs`, and `core/ssr/server.mjs` is the one the site was installed with, so point `ExecStart` at the release folder that `core/current.php` names.
 
 ## If something goes wrong
 

@@ -44,7 +44,22 @@ Headings are sentence case ("Restore a backup", not "Restore A Backup") and say 
 ## Screenshots
 
 - Show the screen the reader is about to use, once, where the task starts: after the first paragraph of the section, or before a lead-in that ends with a colon. Not one per step.
-- Take them with the scripts in `tools/screenshots/` from the sample bakery site, never by hand, so they can be taken again after a release. See `tools/screenshots/README.md`.
+- Take them with the scripts in `tools/screenshots/` from the sample studio site, never by hand, so they can be taken again after a release. See `tools/screenshots/README.md`.
 - Alt text says what the picture shows, with the labels a reader will look for: "The Backups screen: the schedule at the top and the list of backups below it." Not "Screenshot".
 - When the text explains a screen part by part, mark the parts with numbers (`mark()`) and use the same numbers in a list under the picture.
 - The text must make sense without the picture. Never write "click the button shown above".
+
+## Diagrams
+
+Draw a diagram when the text describes an order of steps, or layers that sit on each other, and a reader would otherwise hold it all in their head. Two components are available on every page (`.vitepress/theme/components/`):
+
+- `<Flow :steps="…" />`: steps in order. Up to four sit in a row of cards; more, or `vertical`, become a timeline. Mark the step the page is about with `tone: 'brand'`, optional ones with `tone: 'muted'`, and where it can stop with `note`.
+- `<Layers :layers="…" />`: what sits on what, the top one winning, such as where an email's look comes from.
+- `<States :states="…" :moves="…" />`: a lifecycle, such as an entry's statuses. Each state lists where it can go next, labelled with the admin's buttons.
+- `<Decide :tree="…" />`: a question and where each answer leads, ending in outcomes that can link to the section explaining them.
+- `<Timeline :points="…" />`: points in time, such as retries or nightly tasks. Times come from the code's constants.
+- `<Compare :columns="…" />`: two or three cases side by side, such as before and after. Add `arrow` when one becomes the other.
+
+`Flow` steps can also carry `fail`: what happens instead when that step fails.
+
+Put the data in a `<script setup>` block at the top of the page, so the Markdown stays readable. Every label comes from the code or the admin, like any other fact. Give each diagram a `caption` that says what it shows. The text must still make sense without it: a diagram sums up, it never holds a fact the text leaves out.

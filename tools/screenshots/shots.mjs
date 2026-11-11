@@ -1,4 +1,4 @@
-// Every screenshot the docs use, in one list. Each entry opens a screen in the sample bakery
+// Every screenshot the docs use, in one list. Each entry opens a screen in the sample studio
 // site and says what to capture. Names are the file names under public/screenshots/.
 import { fileURLToPath } from 'node:url';
 import { BASE, mark, settle } from './browser.mjs';
@@ -110,13 +110,13 @@ export const SHOTS = [
         target: () => 'content',
     },
     {
-        // A small WordPress export of the bakery's "old site", read but not imported
+        // A small WordPress export of the studio's "old site", read but not imported
         name: 'import-review',
         open: async (page) => {
             await go('/admin/system/import')(page);
             const leftOpen = page.getByRole('button', { name: 'Cancel', exact: true }); // from a run that stopped halfway
             if (await leftOpen.isVisible()) await leftOpen.click();
-            await page.locator('.k-file__input').setInputFiles(fileURLToPath(new URL('./fixtures/margit-bakery.WordPress.xml', import.meta.url)));
+            await page.locator('.k-file__input').setInputFiles(fileURLToPath(new URL('./fixtures/arroyo-lind.WordPress.xml', import.meta.url)));
             await page.getByRole('button', { name: 'Read the file' }).click();
             await page.getByRole('button', { name: 'Import', exact: true }).waitFor();
             await page.setViewportSize({ width: 1280, height: 1500 }); // the whole review, down to the Import button

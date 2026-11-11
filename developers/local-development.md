@@ -1,3 +1,10 @@
+<script setup>
+const containers = [
+    { title: 'Always on', tone: 'brand', items: ['web (nginx): localhost:8080', 'app (PHP 8.5 FPM)', 'db (MySQL 9.7): localhost:3306', 'phpmyadmin: localhost:8081'] },
+    { title: 'Optional profiles', items: ['pgsql: PostgreSQL 18 on localhost:5432', 'redis: Valkey on localhost:6379', 's3: MinIO, console on localhost:9001', 'search: Meilisearch and Typesense', 'workers: a queue worker and the scheduler', 'ssr: Node.js 26'] },
+];
+</script>
+
 # Local development
 
 This page sets up Kestello on your own machine for building plugins and themes or working on Kestello itself. The repository includes a Docker setup with everything a production server has, plus the optional services (PostgreSQL, Redis, S3-compatible storage, search engines) so you can test against them.
@@ -5,7 +12,7 @@ This page sets up Kestello on your own machine for building plugins and themes o
 ## What you need
 
 - **Docker** with Compose (Docker Desktop on macOS and Windows).
-- **Node.js 22.12 or newer** (24 or 26 recommended), only if you change Vue components. The built files are committed, so you can run Kestello without Node.js.
+- **Node.js 22.15 or newer** (26 is the current LTS). A checkout has no built admin or page scripts: you build them once with `npm`, and again after you change Vue components.
 - **Git**.
 
 PHP is not needed on your machine: it runs inside the container.
@@ -29,6 +36,8 @@ The Compose project is named `kestello`, so its containers, network and volumes 
 | MySQL 9.7 | `cms_db` | `localhost:3306`, inside Docker `db:3306` |
 | phpMyAdmin | `cms_phpmyadmin` | http://localhost:8081 |
 
+<Compare :columns="containers" caption="The containers: four always run, the rest start with a Compose profile" />
+
 The images follow the latest stable releases: PHP 8.5, MySQL 9.7 (the current long-term release), PostgreSQL 18, Valkey 9.2, nginx 1.30 (the stable line) and Node.js 26 (the current LTS) for the optional SSR service. The site itself needs only PHP 8.4 or newer; see [Requirements](/guide/requirements).
 
 ### Coming from an older checkout
@@ -36,7 +45,7 @@ The images follow the latest stable releases: PHP 8.5, MySQL 9.7 (the current lo
 Earlier versions of this setup used MySQL 8.0 and PostgreSQL 16. Their data files cannot be opened by MySQL 9.7 and PostgreSQL 18, so the new versions use new volumes (`kestello_cms_db97_data`, `kestello_cms_pg18_data`) and start empty. Your old volumes are left alone. To bring your local site over, export it before you pull the change and import it afterwards:
 
 ```bash
-docker exec cms_db sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --single-transaction --databases cms_boilerplate' > site.sql
+docker exec cms_db sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --single-transaction --databases "$MYSQL_DATABASE"' > site.sql
 # pull the change, then:
 docker compose up -d --build
 docker exec -i cms_db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < site.sql
@@ -50,8 +59,8 @@ Open http://localhost:8080. The installer starts. Use these database details, wh
 |---|---|
 | Database | MySQL / MariaDB |
 | Host | `db` (the service name inside Docker) |
-| Database name | `cms_boilerplate` |
-| Username | `cms_user` |
+| Database name | `kestello` |
+| Username | `kestello` |
 | Password | `secret` |
 
 The ports and database credentials come from `.env`. Change them there before the first `docker compose up` if they clash with something on your machine.
@@ -119,37 +128,49 @@ docker exec cms_app php bin/cms test tests/Package
 docker exec cms_app php bin/cms test tests/Package/UpdatesTest.php
 ```
 
-Tests that touch the database can also run against MySQL and PostgreSQL. Create a test database on each once:
+Tests that touch the database can also run against MySQL and PostgreSQL, and the cache and session tests against Redis, as CI does. One command starts the `pgsql` and `redis` services and runs the suite on all of them:
 
 ```bash
-docker exec cms_db mysql -uroot -prootsecret -e "CREATE DATABASE IF NOT EXISTS kestello_test; GRANT ALL ON kestello_test.* TO 'cms_user'@'%';"
-docker compose --profile pgsql up -d pgsql
-docker exec cms_pgsql psql -U kestello -c "CREATE DATABASE kestello_test;"
+npm run test:php:matrix
+npm run test:php:matrix -- tests/Package
 ```
 
-Then pass the connections in `KESTELLO_TEST_DATABASES`, and a Redis URL in `KESTELLO_TEST_REDIS` for the cache and session tests:
+It uses a `kestello_test` database on MySQL and on PostgreSQL. A fresh database volume creates both on its first start. On a volume made before that, create them once, with the `pgsql` service running:
 
 ```bash
-docker exec \
-  -e KESTELLO_TEST_DATABASES='[{"driver":"mysql","host":"db","database":"kestello_test","username":"cms_user","password":"secret"},{"driver":"pgsql","host":"pgsql","database":"kestello_test","username":"kestello","password":"secret"}]' \
-  -e KESTELLO_TEST_REDIS='redis://:secret@redis:6379/2' \
-  cms_app php -d apc.enable_cli=1 bin/cms test
+docker exec cms_db sh /docker-entrypoint-initdb.d/10-test-database.sh
+docker exec cms_pgsql sh /docker-entrypoint-initdb.d/10-test-database.sh
 ```
 
-`-d apc.enable_cli=1` turns on APCu for the command line, so the APCu cache store is tested too.
+The command passes the connections to `bin/cms test` in `KESTELLO_TEST_DATABASES` and a Redis address in `KESTELLO_TEST_REDIS`, and turns on APCu for the command line (`-d apc.enable_cli=1`) so the APCu cache store is tested too. Set those variables yourself to test against other servers.
 
 ::: warning
 The tests empty the test databases they are given. Never point `KESTELLO_TEST_DATABASES` at a database you care about.
 :::
+
+## Checks before a pull request
+
+CI runs the same checks. Run them from the repository's root folder. PHP runs on your machine when it is 8.4 or newer, and in the `app` container otherwise:
+
+```bash
+npm run format        # fix the PHP and JavaScript formatting
+npm run check         # lint, static analysis, the JavaScript tests and the PHP tests
+npm run i18n:check    # the translation template is up to date
+npm run ide -- --check  # .phpstorm.meta.php is up to date
+```
+
+`npm run format`, `npm run lint` and `npm run analyse` install the development tools (PHP-CS-Fixer, PHPStan) with Composer, so they need Composer on your machine. When `i18n:check` fails, run `npm run i18n` and commit the template; when the IDE check fails, run `npm run ide` (see [Editor setup](/developers/editor-setup)).
 
 ## Starting over
 
 To reinstall from scratch, empty the database and delete the installed marker:
 
 ```bash
-docker exec cms_app php bin/cms migrate:fresh
+docker exec cms_db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "DROP DATABASE $MYSQL_DATABASE; CREATE DATABASE $MYSQL_DATABASE;"'
 rm config/installed.php
 ```
+
+`php bin/cms migrate:fresh` is not enough for this: it rolls back and runs again only core's migrations, so plugins' tables stay.
 
 The installer starts again on the next visit.
 

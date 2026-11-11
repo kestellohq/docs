@@ -1,3 +1,36 @@
+<script setup>
+const screens = [
+    { title: "Phone", text: "Applies on phones only.", tone: "brand" },
+    { title: "Tablet", text: "Applies on tablets and phones." },
+    { title: "Desktop", text: "Applies on every screen size." },
+];
+const adding = {
+    question: "Which button did you use?",
+    answers: [
+        {
+            label: "Add a block, in the bar",
+            next: {
+                question: "Is a block selected?",
+                answers: [
+                    {
+                        label: "Yes",
+                        next: {
+                            question: "Can it hold the new block, as a column or a cover can?",
+                            answers: [
+                                { label: "Yes", result: "Inside it, at the end.", tone: "brand" },
+                                { label: "No", result: "After it." },
+                            ],
+                        },
+                    },
+                    { label: "No", result: "At the end of the page." },
+                ],
+            },
+        },
+        { label: "Add a block after, on the block toolbar", result: "Straight after the selected block, never inside it.", tone: "brand" },
+    ],
+};
+</script>
+
 # The visual editor
 
 Pages and posts are written in the visual editor. The page in the middle looks the way visitors will see it, with your theme around it, and you change it in place: click a heading and type, put in a photo, move a section up. This page starts with a short tour and a worked example, then shows how to do the everyday jobs: add and arrange blocks, put things side by side, adjust the page for phones, show something only for a while, and publish. For statuses, reviews, revisions and addresses, see [Pages, posts and other content](/guide/content).
@@ -74,6 +107,8 @@ Pages are made of **blocks**: a heading, a paragraph of text, an image, a row of
 - **Add a block** in the bar (the button with a plus) opens the library on the left. Click a block to add it. When the selected block can hold others, such as a column or a cover, the new block goes inside it, at the end. Otherwise it goes after the selected block, or at the end of the page when nothing is selected. You can also drag a block from the library onto the page or into the layers. Type under **Find a block or pattern** to narrow the list.
 - On an empty line of text, type `/`. A small list opens at the cursor; type to search, then press Enter.
 - **Add a block after**, the plus on the block toolbar, opens the same small list and puts the new block straight after the selected one, never inside it.
+
+<Decide :tree="adding" caption="Where a new block goes" />
 
 ![The Add a block panel open on the left, with the blocks grouped under Text, Media and Layout.](/screenshots/editor-add-block.png)
 
@@ -182,6 +217,8 @@ A page that looks right on a wide screen can feel cramped on a phone: too much p
 4. Choose **Desktop** to go back to the full width.
 
 Styles set on **Desktop** apply on every screen size. Styles set on **Tablet** apply on tablets and phones, and styles set on **Phone** apply on phones only. A screen size you have not changed follows the larger one. **Clear the phone styles** (or **Clear the tablet styles**) removes the styles of that size only.
+
+<Layers :layers="screens" caption="Styles per screen size: the top one wins on the screens it applies to" />
 
 To leave a block out on some screens altogether, use **Screens** under [Choose who sees a block](#choose-who-sees-a-block).
 

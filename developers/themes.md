@@ -1,3 +1,37 @@
+<script setup>
+const components = [
+    { title: 'The active theme', text: 'resources/js/pages/, including overrides such as @core/auth/Login.', tone: 'brand' },
+    { title: 'Its parent, then the parent’s parent', text: 'At most three themes in a chain.' },
+    { title: 'Active plugins', text: 'Only their own names, @<slug>/...' },
+    { title: 'Core', text: '@core/... and the fallback layouts/Site.', tone: 'muted' },
+];
+const tokens = [
+    { title: 'The site’s changes', text: 'Appearance → Styles, saved per site.', tone: 'brand' },
+    { title: 'The chosen variation', text: 'A ready-made look from variations in styles.json.' },
+    { title: 'A child theme’s values', text: 'New defaults for tokens its parent declares.' },
+    { title: 'The theme’s defaults', text: 'The value of each token in styles.json.', tone: 'muted' },
+];
+const entryTemplate = {
+    question: 'Did the editor choose a template for this entry, and may its type use it?',
+    answers: [
+        { label: 'Yes', result: 'That template.', tone: 'brand' },
+        { label: 'No', next: {
+            question: 'Is there a templates/entry-<type>.json?',
+            answers: [
+                { label: 'Yes', result: 'entry-<type>.' },
+                { label: 'No', next: {
+                    question: 'Is there a templates/entry.json?',
+                    answers: [
+                        { label: 'Yes', result: 'entry.' },
+                        { label: 'No', result: 'The theme’s own Vue page.', tone: 'muted' },
+                    ],
+                } },
+            ],
+        } },
+    ],
+};
+</script>
+
 # Themes
 
 This page shows how to build a Kestello theme: the manifest, the folders, layouts and page components, child themes, design tokens, stylesheets, fonts, menu locations and block templates. Read it when you start a theme for a client site or a child theme that changes an existing one. How pages reach the browser once your theme renders them is on [Frontend](/developers/frontend).
@@ -49,6 +83,7 @@ The slug must be lowercase letters, digits and single dashes. `make:theme` refus
 | `assets/build/` | Yes, if `resources/js` exists | The Vite output. Committed and shipped, so servers never need Node.js. |
 | `src/` | No | PHP classes, autoloaded from the manifest's `namespace`. |
 | `templates/`, `parts/`, `patterns/` | No | Block templates as JSON (see [Block templates and patterns](#block-templates-and-patterns)). |
+| `emails/` | No | `layout.html` lays out every email the site sends, `<email id>.html` one of them (see [Lay out emails in a theme](/developers/emails#lay-out-emails-in-a-theme)). |
 | `screenshot.png` (or `.jpg`, `.webp`) | No | Shown on **Appearance → Themes**. |
 | `tools/` | No | Your own build helpers. Not needed at run time. |
 
@@ -97,7 +132,7 @@ Plugins and themes share one manifest format. The keys only plugins use, such as
 php bin/cms theme:activate acme
 ```
 
-Or use **Appearance → Themes** in the admin. Kestello checks the theme's requirements and that its parent is installed before it switches. If the active theme or any theme in its chain cannot load, the site falls back to `base`, the default theme, and the reason shows on the Themes screen.
+Or use **Appearance → Themes** in the admin. Kestello checks the theme's requirements, that its parent is installed and that its email files pass their check before it switches. If the active theme or any theme in its chain cannot load, the site falls back to `base`, the default theme, and the reason shows on the Themes screen.
 
 ## The provider
 
@@ -228,6 +263,8 @@ These stay external in the build: the page shell's import map points every packa
 
 Theme pages are named by their path, with no prefix, so a theme can also ship pages with other packages' names. The first match wins, in this order: the active theme, its parents, then plugins (`@<slug>/...` only), then core (`@core/...`).
 
+<Layers :layers="components" caption="Where a page or layout component is found: the top layer that has it wins" />
+
 | To replace | Put a file at |
 |---|---|
 | Core's sign-in page `@core/auth/Login` | `resources/js/pages/@core/auth/Login.vue` |
@@ -274,6 +311,7 @@ What a child inherits and how it changes it:
 | `stylesheets` | Added after the parent's, so the child's rules win. |
 | `styles.json` | Merged over the parent's: the child adds tokens, fonts, groups, contrast pairs and variations, and may set `values` and `custom_css` (see below). |
 | `templates/`, `parts/`, `patterns/` | A child's file replaces the parent's file with the same name. |
+| `emails/` | A child's file replaces the parent's file with the same name, and an email's own file wins over a `layout.html` anywhere in the chain. |
 | Provider | Both run, parent first. |
 
 A chain holds at most three themes (a theme, its parent and the parent's parent). A longer chain, a loop, a missing parent or a suspended member makes the whole chain unusable, and the site falls back to `base`.
@@ -338,7 +376,11 @@ Values are checked by type: colours must be `#rgb`, `#rrggbb` or `#rrggbbaa`; si
 
 Every theme can offer these system stacks for `font` tokens with no downloads: `system-sans`, `system-serif`, `humanist`, `geometric`, `old-style` and `mono`.
 
-The final value of each token is the theme's default, then the chosen variation, then the site's own changes. The generated stylesheet is served at `/system/theme/styles.css?v=<hash>`. Kestello links it only once the site has changed something (or a child theme sets `values`, `custom_css` or uses a downloaded font), because until then your theme's own CSS already holds the defaults. Keep the defaults in `styles.json` and in your `:root` rules the same.
+The final value of each token is the theme's default (with a child theme's `values` applied over its parent's), then the chosen variation, then the site's own changes.
+
+<Layers :layers="tokens" caption="Where a token's value comes from: the top layer that sets it wins" />
+
+The generated stylesheet is served at `/system/theme/styles.css?v=<hash>`. Kestello links it only once the site has changed something (or a child theme sets `values`, `custom_css` or uses a downloaded font), because until then your theme's own CSS already holds the defaults. Keep the defaults in `styles.json` and in your `:root` rules the same.
 
 A broken `styles.json` does not stop the site. Invalid JSON, invalid tokens and refused `custom_css` are skipped and logged:
 
@@ -438,6 +480,8 @@ const internal = (item) => item.url.startsWith('/') && !item.url.startsWith('//'
 
 A location with no menu assigned is an empty list. Give your layout a fallback, as the base theme does, so a fresh site still has navigation.
 
+On a site in several languages, each language can have its own menu in a location; `menus` already holds the one for the page's language. To add a language switcher, see [Content in several languages](/developers/multilingual#add-a-language-switcher-to-a-theme).
+
 ## Block templates and patterns
 
 A theme can ship block trees as JSON files that site owners then change on **Appearance → Templates**:
@@ -475,6 +519,8 @@ A pattern from the base theme:
 Plugins ship the same three folders. A plugin's file names start with its slug (`patterns/acme-events-upcoming.json`), or are the entry template of a type it declares (`templates/entry-acme-event.json`); other names are skipped and logged. A theme file with the same name replaces the plugin's, so a theme can restyle what a plugin brings.
 
 For an entry, Kestello uses the entry's chosen template if its type may use it, then `entry-<type>`, then `entry`, and finally your theme's own Vue page. A theme without templates keeps working as before.
+
+<Decide :tree="entryTemplate" caption="Which template lays out an entry" />
 
 When a site owner changes a template, the published version is stored in the database and replaces your file for that site. When a later version of your theme changes the same file, the editor shows what changed and lets the owner keep theirs, take yours, or open yours as a draft. A file with invalid JSON is skipped and logged; blocks that fail validation are dropped from it and logged.
 

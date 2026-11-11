@@ -16,7 +16,12 @@ The name, address and clock of your site.
 | **Tagline** | One sentence about the site, used by search engines and themes. | Empty |
 | **Site address** | The public address, starting with `https://`. Links in emails, such as password resets, are built from it. | The address given at installation |
 | **Timezone** | The clock for dates on the site and for scheduled posts and tasks. Choose the city you work in. | UTC |
-| **Language** | The language of the admin, of emails, and of the words your theme shows by itself, such as "Read more". Language packs add more languages. | English |
+| **Language** | The language of the admin, of emails, and of the words your theme shows by itself, such as "Read more". Language packs add more languages. It is also the main language of your content. | English |
+| **Other languages** | Languages your content is also written in. Each lives under its code, such as `/es` for Spanish. See [A site in several languages](/guide/languages). | None |
+| **Name and tagline in other languages** | The **Site name** and **Tagline** in each other language. Empty fields use the main ones. | Empty |
+| **Addresses in other languages** | A word of each language for each content type's and category's address, such as `proyectos` for `/projects`. | Empty |
+
+When the site has more than one language, each person can also choose the language of the emails they get: **Language** on **Your profile**. Left at **The site's language**, they get the one set here. See [Emails](/guide/emails).
 
 Changing **Site address** needs the permission *Manage infrastructure, background jobs, scheduled tasks and Site Health* as well, because password reset links are built on it.
 
@@ -51,6 +56,18 @@ How the site sends password resets, notifications and form submissions. Without 
 After saving, use **Send a test email** to check that a message reaches you.
 
 This tab needs the permission *Manage infrastructure, background jobs, scheduled tasks and Site Health* as well. Password reset links travel through the mail server, so whoever sets it could read them.
+
+## Emails
+
+How every email the site sends looks: the logo at the top and a line at the foot. Colours and the font come from your theme. What each email says is changed under **Site → Emails**, explained in [Emails](/guide/emails).
+
+| Setting | What it is for | Default |
+|---|---|---|
+| **Show a logo** | Show a logo at the top of every email. Without one, the site name is shown at the foot only. | On |
+| **Email logo** | The picture to use. Left empty, the **Logo or photo** from **Search and sharing** is used. It is shown 40 pixels tall. | Empty |
+| **Footer text** | A line under the site name in every email, such as a postal address. | Empty |
+
+This tab needs the permission *Change how the site's emails look and what they say*.
 
 ## Accounts
 

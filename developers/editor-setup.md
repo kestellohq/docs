@@ -20,7 +20,7 @@ npm run ide
 
 CI fails when the file is out of date.
 
-For formatting and checks, see [Local development](/developers/local-development).
+For formatting and the other checks CI runs, see [Checks before a pull request](/developers/local-development#checks-before-a-pull-request).
 
 ## For a plugin or theme in its own repository
 

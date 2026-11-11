@@ -1,3 +1,28 @@
+<script setup>
+const fallbacks = [
+    { title: 'Description', items: ['The entry’s search description', 'Its excerpt', 'The first lines of its text', 'The site tagline'] },
+    { title: 'Sharing image', items: ['The entry’s sharing image', 'Its first image field', 'The site’s default sharing image'] },
+];
+const graph = [
+    { id: 'webpage', title: 'WebPage or CollectionPage', text: '{page}#webpage: the page being read.', tone: 'brand' },
+    { id: 'website', title: 'WebSite', text: '{site}/#website' },
+    { id: 'publisher', title: 'Organization or Person', text: '{site}/#publisher, with its logo or picture and sameAs profiles.' },
+    { id: 'image', title: 'ImageObject', text: '{page}#primaryimage, when the page has its own image.' },
+    { id: 'breadcrumb', title: 'BreadcrumbList', text: '{page}#breadcrumb, on every page but the home page.' },
+    { id: 'article', title: 'Article', text: '{page}#article, for dated entries.' },
+];
+const links = [
+    { from: 'webpage', to: 'website', label: 'isPartOf' },
+    { from: 'webpage', to: 'publisher', label: 'about', note: 'home page only' },
+    { from: 'webpage', to: 'image', label: 'primaryImageOfPage' },
+    { from: 'webpage', to: 'breadcrumb', label: 'breadcrumb' },
+    { from: 'website', to: 'publisher', label: 'publisher' },
+    { from: 'article', to: 'webpage', label: 'mainEntityOfPage and isPartOf' },
+    { from: 'article', to: 'publisher', label: 'publisher', note: 'and author, when the entry names none' },
+    { from: 'article', to: 'image', label: 'image' },
+];
+</script>
+
 # Search engines
 
 This page covers what Kestello tells search engines about each page, and the hooks a plugin or theme uses to change it: the head tags, the structured data (JSON-LD), links to other languages and the sitemap. Read it before writing an SEO plugin, or when a theme needs something search engines should see.
@@ -21,6 +46,10 @@ Core writes these into the `<head>` of every public page. Admin pages get none o
 | `link rel="alternate" hreflang` | Only what [`seo.alternates`](#other-languages) returns. |
 | `<script type="application/ld+json">` | The [structured data](#structured-data). |
 
+The description and the sharing image each take the first value that is set:
+
+<Compare :columns="fallbacks" caption="Where the description and the sharing image come from, first one set wins" />
+
 Pages describe themselves to core with a `seo` prop. Controllers of core pages set it; a plugin's own page can too:
 
 ```php
@@ -32,6 +61,7 @@ return Page::render('@acme/Product', [
         'image' => ['url' => $image->url(), 'width' => 1200, 'height' => 630, 'alt' => $image->alt],
         'type' => 'website',            // og:type
         'kind' => 'page',               // page, article or collection: what the structured data calls it
+        'author' => 'Ana',              // the Article's author; without it, the publisher
         'published' => '2026-03-02T09:00:00Z',
         'modified' => '2026-03-05T10:00:00Z',
         'breadcrumbs' => [['name' => 'Shop', 'path' => '/shop']],
@@ -67,8 +97,12 @@ Each page that may be listed gets one JSON-LD `@graph`. Its nodes refer to each 
 | `Organization` or `Person` | `{site}/#publisher` | Every page. Name, logo or photo and `sameAs` profiles come from the settings. |
 | `WebPage` or `CollectionPage` | `{page}#webpage` | Every page; `CollectionPage` for archives and term pages. |
 | `ImageObject` | `{page}#primaryimage` | When the page has its own image. |
-| `Article` | `{page}#article` | Dated entries, with headline, dates, author and publisher. |
+| `Article` | `{page}#article` | Dated entries (types with an archive), or a page whose `seo.kind` is `article`, with headline, dates, author and publisher. |
 | `BreadcrumbList` | `{page}#breadcrumb` | Every page but the home page: home, the archive or the parent pages, then the page. |
+
+`{page}` is the address of the page being read, not its canonical address. The nodes point at each other like this:
+
+<States :states="graph" :moves="links" caption="The nodes of the JSON-LD graph and the properties that link them" />
 
 Change it with `seo.schema`, which receives the list of nodes and the page:
 

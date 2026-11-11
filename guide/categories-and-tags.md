@@ -4,7 +4,7 @@ Categories and tags sort your posts so visitors can find related ones. A **categ
 
 ![The Categories screen: the form to add a category on the left, the list of categories on the right.](/screenshots/content-categories.png)
 
-Posts can be sorted with **categories** (broad sections, which can be nested) and **tags** (free keywords). Each has its own screen: **Content → Categories** and **Content → Tags**.
+Each has its own screen: **Content → Categories** and **Content → Tags**.
 
 ## Assign them while writing
 
@@ -29,6 +29,10 @@ Each category and tag has a public page listing its posts, at `/category/news` o
 A category or tag that is used only by drafts, scheduled posts or trashed posts has no public page yet: its address shows "not found", it is left out of the sitemap, and the list in the admin does not link to it. It appears as soon as one post that uses it is published.
 
 Changing the address of a category or tag does not add a redirect. If the old address was shared, add one yourself under **Site → Redirects**.
+
+## In other languages
+
+On a site in several languages, each category and tag can have a translation with its own name and address. Switch the **Language** at the top of the list and use the **Translations** column. See [A site in several languages](/guide/languages#categories-and-tags).
 
 ## Related pages
 

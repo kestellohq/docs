@@ -1,3 +1,23 @@
+<script setup>
+const building = [
+    { title: 'The provider boots', text: 'It declares the capability notices.manage, the scopes notices:read and notices:write, three endpoints, the admin page, the settings tab and the shared notices prop.' },
+    { title: 'The admin page', text: 'Notices.vue calls /api/v1/notices/notices with the editor’s session.', tone: 'brand' },
+    { title: 'The endpoints', text: 'Kestello checks the request, then handle() reads or writes through the Notice model.' },
+    { title: 'The table', text: 'p_notices_notices, made by the plugin’s migration.' },
+    { title: 'The theme', text: 'Every page gets usePage().props.notices; the theme decides where they show.' },
+];
+const gates = [
+    { title: 'Who is calling', text: 'The session or the token is read.', fail: 'A token that is wrong or expired: 401, invalid_token.' },
+    { title: 'Rate limit', text: 'Per person, or per address for guests.', fail: '429, rate_limited, with Retry-After.' },
+    { title: 'CSRF', text: 'Writes without a token need the X-CSRF-TOKEN header.', fail: '403, csrf_mismatch.' },
+    { title: 'Signed in', fail: '401, unauthenticated.' },
+    { title: 'Capability', fail: '403, forbidden.' },
+    { title: 'Scopes', text: 'Tokens only.', fail: '403, insufficient_scope, with required_scopes.' },
+    { title: 'Query and body', text: 'Checked against the schemas.', fail: '422, validation, with each problem.' },
+    { title: 'handle()', tone: 'brand' },
+];
+</script>
+
 # Build your first plugin
 
 This page walks through a small plugin from an empty folder to an active, checked package: a **Notices** plugin that keeps short messages in its own table, lets editors manage them on an admin screen, exposes them through the REST API, has a settings tab, and hands the current notices to every page so the theme can show them. Follow it when you write your first plugin, or come back to it when you need a working example of one of the pieces. It assumes you have read [Architecture](/developers/architecture) and have a site running as described in [Local development](/developers/local-development).
@@ -16,6 +36,10 @@ Every file on this page was copied out of it and run against Kestello 0.1.0-rc.2
 | Three API endpoints | `src/Api/` | [REST API](/developers/rest-api) |
 | Admin page | `resources/js/pages/admin/Notices.vue` | [Admin pages](/developers/admin-pages) |
 | Settings tab | the provider | [Settings](/developers/settings) |
+
+How the pieces work together once the plugin is active:
+
+<Flow :steps="building" caption="The Notices plugin, from the provider to the page" />
 
 The commands on this page are written as `php bin/cms ...`. In the Docker development setup, put `docker exec cms_app` in front of each one (see [Local development](/developers/local-development#running-commands)).
 
@@ -185,12 +209,16 @@ A token never has more power than the person it belongs to. It acts as its owner
 
 Here is what happens to a request, in order:
 
-1. No session and no token: `401` with the problem type `unauthenticated`.
-2. The person (or the token's owner) lacks the capability: `403`, `forbidden`.
-3. A token without one of the scopes: `403`, `insufficient_scope`, with the missing ones under `required_scopes`.
-4. Too many requests from this person in the time window: `429`.
-5. The query and body are checked against the schemas: `422`, `validation`, with each problem, when they do not match.
-6. `handle()` runs.
+1. A token that is wrong or expired: `401`, `invalid_token`.
+2. Too many requests from this person (or, for a guest, this address) in the time window: `429`, `rate_limited`. This check comes before the permission checks, so a refused request still counts.
+3. A write from the browser session without the `X-CSRF-TOKEN` header: `403`, `csrf_mismatch`.
+4. No session and no token: `401`, `unauthenticated`.
+5. The person (or the token's owner) lacks the capability: `403`, `forbidden`.
+6. A token without one of the scopes: `403`, `insufficient_scope`, with the missing ones under `required_scopes`.
+7. The query and body are checked against the schemas: `422`, `validation`, with each problem, when they do not match.
+8. `handle()` runs.
+
+<Flow :steps="gates" caption="The checks a request passes before handle() runs" />
 
 Two rules keep plugins safe by default. An endpoint must name a capability and at least one scope, or say `isPublic()`: Kestello refuses to register one that does neither ("declares neither a capability nor isPublic(): refused (deny by default)"). And a plugin's names start with its slug: capabilities with `notices.`, scopes with `notices:`.
 

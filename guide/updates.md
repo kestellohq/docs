@@ -1,3 +1,34 @@
+<script setup>
+const update = [
+    { title: 'Check the zip', text: 'Its signature, its code, and whether it fits this site.', fail: 'It stops here, and nothing has changed.' },
+    { title: 'Back up the database', text: 'Listed under Site → Backups as Before an update.' },
+    { title: 'Maintenance page', text: 'Visitors see Back in a moment. Signed-in people keep working.' },
+    { title: 'New files in', text: 'The old ones are moved aside, not deleted.' },
+    {
+        title: 'Check the site',
+        text: 'Database changes, the updated package, every plugin that ran before, the home page and the status address.',
+        tone: 'brand',
+        fail: 'The old files go back, the database is restored from the backup, and the site is checked again on the old version.',
+    },
+    { title: 'Done', text: 'The maintenance page goes away and you see the result.' },
+];
+const releases = [
+    { title: 'Before the update', items: ['`core/releases/1.4.0/`', 'core/current.php names 1.4.0'] },
+    { title: 'After the update', tone: 'brand', items: ['`core/releases/1.4.0/`', '`core/releases/1.5.0/`', 'core/current.php names 1.5.0'] },
+];
+const halfway = [
+    { title: 'The host stops PHP', text: 'A time limit, a memory limit or a restart, in the middle of an update.' },
+    { title: 'The next request', text: 'From a visitor, you or the scheduled task. Visitors keep getting the maintenance page.' },
+    {
+        title: 'Finish the job',
+        text: 'Before any plugin loads: keep the new version if its check had passed, otherwise put the old files and the database back.',
+        tone: 'brand',
+        fail: 'After three failed tries, Kestello stops and keeps the maintenance page on. See If going back did not finish.',
+    },
+    { title: 'Back to normal', text: 'The maintenance page is removed and the page that was asked for is shown.' },
+];
+</script>
+
 # Updates
 
 Updating usually takes about a minute, and you don't have to hold your breath. Before anything changes, Kestello backs up the database. After the new version is in, it checks that the site still works, and if it doesn't, it puts the old version back by itself. You'll see the result either way.
@@ -204,11 +235,13 @@ This goes through the same backup and check. It does not undo database changes t
 
 Uploading and applying an update also asks you to confirm your password if you have not done so in the last 10 minutes.
 
-The same signature rules apply as for installing: from the admin, only zips signed by a publisher your site trusts are accepted, unless `app.packages.admin_unsigned` is on. The command line accepts unsigned zips. A zip whose seal is broken is always refused. See [Signed and unsigned plugins](/guide/plugins#signed-and-unsigned-plugins).
+The same signature rules apply as for installing: from the admin, only zips signed by a publisher your site trusts, or published in the Kestello registry, are accepted, unless `app.packages.admin_unsigned` is on. The command line accepts unsigned zips. A zip whose seal is broken is always refused. See [Signed and unsigned plugins](/guide/plugins#signed-and-unsigned-plugins).
 
 ## What happens during an update {#what-happens}
 
 When you start an update, Kestello works through these steps by itself:
+
+<Flow :steps="update" caption="An update, and how it goes back when the check fails" />
 
 1. **Checks the zip.** It reads the new version, checks its signature and its code, and checks that it fits your site: the PHP version, PHP extensions, and the versions other active plugins require. If something does not fit, it stops here and nothing changes.
 2. **Backs up the database.** The backup appears under **Site → Backups** with the type **Before an update** and a note such as *Before updating Acme Shop 1.2.0 to 1.3.0*. It holds the database only; the old files are kept separately (see below).
@@ -233,6 +266,8 @@ On shared hosting, the host may stop PHP in the middle of an update: a time limi
   - otherwise it puts the old files back and restores the database from the **Before an update** backup;
   - then it removes the maintenance page and shows the page that was asked for.
 
+<Flow :steps="halfway" caption="What happens after an update stopped halfway" />
+
 You do not need FTP or the command line for this. The audit log under **System → Audit log** records it as *Put back an update that stopped halfway*.
 
 Visitors see the maintenance page for as long as an update has not finished, however long that takes. You and other signed-in people can still use the admin.
@@ -250,7 +285,9 @@ Only one update runs at a time, and no backup or restore can start while an upda
 ### Where the old version is kept
 
 - **Plugins and themes:** the old folder goes to `storage/app/backups/packages/`, named after the plugin, its old version and the date, for example `acme-shop-1.2.0-20261105-143012-a1b2c3`. Kestello keeps the newest three per plugin or theme.
-- **Kestello:** each release lives in its own folder under `core/releases/`, and the file `core/current.php` names the one that runs. Kestello keeps the running release, the one before it, and one more.
+- **Kestello:** each release lives in its own folder under `core/releases/`, and the file `core/current.php` names the one that runs. Kestello keeps the running release, the one before it, and one more. An update adds a folder and changes which one `core/current.php` names; switching back changes it again.
+
+<Compare :columns="releases" arrow caption="Kestello's release folders before and after an update from 1.4.0 to 1.5.0" />
 - **The database:** in the **Before an update** backup. These count as automatic backups, so after each scheduled backup the oldest are removed once there are more than the number under **Keep** in the **Schedule** box on **Site → Backups**. See [Backups](/guide/backups).
 
 ### How the check reaches the site

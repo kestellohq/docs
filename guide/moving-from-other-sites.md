@@ -1,3 +1,14 @@
+<script setup>
+const move = [
+    { title: "List your old addresses", text: "From the old site's /sitemap.xml." },
+    { title: "Bring over what you can", text: "An export file, if your builder makes one.", tone: "muted" },
+    { title: "Copy the rest by hand", text: "Pages, pictures, then the menus.", tone: "brand" },
+    { title: "Add redirects", text: "From each old address to its new one." },
+    { title: "Switch over", text: "The Going live checklist." },
+    { title: "Watch the Not found list", text: "For a week or two, for addresses you missed." },
+];
+</script>
+
 # Moving from Squarespace, Wix or another site
 
 Not every site builder lets you take your site with you in one file. This page shows how to move one anyway, without losing your place in search results: what you can bring over in one go, what you copy by hand, and how to make sure old links still work.
@@ -9,6 +20,8 @@ A small business site with ten to twenty pages usually takes an afternoon or two
 :::
 
 As with any move, your old site stays exactly as it is until you switch the domain over, so there is no rush.
+
+<Flow :steps="move" caption="Moving a site by hand, from the list of old addresses to the weeks after" />
 
 ## Before you start
 

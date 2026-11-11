@@ -1,3 +1,13 @@
+<script setup>
+const journey = [
+    { title: 'The registry', text: 'registry.url, or a mirror of it.' },
+    { title: 'Fetch and check', text: 'Every app.updates.check_every hours: keys.json against registry.root_keys, then the list against keys.json.', fail: 'The previous copy stays in use until it expires, and status() gives the reason.' },
+    { title: 'The site’s copy', text: 'Kept on the site. RegistryRefreshed names what changed.', tone: 'brand' },
+    { title: '$cms->registry()', text: 'Reads that copy, never a publisher’s server.' },
+    { title: 'Your plugin', text: 'Shows packages, organisations and advisories.' },
+];
+</script>
+
 # Reading the registry
 
 The Kestello registry lists the plugins and themes sites can install from **Plugins → Add new**. Every site keeps its own checked copy of it. A plugin or theme can read that copy through `$cms->registry()`: to show a directory of packages, an organisation's page or a list of security advisories. Read this page when your plugin shows what is in the registry. To get a package listed, see [Packaging and signing](/developers/packaging).
@@ -52,7 +62,10 @@ With the registry turned off (`'enabled' => false` in the site's `config/registr
 
 ## Keep your own copy up to date
 
-Sites fetch the registry's list every `app.updates.check_every` hours (12 by default). A plugin that keeps its own copy, in its tables or a cache, listens for `RegistryRefreshed`. It names what changed, so the plugin updates only that:
+Sites fetch the registry's list every `app.updates.check_every` hours (12 by default), with the scheduled task `updates.registry`. Each time, the site fetches `keys.json` and checks it against the root keys in `registry.root_keys`, then fetches the list and checks it against the keys `keys.json` names. A list older than the one the site already accepted is refused. When any check fails, the previous copy stays in use until it expires, and `status()` gives the reason.
+
+<Flow :steps="journey" caption="From the registry to your plugin" />
+ A plugin that keeps its own copy, in its tables or a cache, listens for `RegistryRefreshed`. It names what changed, so the plugin updates only that:
 
 ```php
 use Kestello\Cms\Events\RegistryRefreshed;

@@ -27,6 +27,7 @@ const guide = [
             { text: 'Search and sharing', link: '/guide/search-and-sharing' },
             { text: 'Media library', link: '/guide/media' },
             { text: 'Menus', link: '/guide/menus' },
+            { text: 'A site in several languages', link: '/guide/languages' },
             { text: 'Redirects', link: '/guide/redirects' },
             { text: 'Forms', link: '/guide/forms' },
             { text: 'Search', link: '/guide/search' },
@@ -36,6 +37,7 @@ const guide = [
         text: 'Running the site',
         items: [
             { text: 'Settings', link: '/guide/settings' },
+            { text: 'Emails', link: '/guide/emails' },
             { text: 'Themes and design', link: '/guide/themes' },
             { text: 'People and roles', link: '/guide/people' },
             { text: 'Plugins', link: '/guide/plugins' },
@@ -74,6 +76,7 @@ const developers = [
             { text: 'Migrations', link: '/developers/migrations' },
             { text: 'Admin pages', link: '/developers/admin-pages' },
             { text: 'Events and filters', link: '/developers/events' },
+            { text: 'Emails', link: '/developers/emails' },
             { text: 'Hook reference', link: '/developers/hooks' },
             { text: 'Settings', link: '/developers/settings' },
             { text: 'Background jobs', link: '/developers/jobs' },
@@ -86,6 +89,7 @@ const developers = [
             { text: 'Themes', link: '/developers/themes' },
             { text: 'Rendering and caching', link: '/developers/frontend' },
             { text: 'Search engines', link: '/developers/seo' },
+            { text: 'Content in several languages', link: '/developers/multilingual' },
         ],
     },
     {

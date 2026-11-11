@@ -1,7 +1,7 @@
 // Run the installer of a fresh, empty Kestello with SQLite. See tools/screenshots/README.md.
 //
 //   node tools/screenshots/install.mjs          a website: saves the five installer screenshots
-//   node tools/screenshots/install.mjs --demo   the sample bakery site the other screenshots use
+//   node tools/screenshots/install.mjs --demo   the sample studio site the other screenshots use
 //                                               (no screenshots; a demo skips the account step)
 //
 // The website's administrator gets a random password that is never shown or stored: that
@@ -24,8 +24,8 @@ try {
     await page.getByRole('button', { name: 'Connect and continue' }).click();
 
     await settle(page);
-    await page.getByLabel('Site name').fill('Larkspur Bakery');
-    await page.getByLabel('Tagline (optional)').fill('Sourdough, rye and pastries on the quay');
+    await page.getByLabel('Site name').fill('Taller Arroyo & Lind');
+    await page.getByLabel('Tagline (optional)').fill('Houses, schools and rooms, drawn and built from Valencia');
     await save(page, 'install-3-your-site');
     if (demo) {
         await page.getByText('A public demo', { exact: true }).click();
@@ -34,8 +34,8 @@ try {
 
     if (!demo) {
         await settle(page);
-        await page.getByLabel(/^Username/).fill('margit');
-        await page.getByLabel(/^Email/).fill('margit@example.com');
+        await page.getByLabel(/^Username/).fill('lucia');
+        await page.getByLabel(/^Email/).fill('lucia@example.com');
         const password = randomBytes(18).toString('base64url');
         for (const field of await page.locator('input[type=password]').all()) {
             await field.fill(password);

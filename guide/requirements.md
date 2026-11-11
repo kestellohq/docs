@@ -1,3 +1,17 @@
+<script setup>
+const request = {
+    question: "Is there a real file at this address in public/?",
+    answers: [
+        { label: "Yes", result: "The web server sends the file as it is, such as favicon.ico." },
+        {
+            label: "No",
+            result: "The request goes to public/index.php, and Kestello answers it with a page, the admin or its not found page.",
+            tone: "brand",
+        },
+    ],
+};
+</script>
+
 # Requirements
 
 Kestello runs on ordinary web hosting: shared hosting, a virtual server (VPS) or Docker. It needs PHP, a database and a web server, and nothing else. There is no Node.js, Composer or other tool to install on the server.
@@ -70,6 +84,8 @@ For MySQL, MariaDB and PostgreSQL you need a database and a user that can create
 
 Kestello's front door is the file `public/index.php`. The web server has to send every request it cannot answer with a real file to that file.
 
+<Decide :tree="request" caption="What the web server does with each request" />
+
 - **Apache** (most shared hosting): Kestello ships `.htaccess` files that do this. Your host must allow `.htaccess` files and have `mod_rewrite` on. Almost all do.
 - **nginx**: needs a short configuration block, shown in [Installing Kestello](/guide/installation#nginx).
 - **Others** (Caddy, LiteSpeed, IIS): any server that can point the site at `public/` and route unknown paths to `public/index.php` works.
@@ -83,8 +99,8 @@ Kestello writes to a few folders: the installer saves its settings, uploads are 
 | Folder | Why |
 |---|---|
 | `config/` | The installer writes the database details and site settings here. |
-| `storage/` | Caches, logs, sessions, backups, and the SQLite database if you use one. |
-| `content/` | Uploads, and plugins or themes you install from the admin. |
+| `storage/` | Uploads, caches, logs, sessions, backups, and the SQLite database if you use one. |
+| `content/` | Plugins and themes you install from the admin. |
 | `core/` | Only if you want to update Kestello itself from the admin. |
 
 On shared hosting this is usually already the case. On a VPS, the folders must belong to the user the web server runs PHP as (often `www-data`).

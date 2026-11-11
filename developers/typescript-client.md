@@ -1,3 +1,12 @@
+<script setup>
+const generation = [
+    { title: 'Endpoint schemas', text: 'query(), body(), response() and the properties() of resources, in core and the active plugins.' },
+    { title: 'OpenAPI document', text: 'Built from them at /api/v1/openapi.json.' },
+    { title: 'api:client', text: 'Turns the document into one TypeScript file. The admin’s download and /api/v1/openapi.ts serve the same file.', tone: 'brand' },
+    { title: 'kestello.ts', text: 'A method and types for every endpoint, committed with your front end.' },
+];
+</script>
+
 # TypeScript client
 
 Kestello generates a typed client for its REST API: one TypeScript file with no dependencies, a method for every endpoint, and the types of what each one takes and answers. Use it in a headless front end, a build script or an integration, so your editor checks your calls and a renamed field shows up as a type error instead of a bug.
@@ -5,6 +14,8 @@ Kestello generates a typed client for its REST API: one TypeScript file with no 
 It runs anywhere `fetch` does: browsers, Node.js 18 or newer, Deno, Bun and edge runtimes.
 
 ## Generate it
+
+<Flow :steps="generation" caption="From the endpoints' schemas to the file in your front end" />
 
 On the server, from the site's root folder:
 
@@ -40,14 +51,14 @@ const kestello = createClient({
 
 const { data: posts, meta } = await kestello.listEntries({
     type: 'post',
-    query: { status: 'published', limit: 10 },
+    query: { status: 'published', per_page: 10 },
 });
 for (const post of posts) {
     console.log(post.title, post.path);    // typed: string, string | null
 }
 ```
 
-Every method takes one object: path parameters by name (`id`, `type`), then `query` and `body`. It answers with `{ data, meta }`, where `meta` holds paging details for lists. A `DELETE` that has nothing to return answers `undefined`.
+Every method takes one object: path parameters by name (`id`, `type`), then `query` and `body`. Each endpoint has its own query parameters: entries are paged with `page` and `per_page`, users with `limit` and `cursor` (see [Pagination](/developers/rest-api#pagination)). A key the endpoint does not declare is a type error, and if it reaches the server anyway the answer is `422` with `Unknown field.` It answers with `{ data, meta }`, where `meta` holds paging details for lists. A `DELETE` that has nothing to return answers `undefined`.
 
 ```ts
 const { data: hook } = await kestello.createWebhook({

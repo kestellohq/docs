@@ -34,6 +34,11 @@ Follow STYLE.md, "Structure of a page": what the page covers and when you need i
 - Tables for reference (settings, commands, fields), never for steps.
 - `::: warning` for data loss or lock-out, `::: danger` only for what cannot be undone.
 
+## Pictures
+
+- A screenshot where the task starts (STYLE.md, "Screenshots"), taken with `tools/screenshots/`.
+- A diagram for an order of steps or a stack of layers: `<Flow>` or `<Layers>` (STYLE.md, "Diagrams").
+
 ## VitePress gotchas
 
 - Angle brackets outside code become HTML tags and break the build: write `&lt;zip&gt;` in prose, or put it in code.

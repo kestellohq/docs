@@ -1,3 +1,20 @@
+<script setup>
+const life = [
+    { title: 'Activate', text: 'Every pending migration, then upgrade() if the files changed while it was off, then the provider boots.', fail: 'The activation fails with the error.' },
+    { title: 'New version', text: 'On the next request or command: the pending migrations, then upgrade(), then the new version is recorded.', tone: 'brand', fail: 'The plugin is suspended and its version is not recorded.' },
+    { title: 'Restore a backup', text: 'At any time: the migrations the backup recorded run on an empty database, then its rows go in.', tone: 'muted' },
+    { title: 'Uninstall', text: 'uninstall(), then every down(), newest first.' },
+];
+const prefixes = [
+    { title: 'acme', text: 'Prefix p_acme_', items: ['`p_acme_orders`', '`p_acme_settings`'] },
+    { title: 'acme-seo', text: 'Prefix p_acme_seo_', tone: 'brand', items: ['`p_acme_seo_orders`', '`p_acme_seo_links`'] },
+];
+const transactions = [
+    { title: 'PostgreSQL and SQLite', tone: 'brand', items: ['The migration and its record run in one transaction.', 'A failure halfway leaves nothing behind.', 'Not recorded: it runs again after the fix.'] },
+    { title: 'MySQL and MariaDB', tone: 'danger', items: ['Every CREATE, ALTER and DROP commits on its own.', 'A failure halfway leaves the earlier changes in place.', 'Not recorded: it runs again from the start.'] },
+];
+</script>
+
 # Migrations
 
 A migration is a PHP file that creates or changes database tables. Plugins ship their migrations in `database/migrations/`, and Kestello runs them when the plugin is activated and when a new version arrives. This page covers writing migrations, every column type and index method of the schema builder, the table name rules for plugins, when migrations run and how they behave on MySQL, PostgreSQL and SQLite. Read it before you add a table to a plugin, and before you change one that is already on sites.
@@ -221,17 +238,21 @@ Table "p_acme_seo_orders" belongs to another package (prefix "p_acme_seo_").
 
 To stay clear of this, do not name a table so that it starts with another plugin's prefix (`p_acme_seo_...` in the plugin `acme`), even if that plugin is not installed yet.
 
+<Compare :columns="prefixes" caption="Two installed plugins whose prefixes overlap: the longer prefix wins" />
+
 Core migrations have no prefix restriction.
 
 ## When migrations run
 
 | Event | What runs |
 |---|---|
-| `plugin:activate`, or activating on the **Plugins** screen | Every pending migration of the plugin, before the provider boots. |
+| `plugin:activate`, or activating on the **Plugins** screen | Every pending migration of the plugin, before the provider boots. If the plugin's files were replaced by a new version while it was off, `upgrade()` runs next. |
 | A new version of an active plugin's files (after `package:update`, an upload or a deploy) | The pending migrations, on the next request or command, then `upgrade()`. |
-| `plugin:uninstall` | Every migration of the plugin rolled back, newest first. |
-| `backup:restore` | The database is rebuilt: the migrations recorded in the backup run on an empty database, then the backup's rows replace whatever the migrations inserted. |
-| `migrate`, `migrate:rollback`, `migrate:reset`, `migrate:status` | Core migrations only. They do not touch plugin migrations. |
+| `plugin:uninstall` | The provider's `uninstall()`, then every migration of the plugin rolled back, newest first. |
+| `backup:restore` | The database is rebuilt: the migrations recorded in the backup run on an empty database, then the backup's rows replace whatever the migrations inserted. Core migrations newer than the backup run last. |
+| `migrate`, `migrate:rollback`, `migrate:reset`, `migrate:status`, `migrate:fresh` | Core migrations only. They do not touch plugin migrations. |
+
+<Flow :steps="life" caption="When a plugin's migrations run, and what happens when one fails" />
 
 Two consequences for how you write migrations:
 
@@ -258,6 +279,8 @@ Each migration then runs with its record in the `migrations` table:
 
 - **PostgreSQL and SQLite** run each migration, and the row that records it, in one transaction. A migration that fails halfway leaves nothing behind and is not recorded.
 - **MySQL and MariaDB** commit every `CREATE`, `ALTER` and `DROP` on their own, so there is no such transaction. A migration that fails after its first statement leaves the earlier changes in place, and it is not recorded, so it runs again from the start. Keep MySQL migrations small (one table per file), or check with `hasTable()` and `hasColumn()` before each step.
+
+<Compare :columns="transactions" caption="What a migration that fails halfway leaves behind" />
 
 ## Differences between databases
 

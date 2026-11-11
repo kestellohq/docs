@@ -1,3 +1,16 @@
+<script setup>
+const submission = [
+    { title: "Sent from your site", text: "Forms only take submissions sent from your own site.", fail: "Refused." },
+    { title: "Within the visitor's limit", text: "Per visitor and hour, 10 by default.", fail: "Too many tries from here." },
+    { title: "Trap field empty", text: "The hidden field only programs fill in.", fail: "Thrown away, while the program is told it succeeded." },
+    { title: "Not too fast, not too old", text: "At least two seconds after filling in started, at most two days.", fail: "That was quick, or The form has expired." },
+    { title: "Captcha solved", text: "Only when Ask for a captcha is on.", tone: "muted", fail: "Please confirm you are not a robot." },
+    { title: "Answers checked", text: "Required fields, and the limits of each field.", fail: "The problem is shown under the field." },
+    { title: "Kept and emailed", text: "On Submissions, if Keep submissions here is on. Emails go out in the background, retried up to three times.", tone: "brand" },
+    { title: "Thank-you message", text: "Or the page set under Or go to a page." },
+];
+</script>
+
 # Forms
 
 A contact form, a cake order, a job application: whenever you want visitors to send you something, you build a form. You choose the fields, put the form on a page, and each submission arrives by email and waits in the admin, where you can read it or export it. Spam is caught quietly in the background, and you can add a "not a robot" check for the forms that need it. If submissions or their emails don't arrive, [If something goes wrong](#if-something-goes-wrong) is at the bottom.
@@ -175,6 +188,8 @@ Even without a captcha, every form has three checks that stop most automated spa
 - **The per-visitor limit** above.
 
 On top of that, forms only accept submissions sent from your own site. These checks work even when the page is served from Kestello's page cache.
+
+<Flow :steps="submission" caption="The checks a submission passes, in order, and what happens when one fails" />
 
 ## Delete a form
 

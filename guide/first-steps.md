@@ -12,8 +12,8 @@ The admin lives at `/admin` on your site. The menu on the left is grouped by wha
 | **Content** | Your pages and posts (and any content types you add), **Media** and **Forms**. |
 | **People** | **People** (accounts) and **Roles** (what each kind of account may do). |
 | **Appearance** | **Themes**, **Styles**, **Templates** and **Menus**. |
-| **Site** | **Settings**, **Updates**, **Backups**, **Import** and **Redirects**. |
-| **Plugins** | **Manage plugins**, followed by any screens your plugins add. |
+| **Site** | **Settings**, **Emails**, **Updates**, **Backups**, **Import** and **Redirects**. |
+| **Plugins** | **Manage plugins** and **Add new**, followed by any screens your plugins add. |
 | **System** | The tools for whoever looks after the site: **Site Health**, **Security**, **Audit log**, **Content types**, **Webhooks**, **API**, **Background jobs**, **Scheduled tasks**, **File storage** and **Infrastructure**. |
 
 Choose a group's name to fold it away or open it again; your browser remembers which are folded. **System** starts folded, and the group of the screen you are on always opens. Your name at the bottom of the menu opens **Your profile**. To jump straight to any screen, press **Ctrl K** (**⌘K** on a Mac) and type part of its name.
@@ -48,10 +48,11 @@ Open **Site → Settings**. The settings are split into groups.
 | **Tagline** | One sentence about the site. Search engines and many themes show it. |
 | **Site address** | The public address. Make sure it starts with `https://` once your certificate works. Links in emails use it. |
 | **Timezone** | The clock for dates in the admin, scheduled publishing and nightly tasks. |
+| **Language** | The language of the admin, of emails and of the text your theme shows on its own. Language packs add more. |
 
 ### Email
 
-Kestello sends email for password resets, invitations and notifications. Out of the box it hands messages to PHP's built-in mail function. That works on many hosts, but those messages often land in spam.
+Kestello sends email for sign-ups, password resets, form submissions and notifications. [Emails](/guide/emails) lists them and shows how to change what they say. Out of the box it hands messages to PHP's built-in mail function. That works on many hosts, but those messages often land in spam.
 
 For mail people actually receive, enter your mail provider's SMTP details:
 

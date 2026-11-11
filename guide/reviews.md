@@ -1,10 +1,26 @@
+<script setup>
+const states = [
+    { id: "draft", title: "Draft", text: "The writer works on it." },
+    { id: "pending", title: "In review", text: "The person it is assigned to is told, or else everyone who may publish it." },
+    { id: "live", title: "Published or scheduled", text: "The writer is told.", tone: "brand" },
+];
+const moves = [
+    { from: "draft", to: "pending", label: "Submit for review", note: "the writer" },
+    { from: "pending", to: "live", label: "Approve and publish", note: "or Approve and schedule, for a time to come" },
+    { from: "pending", to: "draft", label: "Request changes", note: "a reviewer, with a note the writer is told" },
+    { from: "pending", to: "draft", label: "Withdraw (back to draft)", note: "the writer" },
+];
+</script>
+
 # Reviews and checklists
 
 Use reviews when some people write and others decide what goes live: a contributor submits an entry, an editor publishes it or sends it back with a note, and everyone hears about each step. Use a checklist when every entry of a type must have something before it is published, such as a featured image. Both are optional: a site where everyone publishes their own work needs neither.
 
 ![The Overview with a post by another writer under Waiting on you, marked Waiting for review.](/screenshots/reviews-waiting.png)
 
-People who may write but not publish, such as contributors, send their work to an editor for review. The editor publishes it, or sends it back saying what to change. Everyone involved is told at each step.
+The whole loop, in short. Each step is explained below.
+
+<States :states="states" :moves="moves" caption="The review loop: who moves an entry, and who is told" />
 
 ## Submit for review
 

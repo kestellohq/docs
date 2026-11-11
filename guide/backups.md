@@ -1,3 +1,67 @@
+<script setup>
+const restore = [
+    { title: 'Safety backup', text: 'The site as it is now, database only, listed as Before a restore.', note: 'Skipped with --no-safety on the command line.' },
+    { title: 'Site closed', text: 'Everyone sees the Back in a moment page. Background work waits.' },
+    { title: 'Check the zip', text: 'Every part must match its checksum.', fail: 'The restore stops before anything is changed.' },
+    { title: 'Files replaced', text: 'Only when the backup has files. The old ones are set aside.' },
+    {
+        title: 'Database replaced',
+        text: 'Content, settings, people and roles.',
+        tone: 'brand',
+        fail: 'The old files go back and the database is rebuilt from the safety backup. If that fails too, the site stays closed until a backup is restored from the command line.',
+    },
+    { title: 'Caches emptied', text: 'The page cache too. The search index is rebuilt in the background.' },
+    { title: 'Site open again', text: 'Everyone is signed out and signs in with an account from the backup.' },
+];
+const worst = {
+    question: 'Was something deleted?',
+    answers: [
+        { label: 'Yes', result: 'Restore it from the Trash tab of its content list.', tone: 'brand', link: '/guide/content#trash-and-restore' },
+        {
+            label: 'No',
+            next: {
+                question: 'Did an entry change for the worse?',
+                answers: [
+                    { label: 'Yes', result: 'Go back to an earlier version under Revisions.', tone: 'brand', link: '/guide/content#revisions' },
+                    {
+                        label: 'No',
+                        next: {
+                            question: 'Did it break right after an update?',
+                            answers: [
+                                { label: 'Yes', result: 'Use Switch back to for the old version.', tone: 'brand', link: '/guide/updates#switch-back' },
+                                {
+                                    label: 'No',
+                                    next: {
+                                        question: 'Does the admin open?',
+                                        answers: [
+                                            { label: 'Yes', result: 'Restore the newest backup from before the problem.', link: '#restore' },
+                                            { label: 'No', result: 'Restore from the command line, or ask your host or developer to.', tone: 'danger', link: '#restore-from-the-command-line' },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+const contents = [
+    { title: 'Always', tone: 'brand', items: ['Database: pages, posts, settings, menus, form submissions, accounts, roles, plugin tables'] },
+    { title: 'When you include files', items: ['Uploads and the media library', 'Theme fonts, form attachments, plugin data', 'Plugin and theme folders'] },
+    { title: 'Never', tone: 'muted', items: ['Sign-in sessions', 'The cache', 'Waiting and failed background jobs', 'Password reset links', 'The search index', 'Older backups', 'Files on outside storage'] },
+];
+const move = [
+    { title: 'Back up the old site', text: 'Back up now, with Include files (uploads, plugins, themes) on. Then download it.' },
+    { title: 'Install Kestello', text: 'On the new server, the same version or newer, with the database type you want.', note: 'Optionally carry over the old app key.' },
+    { title: 'Add plugins and themes', text: 'The ones the old site used, or restore with --with-code later.', tone: 'muted' },
+    { title: 'Upload the backup', text: 'Upload a backup, or FTP or SFTP when it is large.' },
+    { title: 'Restore it', text: 'Type the new site’s name to confirm.', tone: 'brand' },
+    { title: 'Check', text: 'The Site address under Site → Settings, then Site Health and the cron job.' },
+];
+</script>
+
 # Backups
 
 A backup is how you get back to yesterday: after a mistake, an update that went wrong, or a server that gave up. Kestello makes one every night by itself, and one before every update and every restore. This page shows how to make your own, how to keep a copy somewhere safe, and how to bring one back.
@@ -111,6 +175,8 @@ Before you start, know what Kestello does for you:
 - **It puts the site back by itself if the restore fails**, from the safety copy, and tells you so.
 - **It signs everyone out**, you too. Afterwards you sign in with an account from the backup, with the password that account had then.
 
+<Flow :steps="restore" caption="What happens during a restore, and how it is undone when a step fails" />
+
 To restore:
 
 1. Open **Site → Backups**.
@@ -164,6 +230,8 @@ Run the command from the site's root folder, as the same user the web server run
 
 A page has gone, the site looks broken, or something was deleted that shouldn't have been. Take it one step at a time; most of these are fixed without a restore:
 
+<Decide :tree="worst" caption="Finding the smallest fix before you restore" />
+
 1. **Don't delete anything yet**, including old backups.
 2. **Something deleted?** Look in the **Trash** tab of that content list first. Deleted entries wait there and come back with **Restore** (see [Trash and restore](/guide/content#trash-and-restore)).
 3. **Something changed for the worse?** Open the entry and go back to an earlier version under **Revisions** (see [Revisions](/guide/content#revisions)).
@@ -196,6 +264,8 @@ The upload is limited by your hosting's upload size limit. For a large backup wi
 ## Move a site to another server or database {#move-a-site}
 
 A backup with files carries everything a site needs. Moving works the same way whether you change hosting, change domain, or change database type (for example from SQLite to MySQL, or from MySQL to PostgreSQL).
+
+<Flow :steps="move" caption="Moving a site, in short; the steps below have the details" />
 
 1. **On the old site**, open **Site → Backups**, choose **Back up now** with **Include files (uploads, plugins, themes)** on, and wait for it to finish.
 2. Download the backup.
@@ -258,6 +328,8 @@ Inside it are up to three kinds of things:
 | **Code** | The plugin and theme folders, `content/plugins` and `content/themes`. | Only when you include files |
 
 Some things are never in a backup, because they are short-lived or can be rebuilt: sign-in sessions, the cache, waiting and failed background jobs, password reset links and the search index (it is rebuilt after a restore). Older backups are never put inside new ones.
+
+<Compare :columns="contents" caption="What a backup holds, and what it never holds" />
 
 Two more points worth knowing:
 

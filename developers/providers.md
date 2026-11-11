@@ -1,3 +1,30 @@
+<script setup>
+const bootOrder = [
+    { title: 'Core modules register()', text: 'Auth, admin, API, content, media and the rest.' },
+    { title: 'Plugins register()', text: 'Active plugins in dependency order: a plugin’s dependencies first, ties broken by slug.', tone: 'brand' },
+    { title: 'Theme chain register()', text: 'Parent before child, up to three themes.' },
+    { title: 'Every boot()', text: 'In the same order: core, plugins, theme chain.' },
+    { title: 'Pending upgrades', text: 'Plugins, then the themes of the chain, whose files have a new version.', tone: 'muted' },
+];
+const pluginStates = [
+    { id: 'inactive', title: 'Inactive', text: 'Installed, not loaded. Its data is kept.' },
+    { id: 'active', title: 'Active', text: 'Registered and booted on every request.', tone: 'brand' },
+    { id: 'suspended', title: 'Suspended', text: 'Turned off by Kestello after it threw or hit a fatal error. The reason is recorded.' },
+    { id: 'failed', title: 'Failed to start', text: 'Active, but skipped: a requirement or dependency is missing.' },
+    { id: 'deleted', title: 'Deleted', text: 'Its tables, settings and files are gone.', tone: 'muted' },
+];
+const pluginMoves = [
+    { from: 'inactive', to: 'active', label: 'Activate', note: 'checks, migrations, a test boot, then activate()' },
+    { from: 'inactive', to: 'deleted', label: 'Delete plugin and data', note: 'uninstall(), migrations rolled back, settings and folder removed' },
+    { from: 'active', to: 'inactive', label: 'Deactivate', note: 'deactivate(); refused while another active plugin needs it' },
+    { from: 'active', to: 'suspended', label: 'register(), boot() or an upgrade throws', note: 'or a fatal error in its files' },
+    { from: 'active', to: 'failed', label: 'A requirement stops being met', note: 'such as a dependency that was suspended or removed' },
+    { from: 'suspended', to: 'inactive', label: 'Deactivate', note: 'clears the suspension' },
+    { from: 'suspended', to: 'active', label: 'plugin:activate', note: 'after the fix; the test boot runs first' },
+    { from: 'failed', to: 'inactive', label: 'Deactivate' },
+];
+</script>
+
 # Providers
 
 A provider is the class a plugin or theme names in its manifest. Kestello calls it at fixed points: on every request to set things up, and once when the package is activated, upgraded, deactivated or uninstalled. This page explains each hook, the order they run in, how Kestello knows which package a piece of code belongs to, and what happens when that code throws. Read it before you put anything in `boot()` beyond the examples, and when a plugin shows as **suspended**.
@@ -62,6 +89,8 @@ On every request:
 3. The active theme chain `register()`, parent before child.
 4. Every `boot()`, in the same order: core, plugins, theme.
 5. Pending upgrades (see below).
+
+<Flow :steps="bootOrder" caption="The order providers run in on every request" />
 
 Because core boots first, a plugin can grant capabilities to core roles such as `editor`, extend core resources with `$cms->api->extend('users')` and use the core admin menu groups. A plugin that builds on another plugin's registries must list it in `dependencies`, so it boots after it.
 
@@ -190,7 +219,11 @@ Suspensions are stored in `storage/framework/suspended.json`, not the database, 
 plugin:notices failed during boot: Unknown role [editors]. (/var/www/content/plugins/notices/src/NoticesProvider.php:17)
 ```
 
-It shows on the **Plugins** screen, where the plugin's status is **suspended**. To clear it, fix the code and activate the plugin again (the test boot runs first). Deactivating or uninstalling also clears it.
+It shows on the **Plugins** screen, where the plugin's status is **Suspended**. To clear it, fix the code and run `plugin:activate <slug>` (the test boot runs first), or **Deactivate** the plugin on the screen and **Activate** it again. Deactivating or uninstalling also clears it.
+
+A plugin that is active but whose requirements are no longer met (a dependency was suspended or removed, the PHP version changed) is not loaded either, and shows as **Failed to start**, with the reason.
+
+<States :states="pluginStates" :moves="pluginMoves" caption="A plugin's statuses on the Plugins screen, and what moves it between them" />
 
 ### Recovery mode
 

@@ -1,3 +1,12 @@
+<script setup>
+const ask = [
+    { title: 'The fleet site asks', text: 'Every hour, as the scheduled task fleet.check, or when you choose Check now.' },
+    { title: 'With the site’s fleet token', text: 'A token with only the fleet permission, made on the watched site.' },
+    { title: 'The site answers', text: 'Its report from /api/v1/fleet/report: versions, updates and licenses, Site Health, backups. No content, people or settings.', tone: 'brand' },
+    { title: 'Site → Fleet', text: 'One row per site. If the site can’t be reached, the reason shows in red and the rest is from the last good report.' },
+];
+</script>
+
 # Fleet
 
 If you look after several Kestello sites, **Site → Fleet** shows them all in one list: which version of Kestello each runs and whether a newer one is out, plugins and themes with updates or license problems, Site Health, and when each was last backed up. You can open any site from there to act on it.
@@ -39,13 +48,15 @@ Kestello asks the site for its report straight away. The token is stored encrypt
 | **Last backup** | When the newest backup was made. **Over a week old** and **Never** stand out. |
 | **Checked** | When the site was last asked. **Check now** asks again. |
 
-Every site is asked once an hour. Updates themselves are applied on each site, under **Site → Updates**.
+Every site is asked once an hour, by the scheduled task `fleet.check`, so the fleet site needs its background tasks running (see [Site Health](/guide/health#scheduled-tasks-and-background-jobs)). Updates themselves are applied on each site, under **Site → Updates**.
 
 ## Remove a site
 
 Choose the bin icon on its row. The token keeps working on that site until you revoke it there, under **Your profile → Access tokens** or **System → Security**.
 
 ## What a site shares
+
+<Flow :steps="ask" caption="How the fleet site gets each site's report" />
 
 A fleet token reads `GET /api/v1/fleet/report` and nothing else: no content, people or settings. The report holds the site's name and address, its Kestello and PHP versions, update and license status of its plugins and themes, its Site Health summary, and the number and date of its backups. A token only works while the administrator who made it can manage the site.
 

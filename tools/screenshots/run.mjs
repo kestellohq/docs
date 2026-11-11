@@ -1,4 +1,4 @@
-// Take the docs screenshots from a running Kestello with the sample bakery site.
+// Take the docs screenshots from a running Kestello with the sample studio site.
 //   npm run screenshots                  every screenshot
 //   npm run screenshots -- editor menus  only the ones whose name contains a word given
 // See tools/screenshots/README.md for preparing the site.

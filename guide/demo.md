@@ -1,3 +1,12 @@
+<script setup>
+const cycle = [
+    { title: 'Snapshot', text: 'A backup of the whole demo, taken on the first visit after installing, or with demo:snapshot.' },
+    { title: 'Visitors try it', text: 'They change content and the design, and upload images. The admin bar counts down.' },
+    { title: 'The hour is up', text: 'The next run of scheduled tasks starts demo.reset.', note: 'Without cron, that is the next visit.' },
+    { title: 'Back to the snapshot', text: 'Content, settings, uploads and accounts go back, and everyone is signed out. The next hour starts.', tone: 'brand' },
+];
+</script>
+
 # Public demo
 
 A public demo is a Kestello site anyone can sign in to and try. This page covers what visitors can and cannot do on one, how it resets, and how you look after it on the server. Read it before you put a demo online, for example to show Kestello to clients or in a post about it.
@@ -8,7 +17,16 @@ Kestello's own demo is at [demo.kestello.com](https://demo.kestello.com/). Sign 
 
 Install Kestello as usual (see [Installation](/guide/installation)). In step 3, under **What is this site for?**, choose **A public demo**. The installer then skips the administrator step and creates one account, `demo`, with the password `demo`.
 
-The first time the site is opened after installing, Kestello fills it with a sample site, a small bakery with pages, posts, a contact form, menus and images, and takes a snapshot of it. That takes a few seconds.
+The first visits after installing fill it with a sample site: Taller Arroyo & Lind, an invented architecture studio in Valencia, in English and Spanish, in the Exhibit theme. It has:
+
+- three content types built in the admin: projects, talks and people;
+- pages, journal posts with categories, and a contact form in each language;
+- menus for each language, and Spanish words in its addresses, such as `/es/proyectos`;
+- photos that are free to reuse (CC0 or public domain), each credited in its caption.
+
+The first visit builds the content types and the second fills them, because a content type built in the admin is ready from the next request on. Kestello then takes a snapshot of the site. Both visits together take a few seconds.
+
+The studio, its people and its projects are made up, and the site says so. The photos are real: the projects show close details of walls, stairs and concrete, so no recognisable building passes as the studio's work.
 
 The hourly reset is a [background task](/guide/installation#background-tasks). A cron job is best, but a demo also works without one.
 
@@ -60,7 +78,9 @@ Some screens are hidden on a demo even for reading, because they would show one 
 
 Every hour the scheduled task `demo.reset` restores the snapshot: content, settings, uploads and accounts go back to how they were, and everyone is signed out. Visitors see the countdown in the admin bar.
 
-The snapshot is a backup listed under **Site → Backups** with the note *Demo snapshot*. Do not delete it on the server: without it the demo cannot reset. **Site Health** lists a **Demo** check that turns critical when the snapshot is missing, or when scheduled tasks ran after a reset was due and the demo still did not go back (the reset is failing). A demo that is overdue only because nobody visited is fine.
+<Flow :steps="cycle" caption="A demo's hour, from the snapshot back to it" />
+
+The snapshot is a backup listed under **Site → Backups** with the note *Demo snapshot: the demo goes back to this every hour.* Do not delete it on the server: without it the demo cannot reset. **Site Health** lists a **Demo** check that turns critical when the snapshot is missing, or when scheduled tasks ran after a reset was due and the demo still did not go back (the reset is failing). A demo that is overdue only because nobody visited is fine.
 
 ## Look after the demo on the server
 
