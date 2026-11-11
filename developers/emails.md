@@ -201,7 +201,7 @@ $cms->filters->add('mail.branding', function (MailBrand $brand, string $id, stri
 });
 ```
 
-`MailBrand::site()` is the site's look as it is now, with the name you give. `new MailBrand(...)` starts from the default colours instead, for an email that should look like nothing else on the site.
+`MailBrand::site()` is the site's look as it is now, with the name you give. `new MailBrand(...)` starts from the default colours instead, for an email that should look like nothing else on the site. Its `logo` and `darkLogo` are `['url' => …, 'width' => …, 'height' => …]` with a whole `http://` or `https://` address; `darkLogo` needs a `logo`, and dark mail apps show it in the logo's place.
 
 ## Lay out emails in a theme
 
@@ -231,7 +231,7 @@ A file is HTML with placeholders. `{{ … }}` is escaped; `{!! … !!}` is writt
 | `{{ brand.font }}` | The font stack. |
 | `{!! blocks !!}` | Every block of the email, rendered, with the written-out link after the first button. A layout must have it. |
 | `{!! block.<name> !!}` | One named block, such as `{!! block.link !!}`. Only in an email's own file. |
-| `{!! logo !!}` | The logo's `<img>`, or nothing when the email has no logo. |
+| `{!! logo !!}` | The logo's `<img>`, or nothing when the email has no logo. With a logo for dark mode, its `<img>` follows, hidden until `{!! dark_css !!}` swaps the two. |
 | `{!! footer !!}` | The footer line from **Site → Settings → Emails**, its lines joined with `<br>`. |
 | `{!! dark_css !!}` | The CSS that repaints the email for dark mode. Put it in a `<style>` in the `<head>`. |
 
