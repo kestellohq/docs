@@ -7,8 +7,8 @@ description: The emails your site sends, how they look, and how to change their 
 const where = [
     { title: 'Your words', text: 'Site → Emails: what each email says, per language.', tone: 'brand' },
     { title: 'Your logo and footer', text: 'Site → Settings → Emails.' },
-    { title: 'Your theme', text: 'Colours and the font, from Appearance → Styles.', items: ['light', 'dark'] },
-    { title: 'Kestello', text: 'The layout every email shares, and the words each one starts with.', tone: 'muted' },
+    { title: 'Your theme', text: 'Colours and the font, from Appearance → Styles, and the layout, if the theme brings one.', items: ['light', 'dark'] },
+    { title: 'Kestello', text: 'The layout every email shares unless the theme has its own, and the words each one starts with.', tone: 'muted' },
 ];
 const change = [
     { title: 'Open the email', text: 'Site → Emails, then the email.' },
@@ -55,6 +55,7 @@ Every email is built from the same layout, then made yours in layers. The top la
 - **Colours and the font** follow your theme. Change them under **Appearance → Styles**, and the emails change with the site. Mail apps in dark mode get the theme's dark colours. If a colour would make text hard to read, Kestello uses a readable one instead.
 - **The logo** is your site's logo, shown 40 pixels tall. Change it, or turn it off, under **Site → Settings → Emails** (see [Settings](/guide/settings#emails)).
 - **The footer** shows the site name and, if you write one, a line such as a postal address.
+- **The layout**, where the logo, the card and the footer sit, is Kestello's unless your theme brings its own. The Base theme does: it shows your site's name on a band in the theme's accent colour above the email. Changing themes under **Appearance → Themes** can change it. Your words, logo and footer stay the same whichever layout is used.
 
 ## Change what an email says
 

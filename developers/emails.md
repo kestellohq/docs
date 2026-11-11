@@ -1,6 +1,6 @@
 ---
 title: Emails
-description: Register a named email that site owners can preview and reword, send it in the reader's language, and change any email with filters and events.
+description: Register a named email that site owners can preview and reword, send it in the reader's language, change any email with filters and events, and lay out emails in a theme.
 ---
 
 <script setup>
@@ -24,7 +24,7 @@ const look = [
 
 # Emails
 
-Every email Kestello sends has a name, such as `auth.password_reset`. A named email is listed under **Site → Emails**, where the site owner previews it with sample values and changes its words, per language. This page shows how to register your plugin's emails so they get the same treatment, how to send them, and how to change any email, yours or core's, with filters and events. For what the site owner sees, see the [Emails guide](/guide/emails).
+Every email Kestello sends has a name, such as `auth.password_reset`. A named email is listed under **Site → Emails**, where the site owner previews it with sample values and changes its words, per language. This page shows how to register your plugin's emails so they get the same treatment, how to send them, and how to change any email, yours or core's, with filters and events, and how a theme lays emails out. For what the site owner sees, see the [Emails guide](/guide/emails).
 
 ## How an email is sent
 
@@ -203,6 +203,112 @@ $cms->filters->add('mail.branding', function (MailBrand $brand, string $id, stri
 
 `MailBrand::site()` is the site's look as it is now, with the name you give. `new MailBrand(...)` starts from the default colours instead, for an email that should look like nothing else on the site.
 
+## Lay out emails in a theme
+
+The colour roles above change Kestello's layout. To change the layout itself, a theme brings its own markup in an `emails/` folder:
+
+| File | Lays out |
+| --- | --- |
+| `emails/layout.html` | Every email the site sends. |
+| `emails/<email id>.html`, such as `emails/auth.password_reset.html` | One email, in place of the layout. |
+
+For each email, Kestello takes the email's own file, else the layout, looking in the active theme first and then in its parents. With neither, the email uses Kestello's layout. The files wrap the same rendered blocks, so an owner's edit under **Site → Emails**, the filters and the events all still apply. The theme's markup is used for named emails and notifications, in the preview and in **Send me a test** as well.
+
+The Base theme ships `content/themes/base/emails/layout.html`. Copy it into your theme as the place to start.
+
+::: v-pre
+
+### Placeholders
+
+A file is HTML with placeholders. `{{ … }}` is escaped; `{!! … !!}` is written as it is, and only for what Kestello builds itself:
+
+| Placeholder | What it holds |
+| --- | --- |
+| `{{ subject }}` | The subject, for the `<title>`. |
+| `{{ lang }}`, `{{ dir }}` | The reader's language (`es`) and direction (`ltr` or `rtl`), for `<html>`. |
+| `{{ site.name }}` | The site's name, or the name `mail.branding` gave. |
+| `{{ brand.page }}`, `{{ brand.card }}`, `{{ brand.ink }}`, `{{ brand.muted }}`, `{{ brand.line }}`, `{{ brand.accent }}`, `{{ brand.accentInk }}` | The colours, after `styles.json` and `mail.branding`, already checked for contrast. |
+| `{{ brand.font }}` | The font stack. |
+| `{!! blocks !!}` | Every block of the email, rendered, with the written-out link after the first button. A layout must have it. |
+| `{!! block.<name> !!}` | One named block, such as `{!! block.link !!}`. Only in an email's own file. |
+| `{!! logo !!}` | The logo's `<img>`, or nothing when the email has no logo. |
+| `{!! footer !!}` | The footer line from **Site → Settings → Emails**, its lines joined with `<br>`. |
+| `{!! dark_css !!}` | The CSS that repaints the email for dark mode. Put it in a `<style>` in the `<head>`. |
+
+A small layout:
+
+```html
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="color-scheme" content="light dark" />
+        <title>{{ subject }}</title>
+        <style>{!! dark_css !!}</style>
+    </head>
+    <body class="k-page" style="margin: 0; background: {{ brand.page }}">
+        <table class="k-page" role="presentation" width="100%" style="background: {{ brand.page }}">
+            <tr>
+                <td align="center" style="padding: 24px 12px">
+                    <table role="presentation" width="100%" style="max-width: 560px">
+                        <tr>
+                            <td class="k-card" style="padding: 32px; background: {{ brand.card }}; color: {{ brand.ink }}; font-family: {{ brand.font }}">
+                                {!! logo !!} {!! blocks !!}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="k-muted" style="padding-top: 16px; color: {{ brand.muted }}; font-size: 12px; text-align: center">
+                                {{ site.name }}<br />{!! footer !!}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
+```
+
+Mail apps ignore most CSS, so lay out with tables and inline styles, as above. For dark mode, give elements the classes the dark CSS repaints: `k-page` (the background), `k-card`, `k-ink`, `k-muted`, `k-btn` (accent colour on accent ink), `k-row` and `k-code`.
+
+An email's own file can place its blocks one by one, with your markup between them. It must still show the blocks the email is locked to, one by one or all together with `{!! blocks !!}`:
+
+```html
+<!-- emails/auth.password_reset.html, inside the same page markup as the layout -->
+<h1 style="color: {{ brand.ink }}">{{ site.name }}</h1>
+{!! block.link !!}
+```
+
+The names an email has are the ones its code gives with `name()`. **Site → Emails** shows which blocks are locked.
+
+### What is checked
+
+Kestello checks the files when the theme is activated, when `php bin/cms plugin:check <slug> --theme` checks it, and again before each email. A file is refused when it has:
+
+- scripts, forms, frames or objects (`<iframe>`, `<object>`, `<embed>`), a `<base>` tag or `<meta http-equiv>`, event handlers such as `onclick=`, or `javascript:` links;
+- a placeholder that doesn't exist, or a `{{ }}` and `{!! !!}` the wrong way round;
+- no `{!! blocks !!}`, in a layout;
+- not every locked block, in an email's own file;
+- more than 200 KB.
+
+A theme with a file that fails can't be activated. The error names each file and problem:
+
+```text
+Cannot activate theme "acme":
+  - emails/layout.html: it has scripts (<script>), which emails cannot carry
+  - emails/layout.html: a layout must place the email with {!! blocks !!}
+```
+
+A file that changes after activation and then fails is not used. The email still goes, in Kestello's layout, and the reason is logged:
+
+```text
+[kestello] /var/www/site/content/themes/acme/emails/layout.html is not used for this email (it has forms (<form>), which emails cannot carry); Kestello's own layout is.
+```
+
+A file for an email no installed package registers is checked as far as it can be and kept: it is used once the plugin that sends that email is installed.
+
+:::
+
 ## Notifications by email
 
 A notification with the `mail` channel builds its own message in `toMail()`, so it has no sample values and isn't listed under **Site → Emails**, and `mail.message` doesn't see it. It joins the steps above at `MailSending`, with the id `notification.<type>`: listeners can change or stop it, `mail.branding` applies, and it gets the same layout. Name who may receive a notification type with `capability:`, so people who can't act on it don't see it in their settings:
@@ -231,10 +337,11 @@ The full schemas are in the API explorer under **System → API**, and in the [R
 - **`An email id is a lowercase group and name, such as "shop.order_shipped", got "Shop.Shipped".`** Use lowercase letters, digits, `_` and `-`, with a dot between the group and the name.
 - **`The email "acme-shop.order_shipped" is already registered by …`** Another package registered that id. Start your ids with your own slug.
 - **`The email "acme-shop.order_shipped" must have a block named "link" (it is locked), and this one has none.`** Every message your `build` returns, and every `mail.message` filter, must keep the blocks in `locked`. If one is only there sometimes, don't lock it.
+- **An email came out in Kestello's layout although your theme has one.** The theme's file failed its check; the log names the file and the problem. Run `php bin/cms plugin:check <slug> --theme` to see every problem at once.
 - **An owner's edit stopped applying.** Your email changed so that the saved edit no longer fits, for example a block it kept lost its name. The email goes out as your code writes it, and the reason is logged. Keep block names stable between versions.
 
 ## Next
 
 - [Events and filters](/developers/events): listening and filtering in general.
 - [Background jobs](/developers/jobs): sending from the queue.
-- [Themes](/developers/themes): the tokens your email roles point to.
+- [Themes](/developers/themes): the tokens your email roles point to, and the theme's folders.

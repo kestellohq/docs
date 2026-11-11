@@ -83,6 +83,7 @@ The slug must be lowercase letters, digits and single dashes. `make:theme` refus
 | `assets/build/` | Yes, if `resources/js` exists | The Vite output. Committed and shipped, so servers never need Node.js. |
 | `src/` | No | PHP classes, autoloaded from the manifest's `namespace`. |
 | `templates/`, `parts/`, `patterns/` | No | Block templates as JSON (see [Block templates and patterns](#block-templates-and-patterns)). |
+| `emails/` | No | `layout.html` lays out every email the site sends, `<email id>.html` one of them (see [Lay out emails in a theme](/developers/emails#lay-out-emails-in-a-theme)). |
 | `screenshot.png` (or `.jpg`, `.webp`) | No | Shown on **Appearance → Themes**. |
 | `tools/` | No | Your own build helpers. Not needed at run time. |
 
@@ -131,7 +132,7 @@ Plugins and themes share one manifest format. The keys only plugins use, such as
 php bin/cms theme:activate acme
 ```
 
-Or use **Appearance → Themes** in the admin. Kestello checks the theme's requirements and that its parent is installed before it switches. If the active theme or any theme in its chain cannot load, the site falls back to `base`, the default theme, and the reason shows on the Themes screen.
+Or use **Appearance → Themes** in the admin. Kestello checks the theme's requirements, that its parent is installed and that its email files pass their check before it switches. If the active theme or any theme in its chain cannot load, the site falls back to `base`, the default theme, and the reason shows on the Themes screen.
 
 ## The provider
 
@@ -310,6 +311,7 @@ What a child inherits and how it changes it:
 | `stylesheets` | Added after the parent's, so the child's rules win. |
 | `styles.json` | Merged over the parent's: the child adds tokens, fonts, groups, contrast pairs and variations, and may set `values` and `custom_css` (see below). |
 | `templates/`, `parts/`, `patterns/` | A child's file replaces the parent's file with the same name. |
+| `emails/` | A child's file replaces the parent's file with the same name, and an email's own file wins over a `layout.html` anywhere in the chain. |
 | Provider | Both run, parent first. |
 
 A chain holds at most three themes (a theme, its parent and the parent's parent). A longer chain, a loop, a missing parent or a suspended member makes the whole chain unusable, and the site falls back to `base`.
