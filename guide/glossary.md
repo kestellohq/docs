@@ -51,6 +51,9 @@ A short explanation of the words this guide and the admin use, in plain terms. E
 **Theme**
 : The design of the whole site: layout, colours, fonts and templates. See [Themes and design](/guide/themes).
 
+**Parent theme**
+: The theme another theme builds on. A theme made in the admin shows **Builds on** and its parent's name, and looks like the parent with its own changes on top. Developers call the theme on top a child theme. See [Two kinds of theme](/guide/themes#two-kinds-of-theme).
+
 **Menu**
 : A list of links visitors use to find their way around, usually across the top. See [Menus](/guide/menus).
 
@@ -84,19 +87,45 @@ A short explanation of the words this guide and the admin use, in plain terms. E
 **Role**
 : A named set of things a person may do, such as Editor or Author. Every account has one. See [People and roles](/guide/people).
 
-**Permission**
-: One thing a role allows, such as *Change site settings*. The admin and developers also call it a capability.
+**Permission**, **capability**
+: One thing a role allows, such as *Change site settings*. This guide says permission; the **Roles** screen and developers say capability. See [Capabilities](/guide/people#capabilities).
+
+**Recovery code**
+: One of ten codes you save when you turn on two-step sign-in. Each one signs you in once instead of the code from your phone. See [Two-step sign-in](/guide/people#two-step-sign-in).
 
 **Two-step sign-in**
 : Signing in with a code from an app on your phone as well as your password, so a stolen password alone isn't enough.
 
 **Access token**
-: A long secret that lets another program, such as an app or a script, use the site on your behalf, with only the rights you give it.
+: A long secret that lets another program, such as an app or a script, use the site on your behalf. It has **Permissions** of its own, ticked when you make it, and can never do more than your role. See [Access tokens](/guide/people#access-tokens).
+
+## Email
+
+**Site email**
+: One of the emails the site sends by itself, such as **Password reset** or **Sign-up link**. Each has a name in **Site → Emails**, where you change what it says, per language. See [Emails](/guide/emails).
+
+**Email language**
+: The language an email is written in. Someone with an account gets their own, chosen on **Your profile**, or the site's. See [Emails](/guide/emails).
 
 ## Running the site
 
 **Plugin**
 : An add-on that gives the site new features. See [Plugins](/guide/plugins).
+
+**Registry**
+: The Kestello list of plugins that publishers signed and the registry checked. You find them under **Plugins → Add new**. See [Add a plugin from the registry](/guide/plugins#add-a-plugin-from-the-registry).
+
+**Signature**
+: A seal on a plugin or theme zip that proves who made it and that nobody changed it afterwards. See [Signed and unsigned plugins](/guide/plugins#signed-and-unsigned-plugins).
+
+**Suspended**, **recovery mode**
+: How Kestello deals with a plugin that breaks the site: it switches the plugin off by itself (suspended), or a recovery link opens the site for you with every plugin off. See [When a plugin breaks the site](/guide/plugins#when-a-plugin-breaks-the-site).
+
+**Webhook**
+: A message Kestello sends to another service when something happens on the site, such as a post going live. See [Webhooks](/guide/webhooks).
+
+**Fleet**
+: Several Kestello sites watched from one of them, under **Site → Fleet**. See [Fleet](/guide/fleet).
 
 **Backup**
 : A copy of the site's database, and optionally its files, that you can bring back later. See [Backups](/guide/backups).
@@ -111,7 +140,7 @@ A short explanation of the words this guide and the admin use, in plain terms. E
 : The page that checks the site and the server and says what needs attention. See [Site Health](/guide/health).
 
 **Maintenance page**
-: The short "Back in a moment" page visitors see during an update or a restore.
+: The short "Back in a moment" page visitors see during an update or a restore. See [The site is stuck on "Back in a moment"](/guide/troubleshooting#maintenance).
 
 **Document root**
 : The folder on the server that a domain shows to the web. For Kestello, it should be the `public` folder. See [Installing Kestello](/guide/installation).

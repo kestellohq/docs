@@ -1,3 +1,36 @@
+<script setup>
+const access = [
+    { title: 'Account', text: 'A username, an email address and a password.' },
+    { title: 'Role', text: 'Exactly one per account, such as Editor.' },
+    { title: 'Capabilities', text: 'What the role may do, ticked on the Roles screen.', tone: 'brand' },
+    { title: 'Access token', text: 'Only the capabilities that are also among the permissions ticked for the token.', tone: 'muted' },
+];
+const roles = [
+    { title: 'Administrator', text: 'Everything, including what plugins add later. Cannot be changed.' },
+    { title: 'Editor', text: 'Everyone’s pages and posts, categories and tags, everyone’s files, menus, forms and redirects.', tone: 'brand' },
+    { title: 'Author', text: 'Publish and delete their own posts.' },
+    { title: 'Contributor', text: 'Open the admin, write their own posts for review, assign categories and tags, upload files.' },
+    { title: 'User', text: 'Sign in and manage their own profile.', tone: 'muted' },
+];
+const twoStep = [
+    { title: 'Password', text: 'Email or username and password, then Sign in.' },
+    {
+        title: 'Code',
+        text: 'The six-digit code from the app, then Verify, within 5 minutes of the password.',
+        note: 'No phone: Use a recovery code.',
+        tone: 'brand',
+        fail: 'Lost the phone and every recovery code: someone with server access runs auth:reset-2fa, and the person signs in with the password alone.',
+    },
+    { title: 'Signed in', text: 'After a recovery code, you see how many are left.' },
+];
+const signUp = [
+    { title: 'Create an account', text: 'On the sign-in page, the visitor enters an email address and chooses Send link.' },
+    { title: 'The email', text: 'A link that works once, for 24 hours.', note: 'An address that already has an account gets an email with links to sign in instead.' },
+    { title: 'Choose your password', text: 'The link opens it. Create account makes the account.', tone: 'brand' },
+    { title: 'Signed in', text: 'With the role set under Role for new accounts.' },
+];
+</script>
+
 # People, roles and sign-in
 
 Everyone who signs in to your site has an account, and a role that decides what they may do: an editor can publish, a contributor can only write drafts for someone to check. This page shows how to add someone in a minute, choose the right role, pause or remove access when a person leaves, and keep every account safe with a good password and two-step sign-in.
@@ -137,8 +170,6 @@ Reset emails go through the mail settings under **Site → Settings → Email**.
 
 With two-step sign-in, signing in needs your password and a six-digit code from an authenticator app on your phone (for example 1Password, Google Authenticator or Authy). Someone who steals your password still cannot get in.
 
-![The Security screen: who uses two-step sign-in, failed sign-ins today, signed-in sessions and access tokens.](/screenshots/security.png)
-
 Everyone with an account can turn it on for themselves. Administrators are expected to use it: their **Sign-in & security** tab shows "Your role is expected to use two-step sign-in. Turn it on now." until they do. (The roles this applies to come from the config key `auth.two_factor_roles`, default `['admin']`.) Kestello does not yet force anyone to turn it on.
 
 ### Turn it on
@@ -154,7 +185,9 @@ The codes are not shown again. Each one signs you in once if you lose your phone
 
 ### Signing in with two-step sign-in
 
-After your password, Kestello asks for the six-digit code from your app. Type it in **Code** and choose **Verify**. If you do not have your phone, choose **Use a recovery code** and type one of your recovery codes instead. When you sign in with a recovery code, you see how many you have left; make new ones soon.
+After your password, Kestello asks for the six-digit code from your app. Type it in **Code** and choose **Verify**, within 5 minutes of entering your password. If you do not have your phone, choose **Use a recovery code** and type one of your recovery codes instead. When you sign in with a recovery code, you see how many you have left; make new ones soon. If you have lost both, see [Someone lost their phone and their recovery codes](#someone-lost-their-phone-and-their-recovery-codes).
+
+<Flow :steps="twoStep" caption="Signing in with two-step sign-in, and the way back in when everything is lost" />
 
 An account takes at most 20 wrong codes an hour, from anywhere; after that, codes are refused until the hour is up. After 5 wrong codes, Kestello emails the account's owner: whoever typed them got past the password. If that email reaches you and it wasn't you, change your password straight away.
 
@@ -216,6 +249,8 @@ This protects you if you leave a signed-in browser unattended.
 
 **System → Security** shows, in one place, how well the site is protected and who can get in.
 
+![The Security screen: who uses two-step sign-in, failed sign-ins today, signed-in sessions and access tokens.](/screenshots/security.png)
+
 - **Two-step sign-in**: how many people in the roles expected to use it have turned it on, and who hasn't yet. Each name opens that person's page. Kestello does not force anyone to turn it on, so ask them to, under **Your profile**.
 - **Failed sign-ins**: how many there were today and in the last 7 days, the network addresses with the most attempts, and the latest ones: when, which account, why (for example **Wrong password** or **No such account**) and from where. What was typed into the login field is never shown.
 - **Signed-in sessions**: everyone who is signed in, on which browser and device, from which address, and when they were last active. **Sign out** ends one session; **Everywhere** signs that person out on every device. Your own session is marked **This session**.
@@ -243,7 +278,7 @@ Who can see this: people whose role includes *See everyone's sign-ins, sessions 
 
 ![The Audit log: a Show filter, then each event with when it happened, who did it, what it was and where from.](/screenshots/audit-log.png)
 
-Each row shows when it happened, who did it, what happened in plain words and the network address it came from. Use **Area** to show one part of the site, such as **Sign-in and accounts** or **Plugins**. Choose a person's name to show only what they did. **Details** opens everything recorded for that row. **Load more** goes further back.
+Each row shows when it happened, who did it, what happened in plain words and the network address it came from. Use **Show** to show one part of the site, such as **Sign-in and accounts** or **Plugins**. Choose a person's name to show only what they did. **Details** opens everything recorded for that row. **Load more** goes further back.
 
 Entries are kept for 365 days, then removed by the daily `audit.prune` task. Change that with `audit.retention_days` in `config/audit.php`, see [Configuration](/developers/configuration). Nobody can edit or delete entries from the admin.
 
@@ -253,7 +288,9 @@ Who can see this: people whose role includes *Read the audit log*. On a new site
 
 The rest of this page is reference: what each role and capability allows in detail, and the less common tasks.
 
-Every person who signs in has an **account**: a username, an email address and a password. Each account has exactly one **role**. A role is a named set of **capabilities**, and a capability is one thing a person may do, such as "Upload files" or "Change site settings".
+Every person who signs in has an **account**: a username, an email address and a password. Each account has exactly one **role**. A role is a named set of **capabilities**, and a capability is one thing a person may do, such as "Upload files" or "Change site settings". This guide also calls a capability a permission. An [access token](#access-tokens) has **Permissions** of its own, ticked when you create it, and can do only what both its role and those permissions allow.
+
+<Flow :steps="access" caption="From an account to what it may do, and what a token may do" />
 
 You manage this under **People** in the admin menu:
 
@@ -267,7 +304,9 @@ You only see **People** if your role includes *List and view users*, and **Roles
 
 ## The built-in roles
 
-Kestello comes with five roles. Plugins can add more.
+Kestello comes with five roles. Plugins can add more. Out of the box, each one can do everything the role below it can, and more:
+
+<Layers :layers="roles" caption="The built-in roles, each adding to the one below it" />
 
 | Role | Who it is for | What it may do |
 |---|---|---|
@@ -301,6 +340,7 @@ The capabilities Kestello itself defines:
 | *Upload files, and edit or delete their own* | Adding files to **Media**. |
 | *Edit and delete everyone's files* | Changing or removing any file in **Media**. |
 | *Change site settings* | **Site → Settings** (except the email and site address fields, which also need *Manage infrastructure...*), and clearing the page cache. |
+| *Change how the site's emails look and what they say* | **Site → Emails**, and the **Emails** tab of **Site → Settings**. See [Emails](/guide/emails). |
 | *Install, update, activate, deactivate and delete plugins* | **Plugins → Manage plugins**. |
 | *Update Kestello, and plugins and themes from their publishers* | Kestello updates, license keys, and updates of plugins and themes that say where their updates come from, under **Site → Updates**. |
 | *Make and download backups (restoring needs an administrator)* | **Site → Backups**, except restoring and uploading, which are for administrators only. |
@@ -395,6 +435,8 @@ By default only people who manage accounts can add new ones. To let visitors cre
 Keep **Role for new accounts** on **User** unless you mean it: every person who signs up gets that role.
 
 When sign-up is open, the sign-in page shows **Create an account**. It takes two steps:
+
+<Flow :steps="signUp" caption="Creating an account by email" />
 
 1. The visitor enters their email address and chooses **Send link**. Kestello emails a link to that address.
 2. The link opens **Choose your password**. When they choose **Create account**, the account is created and they are signed in.

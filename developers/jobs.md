@@ -1,3 +1,38 @@
+<script setup>
+const jobStates = [
+    { id: 'waiting', title: 'Waiting', text: 'In its queue, possibly with a delay.' },
+    { id: 'running', title: 'Running', text: 'A worker reserved it and runs handle().' },
+    { id: 'done', title: 'Done', text: 'Removed from the queue.', tone: 'brand' },
+    { id: 'failed', title: 'Failed', text: 'In the failed_jobs table, with its exception.' },
+    { id: 'gone', title: 'Deleted', tone: 'muted' },
+];
+const jobMoves = [
+    { from: 'waiting', to: 'running', label: 'A worker takes it', note: 'queues in order: high, default, mail, media, low' },
+    { from: 'running', to: 'done', label: 'handle() returns' },
+    { from: 'running', to: 'waiting', label: 'handle() throws, attempts left', note: 'back after backoff()' },
+    { from: 'running', to: 'waiting', label: 'ReleaseJob', note: 'no attempt used' },
+    { from: 'running', to: 'failed', label: 'The last attempt throws', note: 'JobFailed is dispatched' },
+    { from: 'failed', to: 'waiting', label: 'Retry', note: 'Background jobs screen, or queue:retry' },
+    { from: 'failed', to: 'gone', label: 'Delete', note: 'or queue:forget, or after 30 days' },
+];
+const retries = [
+    { at: 'At once', title: 'Attempt 1' },
+    { at: '10 s later', title: 'Attempt 2' },
+    { at: '20 s later', title: 'Attempt 3' },
+    { at: '40 s later', title: 'Attempt 4', text: 'The last one with the default retries() of 3.' },
+    { at: 'If it throws again', title: 'Failed', text: 'Moved to failed_jobs.', tone: 'danger' },
+];
+const chainOrBatch = [
+    { title: 'Chain', items: ['One job after another', 'The next is queued when the one before succeeded', 'A failure drops the rest', '`$cms->queue->chain([...])`'] },
+    { title: 'Batch', items: ['Every job at once, in parallel', 'then(), catch() and finally() jobs', 'A failure cancels the jobs not started, unless allowFailures()', '`$cms->queue->batch([...])->dispatch()`'] },
+];
+const running = [
+    { title: 'A trigger', text: 'Every minute: a system cron line, an external service calling POST /system/cron, or the web runner after a page was sent.' },
+    { title: 'schedule:run', text: 'Runs the due tasks one after another, each claimed in the database so it runs once.' },
+    { title: 'queue.work', text: 'The core task works the queue for up to 50 seconds, reading high, default, mail, media and low in that order.', tone: 'brand', note: 'Not registered when queue.worker is daemon: a queue:work process does this instead.' },
+];
+</script>
+
 # Jobs and scheduling
 
 A job is work that runs in the background instead of while a visitor waits: sending mail, calling a slow API, resizing images, cleaning up old rows. Scheduled tasks are work that runs on a clock: every night at four, every fifteen minutes on weekdays. This page covers writing a job, pushing it, retries and timeouts, unique jobs, chains and batches, job middleware, the scheduler, and how workers, cron and the web runner execute everything. Read it when your plugin does anything that takes more than a moment, or anything that must happen regularly.
@@ -117,6 +152,12 @@ When `handle()` throws:
 1. If attempts are left, the job goes back in its queue with the `backoff()` delay. The log says `[queue] Plugins\Notices\Jobs\PruneNotices attempt 1/3 failed, will retry: <message>`.
 2. When the last attempt fails, the job is moved to the `failed_jobs` table with the exception, the `JobFailed` event is dispatched, and the log says `[queue] Plugins\Notices\Jobs\PruneNotices failed for good (owner plugin:notices): <message>`.
 
+<States :states="jobStates" :moves="jobMoves" caption="The life of a job" />
+
+With the defaults, a job that keeps throwing runs four times before it fails:
+
+<Timeline :points="retries" caption="Attempts of a job with the default retries() and backoff()" />
+
 A job whose worker crashed or was killed counts as an attempt too. After too many, it fails with `Exceeded N attempts (the worker may have crashed or timed out).`
 
 Failed jobs show on the **Background jobs** screen, where they can be retried or deleted, and on the command line:
@@ -129,11 +170,17 @@ php bin/cms queue:retry all
 php bin/cms queue:forget all
 ```
 
-Failed jobs are deleted after 30 days, or the number of days in the config key `queue.failed_retention_days`.
+Failed jobs are deleted after 30 days, or the number of days in the config key `queue.failed_retention_days`, by the core task `queue.prune-failed` every night at 03:20.
 
 Write `handle()` so that running it twice does no harm. A retry after a partial failure, or after a worker died, runs it again from the start.
 
-## Chains
+## Chains and batches
+
+A chain and a batch both group jobs. A chain is for steps that depend on each other; a batch is for many independent pieces of one task.
+
+<Compare :columns="chainOrBatch" caption="A chain and a batch side by side" />
+
+### Chains
 
 A chain runs jobs one after another. Each one is queued when the one before succeeded:
 
@@ -147,7 +194,7 @@ $cms->queue->chain([
 
 If a job in the chain fails for good, the jobs after it are dropped, and the log says `[queue] ... failed; dropped 2 chained job(s).`
 
-## Batches
+### Batches
 
 A batch runs many jobs in parallel and tracks them as one:
 
@@ -294,6 +341,8 @@ Each run is recorded as `ok`, `failed` or `skipped`, with a reason such as `Cond
 ## How jobs and tasks run
 
 Kestello runs on any host, including shared hosting without shell access, so there are several ways for background work to happen. They all go through the same scheduler, which also runs the queue.
+
+<Flow :steps="running" caption="How a minute of background work starts" />
 
 | Setup | How it works |
 |---|---|

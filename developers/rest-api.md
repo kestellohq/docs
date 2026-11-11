@@ -1,3 +1,19 @@
+<script setup>
+const pipeline = [
+    { title: 'Authenticate', text: 'The bearer token, or else the session.', fail: '401 invalid_token for a wrong, expired or deactivated token.' },
+    { title: 'Rate limit', text: 'Counted per user, or per address for guests.', fail: '429 rate_limited, with Retry-After.' },
+    { title: 'CSRF', text: 'Cookie requests to unsafe methods need X-CSRF-TOKEN.', fail: '403 csrf_mismatch.' },
+    { title: 'Demo policy', text: 'Only on a public demo site.', tone: 'muted', fail: '403 demo: This is turned off in the demo.' },
+    { title: 'Signed in', text: 'Skipped for public endpoints, like the next three.', fail: '401 unauthenticated.' },
+    { title: 'Capability', fail: '403 forbidden.' },
+    { title: 'Scopes', text: 'Tokens only.', fail: '403 insufficient_scope, with required_scopes.' },
+    { title: 'Recent authentication', text: 'Only endpoints with requiresRecentAuth().', fail: '403 forbidden for a token; 401 reauth_required for a session.' },
+    { title: 'Validation', text: 'The query and the body against their schemas.', fail: '400 or 413 malformed_body; 422 validation.' },
+    { title: 'authorize()', text: 'The endpoint’s own policy.', fail: '403 forbidden.' },
+    { title: 'handle()', tone: 'brand', fail: '500 server_error, logged with the request id.' },
+];
+</script>
+
 # REST API
 
 This page covers Kestello's REST API: where it lives, how to authenticate, the scopes a token can carry, the error format, rate limits, pagination and the OpenAPI document. The second half shows how a plugin adds its own endpoints. Read it when you connect another system to a site, or when your plugin needs an API for its admin screens or for integrations.
@@ -122,7 +138,9 @@ A token must hold **every** scope an endpoint lists. Core declares these, in `Ap
 | `settings:write` | Change site settings |
 | `audit:read` | Read the audit log |
 | `security` | See everyone's sign-in security, and end their sessions and tokens |
+| `webhooks:manage` | Set up webhooks and read their deliveries |
 | `system` | Manage infrastructure, jobs and Site Health |
+| `fleet` | Report this site's version, updates, health and backups to a fleet console, and nothing else |
 | `admin` | Everything your account can do |
 
 `admin` passes every scope check, including scopes that plugins declare. Plugins add their own scopes, named `<plugin-slug>:<name>`, such as `hello:read`. The full list on a site, plugin scopes included, is in the OpenAPI document under `components.x-scopes`, and `token:create` prints the known scopes when you leave out `--scopes`.
@@ -182,6 +200,7 @@ Some problems add members: `insufficient_scope` adds `required_scopes`, and `rea
 | 403 | `forbidden` | The user's role lacks the capability, the endpoint's own policy refused, or a token called a session-only action. |
 | 403 | `insufficient_scope` | The token lacks one of the endpoint's scopes. |
 | 403 | `csrf_mismatch` | A cookie request to an unsafe method without a valid `X-CSRF-TOKEN` header. |
+| 403 | `demo` | On a public demo site, a change the demo does not allow. The detail is `This is turned off in the demo.` |
 | 404 | `not_found` | No endpoint matches the path, or the resource does not exist. |
 | 405 | `method_not_allowed` | Raised by endpoints that refuse a method explicitly. |
 | 409 | `conflict` | The change clashes with the current state. |
@@ -190,7 +209,9 @@ Some problems add members: `insufficient_scope` adds `required_scopes`, and `rea
 | 429 | `rate_limited` | Too many requests. Sent with `Retry-After`. |
 | 500 | `server_error` | The endpoint threw. `detail` is `Something went wrong.` unless `app.debug` is on, in which case it is the exception message. Stack traces never leave the server. |
 
-The request pipeline runs in this order, so the first failing step decides the error: authenticate, rate limit, CSRF (cookie requests to unsafe methods), capability and scopes, recent authentication, query and body validation, the endpoint's `authorize()`, then `handle()`.
+The request pipeline runs in this order, so the first failing step decides the error: authenticate, rate limit, CSRF (cookie requests to unsafe methods), the demo policy (only on a public demo site), signed in, capability and scopes, recent authentication, query and body validation, the endpoint's `authorize()`, then `handle()`.
+
+<Flow :steps="pipeline" caption="What an API request passes through, and the answer when a step refuses it" />
 
 ## Rate limits
 
@@ -347,7 +368,7 @@ What the document contains:
 
 ## Write an endpoint in a plugin
 
-An endpoint is one class extending `Kestello\Cms\Api\Endpoint`. From that one declaration Kestello builds the route, the authentication and authorisation checks, input validation, the rate limit, the error format and the OpenAPI entry. The example below adds a list and a create endpoint to a plugin with the slug `acme-books`. It assumes a table `acme_books_books` with `id`, `title`, `author` and `created_at` columns, created by a [migration](/developers/migrations).
+An endpoint is one class extending `Kestello\Cms\Api\Endpoint`. From that one declaration Kestello builds the route, the authentication and authorisation checks, input validation, the rate limit, the error format and the OpenAPI entry. The example below adds a list and a create endpoint to a plugin with the slug `acme-books`. It assumes a table `p_acme_books_books` (a plugin's tables start with `p_` and its slug, with dashes as underscores) with `id`, `title`, `author` and `created_at` columns, created by a [migration](/developers/migrations).
 
 ### Declare the capability, scopes and endpoints
 
@@ -465,7 +486,7 @@ final class ListBooks extends Endpoint
     public function handle(ApiRequest $request): mixed
     {
         $limit = (int) $request->query('limit');
-        $query = QueryBuilder::table('acme_books_books')->orderBy('id', 'DESC')->limit($limit + 1);
+        $query = QueryBuilder::table('p_acme_books_books')->orderBy('id', 'DESC')->limit($limit + 1);
 
         if (($cursor = $request->query('cursor')) !== null) {
             $after = Cursor::decode($cursor) ?? throw ApiProblem::validation(['query.cursor' => ['Invalid cursor.']]);
@@ -524,16 +545,16 @@ final class CreateBook extends Endpoint
     {
         $title = (string) $request->input('title');
 
-        if (QueryBuilder::table('acme_books_books')->where('title', $title)->first() !== null) {
+        if (QueryBuilder::table('p_acme_books_books')->where('title', $title)->first() !== null) {
             throw ApiProblem::conflict('A book with that title already exists.');
         }
 
-        $id = (int) QueryBuilder::table('acme_books_books')->insert([
+        $id = (int) QueryBuilder::table('p_acme_books_books')->insert([
             'title' => $title,
             'author' => (string) $request->input('author'),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
-        $row = QueryBuilder::table('acme_books_books')->where('id', $id)->first();
+        $row = QueryBuilder::table('p_acme_books_books')->where('id', $id)->first();
 
         return Response::json(['data' => (new BookResource($row))->resolve($request->principal)], 201);
     }
@@ -648,7 +669,7 @@ A plugin can add fields to a core resource, or to another plugin's resource with
 ```php
 $cms->api->extend('users')->field(
     'acme_books_count',
-    fn(array $row) => QueryBuilder::table('acme_books_books')->where('author', (string) $row['username'])->count(),
+    fn(array $row) => QueryBuilder::table('p_acme_books_books')->where('author', (string) $row['username'])->count(),
     read: 'acme-books.manage',
 );
 ```
@@ -670,6 +691,7 @@ Field names are lowercase with underscores, an added field never replaces an exi
 | `The request body must be a JSON object.` (`400 malformed_body`) | The body was a JSON array or a scalar. Wrap it in an object. |
 | `The request body is larger than 1 MB.` (`413 malformed_body`) | Upload files through the media endpoints, not inside JSON. |
 | `Unknown field.` (`422 validation`) | The body or query string has a key the schema does not declare. Query keys appear as `query.<name>`. |
+| `This is turned off in the demo.` (`403 demo`) | The site is a public demo (`app.demo`), which only allows changes to content, design, menus, forms and images. |
 | `Try again in 23 seconds.` (`429 rate_limited`) | Wait for `Retry-After` seconds. Read `RateLimit-Remaining` to slow down before this happens. |
 | `No endpoint matches GET /api/v1/... .` (`404 not_found`) | Wrong path or method, or the plugin that provides it is not active or its endpoint was refused. Run `php bin/cms routes` to see what is registered. |
 | `[kestello] API endpoint refused (plugin:acme-books): Plugins\AcmeBooks\Api\ListBooks declares no scopes: refused (tokens need an explicit scope).` (error log) | Add `scopes()`. The other refusal reasons are `declares neither a capability nor isPublic(): refused (deny by default).`, `uses unknown scope [...]. Declare it with $cms->api->scope().`, `plugin endpoints must live under /acme-books/ (got ...)` and `... is already registered by ...`. |

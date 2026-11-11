@@ -4,7 +4,7 @@ Categories and tags sort your posts so visitors can find related ones. A **categ
 
 ![The Categories screen: the form to add a category on the left, the list of categories on the right.](/screenshots/content-categories.png)
 
-Posts can be sorted with **categories** (broad sections, which can be nested) and **tags** (free keywords). Each has its own screen: **Content → Categories** and **Content → Tags**.
+Each has its own screen: **Content → Categories** and **Content → Tags**.
 
 ## Assign them while writing
 

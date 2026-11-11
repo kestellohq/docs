@@ -1,3 +1,36 @@
+<script setup>
+const statuses = [
+    { id: "draft", title: "Draft", text: "Only people who can edit it see it." },
+    { id: "pending", title: "In review", text: "Waiting for someone who may publish." },
+    { id: "scheduled", title: "Scheduled", text: "Goes live by itself at its time." },
+    { id: "published", title: "Published", text: "Everyone sees it at its address.", tone: "brand" },
+    { id: "private", title: "Private", text: "Not on the public site. Set by a plugin or the API, never by an editor button." },
+    { id: "trash", title: "Trash", text: "Move to trash, from any status. Restore brings it back with the status it had.", tone: "muted" },
+];
+const moves = [
+    { from: "draft", to: "published", label: "Publish" },
+    { from: "draft", to: "scheduled", label: "Schedule", note: "with a time in the future" },
+    { from: "draft", to: "pending", label: "Submit for review", note: "someone who may not publish" },
+    { from: "pending", to: "published", label: "Approve and publish" },
+    { from: "pending", to: "scheduled", label: "Approve and schedule" },
+    { from: "pending", to: "draft", label: "Request changes", note: "with a note" },
+    { from: "pending", to: "draft", label: "Withdraw (back to draft)", note: "the writer" },
+    { from: "scheduled", to: "published", label: "Its time comes", note: "a background task" },
+    { from: "scheduled", to: "draft", label: "Unpublish (back to draft)" },
+    { from: "published", to: "draft", label: "Unpublish (back to draft)" },
+    { from: "published", to: "scheduled", label: "Update", note: "after moving its date into the future" },
+];
+const parent = [
+    { title: "Parent published", tone: "brand", items: ["`/about` is public", "`/about/team` is public"] },
+    { title: "Parent back to draft", tone: "danger", items: ["`/about` shows not found", "`/about/team` shows not found, though it is published"] },
+];
+const address = [
+    { title: "Until first published", text: "The address follows the title as you change it." },
+    { title: "Published or scheduled", text: "The address stays fixed, whatever the title.", tone: "brand" },
+    { title: "You change it", text: "Kestello adds a redirect from the old address.", note: "Only when the entry is published." },
+];
+</script>
+
 # Pages, posts and other content
 
 Most days in Kestello you'll be writing pages and posts: a new opening-hours page, a post about Saturday's rye bread, a correction to the About page. This page follows one of them from the first draft to the live site and back: creating it, publishing or scheduling it, finding an older version, and changing its address.
@@ -23,7 +56,7 @@ Open **Content → Pages** (or any other type). The list shows each entry's titl
 
 - **Search titles** filters the list as you type.
 - **Order** sorts by **Last edited** (the default) or **Newest published**, among others. Pages can also be sorted by **Page order**.
-- The tabs filter by status: **All**, **Published**, **Drafts**, **Scheduled**, **Private** and **Trash**. Tabs with nothing in them are hidden, so on a new site you may only see **All**.
+- The tabs filter by status: **All**, **Published**, **In review**, **Drafts**, **Scheduled**, **Private** and **Trash**. Tabs with nothing in them are hidden, so on a new site you may only see **All**.
 
 The date column changes with the status: **Goes live** for scheduled entries, **Published** for published ones and **Edited** for drafts.
 
@@ -100,6 +133,8 @@ Blocks that hold other blocks (**Group**, **Columns**) show their own **Add to**
 | **Scheduled** | Only the admin, until its time comes. Then it becomes **Published** by itself. | **Schedule**, with a date in the future. |
 | **Published** | Everyone, at its address. | **Publish**. |
 | **Private** | Not shown on the public site. | The editor has no button for this. Entries can get it from a plugin or the Kestello API. |
+
+<States :states="statuses" :moves="moves" caption="An entry's statuses and the buttons that move it between them" />
 
 A draft never needs its required fields filled in. Kestello only checks them when you publish; the field editor calls these **Required to publish**. A title is needed too: publishing without one shows **Add a title before publishing.**
 
@@ -205,6 +240,8 @@ Every entry of a public type has an address (also called a slug or permalink): `
 
 Kestello makes the address from the title. Until the entry first gets a publish date (when you publish or schedule it), the address keeps following the title, which the editor says (**Follows the title until it is published.** in the visual editor, **follows the title until published** in the form view). After that it stays fixed, so links people have shared keep working even if you change the title.
 
+<Flow :steps="address" caption="An entry's address, from the first draft to a change after publishing" />
+
 To set the address yourself, choose **Change** next to **Address** on the type's tab in the visual editor (or **Edit** next to the address under the title in the form view), type the new one and press Enter. Kestello writes it in lowercase, turns accented letters into plain ones and replaces anything other than letters and digits with hyphens.
 
 If the address is already taken by another entry of the same type (for pages, one under the same parent), Kestello adds `-2`, `-3` and so on.
@@ -242,6 +279,8 @@ A page can be nested at most 25 levels deep, and it cannot be placed inside itse
 ::: warning A draft parent hides its children
 A page is only public when every page above it is published too. If you unpublish, schedule or trash a parent page, all of its sub-pages disappear from the site, the sitemap, site search and menus, even the published ones. Publish or restore the parent and they come back.
 :::
+
+<Compare :columns="parent" caption="A published sub-page under a published parent, and under a draft one" />
 
 ## The home page
 

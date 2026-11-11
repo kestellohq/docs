@@ -1,3 +1,30 @@
+<script setup>
+const narrowing = [
+    { title: 'The role', text: 'Grants capabilities, such as notices.manage. Administrators hold *.' },
+    { title: 'The token’s scopes', text: 'Only for a personal access token: the scopes it was given, such as notices:write.', tone: 'muted', note: 'A browser session has no scope limit.' },
+    { title: 'What the request may do', text: 'Only what both allow. A token never adds to its user.', tone: 'brand' },
+];
+const checks = [
+    { title: 'Who is asking', text: 'The session cookie or the bearer token.', fail: '401 invalid_token, when a bearer token is not valid.' },
+    { title: 'Rate limit', text: 'Per user, or per IP address for visitors.', fail: '429 rate_limited, with Retry-After.' },
+    { title: 'CSRF header', text: 'Only for a request that changes data and has no bearer token.', fail: '403 csrf_mismatch.' },
+    { title: 'Demo', text: 'Only when app.demo is on.', tone: 'muted', fail: '403 demo, when the demo does not allow the change.' },
+    { title: 'Signed in', text: 'Public endpoints skip this and the next three checks.', fail: '401 unauthenticated.' },
+    { title: 'Capability', text: 'The role holds capability().', fail: '403 forbidden.' },
+    { title: 'Scopes', text: 'The token holds every one of scopes().', fail: '403 insufficient_scope.' },
+    { title: 'Recent authentication', text: 'Only when requiresRecentAuth() is true.', fail: '403 for a token, 401 reauth_required for a session.' },
+    { title: 'Schema', text: 'The query string and the body.', fail: '422 validation.' },
+    { title: 'authorize()', text: 'Your check on the object itself.', fail: '403 forbidden.' },
+    { title: 'handle()', text: 'Your endpoint runs.', tone: 'brand' },
+];
+const reauth = [
+    { title: 'The request', text: 'An action that requires recent authentication.' },
+    { title: '401 reauth_required', text: 'The password was last confirmed more than 10 minutes ago.' },
+    { title: 'Confirm the password', text: 'The admin asks for it and calls POST /api/v1/auth/confirm.', tone: 'brand' },
+    { title: 'Retry', text: 'The same request, now within the 10 minutes.' },
+];
+</script>
+
 # Permissions
 
 Kestello decides what someone may do from two things: the **capabilities** their role grants, and, when they call the API with a personal access token, the **scopes** of that token. This page explains how to declare capabilities and scopes in a plugin, how to check them, how roles work, and which actions also need a recent password confirmation. Read it when your plugin adds a screen, an endpoint or an action that not everyone should reach.
@@ -10,6 +37,8 @@ Kestello decides what someone may do from two things: the **capabilities** their
 - A **principal** (`Kestello\Contracts\Auth\Principal`) is who is making the request: the user, how they signed in, their capabilities and, for a token, its scopes.
 
 The effective permission for an API call is "the role has the capability, and the token (if any) has the scopes". A session in the browser has no scope limit.
+
+<Flow :steps="narrowing" caption="A token's scopes narrow what its user's role allows" />
 
 ## Core capabilities
 
@@ -26,11 +55,16 @@ The effective permission for an API call is "the role has the capability, and th
 | `media.upload` | Upload files, and edit or delete their own. |
 | `media.manage` | Edit and delete everyone's files. |
 | `settings.manage` | Change site settings. |
+| `emails.manage` | Change how the site's emails look and what they say (**Site → Emails**). |
 | `audit.read` | Read the audit log. |
 | `security.manage` | See everyone's sign-ins, sessions and access tokens, and end them (**System → Security**). |
+| `webhooks.manage` | Set up webhooks that send site events to other services (**System → Webhooks**). |
 | `system.manage` | Manage infrastructure, background jobs, scheduled tasks and Site Health. |
+| `fleet.manage` | Watch other Kestello sites from **Site → Fleet**, with their fleet tokens. |
 
-Core modules declare more: `backups.manage`, `plugins.manage`, `core.update`, `forms.manage`, `redirects.manage`, `snippets.manage`, `content_models.manage`, `theme.design`, `theme.custom_css` and `theme.manage`. Each content type adds `content.<type>.<action>` for the actions `create`, `edit`, `edit_others`, `publish`, `delete` and `delete_others`; each taxonomy adds `manage` and `assign`. The **Roles** screen lists every capability with its label.
+Core modules declare more: `backups.manage`, `plugins.manage`, `core.update`, `forms.manage`, `redirects.manage`, `snippets.manage`, `import.run`, `content_models.manage`, `theme.design`, `theme.custom_css` and `theme.manage`. Each content type adds `content.<type>.<action>` for the actions `create`, `edit`, `edit_others`, `publish`, `delete` and `delete_others`; each taxonomy adds `manage` and `assign`. The **Roles** screen lists every capability with its label.
+
+Some capabilities are as good as being an administrator: whoever holds one can make themselves one, or act as anyone. The **Roles** screen marks them and warns before a role gets one. In core these are `users.manage`, `roles.manage`, `security.manage` and `system.manage`, and from core modules `backups.manage`, `plugins.manage`, `core.update`, `snippets.manage`, `import.run` and `theme.manage`.
 
 ## Core roles
 
@@ -87,7 +121,9 @@ Plugin scopes start with your slug and a colon (`notices:`). The description is 
 | `settings:write` | Change site settings |
 | `audit:read` | Read the audit log |
 | `security` | See everyone's sign-in security, and end their sessions and tokens |
+| `webhooks:manage` | Set up webhooks and read their deliveries |
 | `system` | Manage infrastructure, jobs and Site Health |
+| `fleet` | Report this site's version, updates, health and backups to a fleet console, and nothing else |
 | `admin` | Everything your account can do |
 
 A token with `admin` passes every scope check. Tokens are created on **Your profile** or with `php bin/cms token:create <user> --scopes=notices:read,notices:write`.
@@ -106,19 +142,24 @@ final class CreateNotice extends Endpoint
 }
 ```
 
-Endpoints are denied by default. An endpoint that is not `isPublic()` must declare a capability and at least one declared scope, or it is not registered. The checks run in this order:
+Endpoints are denied by default. An endpoint that is not `isPublic()` must declare a capability and at least one declared scope, or it is not registered. The checks run in this order, and the first one that fails answers the request:
+
+<Flow :steps="checks" caption="The checks every API request passes before handle() runs" />
 
 | Check | Response when it fails |
 |---|---|
 | A bearer token was sent and is not valid | `401` `invalid_token` |
-| Rate limit | `429` `rate_limited` |
-| A cookie request that changes data has no valid `X-CSRF-TOKEN` header | `403` `csrf_mismatch` |
+| Rate limit: by default 300 reads and 60 writes a minute per user, or per IP address for visitors; an endpoint can set its own with `rateLimit()` | `429` `rate_limited` |
+| A request that changes data, without a bearer token, has no valid `X-CSRF-TOKEN` header | `403` `csrf_mismatch` |
+| The site runs as a public demo (`app.demo`) and the demo does not allow this change | `403` `demo` |
 | Nobody is signed in | `401` `unauthenticated` |
 | The role lacks the capability | `403` `forbidden` |
 | The token lacks a scope | `403` `insufficient_scope` (the response lists `required_scopes`) |
 | The endpoint needs recent authentication (below) | `403` for tokens, `401` `reauth_required` for sessions |
 | The query string or body does not match the schema | `422` `validation` |
 | `authorize()` returns `false` | `403` `forbidden` |
+
+A public endpoint skips the four checks from "Nobody is signed in" to recent authentication; the others still apply.
 
 Use `authorize()` for checks on a specific object, such as "only the author may delete this", after the capability check:
 
@@ -198,18 +239,25 @@ For those endpoints:
 - A personal access token is refused: `403` with `This action requires an interactive session.`
 - A browser session must have confirmed the password (or signed in) in the last 10 minutes. Otherwise the API answers `401` `reauth_required`. The admin then asks for the password, calls `POST /api/v1/auth/confirm`, and retries the request.
 
+<Flow :steps="reauth" caption="How the admin gets past reauth_required" />
+
 Core endpoints that require it:
 
 | Area | Endpoints |
 |---|---|
-| Your account | `POST /me/tokens`, `POST /me/2fa/totp`, `POST /me/2fa/totp/confirm`, `DELETE /me/2fa`, `POST /me/2fa/recovery-codes`, `DELETE /me/identities/{id}` |
+| Your account | `DELETE /me`, `GET /me/export`, `POST /me/tokens`, `POST /me/2fa/totp`, `POST /me/2fa/totp/confirm`, `DELETE /me/2fa`, `POST /me/2fa/recovery-codes`, `DELETE /me/identities/{id}` |
 | People and roles | `POST /users`, `PATCH /users/{id}`, `DELETE /users/{id}`, `POST /roles`, `PATCH /roles/{name}`, `DELETE /roles/{name}` |
 | Settings | `PATCH /settings` |
-| Plugins and themes | `POST /plugins/install`, `POST /plugins/upload`, `POST /plugins/update`, `POST /plugins/switch-back`, `POST /plugins/{slug}/activate`, `POST /plugins/{slug}/deactivate`, `DELETE /plugins/{slug}`, `POST /themes/{slug}/activate`, `DELETE /themes/{slug}`, `POST /themes/import` |
+| Plugins and themes | `POST /plugins/install`, `POST /plugins/upload`, `POST /plugins/update`, `POST /plugins/switch-back`, `POST /plugins/registry/{slug}/review`, `POST /plugins/{slug}/activate`, `POST /plugins/{slug}/deactivate`, `DELETE /plugins/{slug}`, `POST /themes`, `POST /themes/{slug}/activate`, `DELETE /themes/{slug}`, `POST /themes/import` |
 | Content types | `POST /content-models`, `PATCH /content-models/{id}`, `DELETE /content-models/{id}` |
 | Backups | `POST /backups/upload`, `GET /backups/{name}/download`, `POST /backups/{name}/restore`, `DELETE /backups/{name}` |
-| Updates | `POST /updates/core`, `POST /updates/core/upload`, `POST /updates/core/switch-back`, `POST /updates/recover` |
+| Imports | `POST /imports`, `POST /imports/{id}/start` |
+| Updates | `POST /updates/core`, `POST /updates/core/download`, `POST /updates/core/upload`, `POST /updates/core/switch-back`, `POST /updates/recover`, `POST /updates/packages/download`, `POST /updates/packages/update`, `PUT /updates/packages/license`, `POST /updates/packages/license/remove` |
+| Webhooks | `POST /webhooks`, `PATCH /webhooks/{id}`, `POST /webhooks/{id}/secret` |
+| Fleet | `POST /fleet/sites`, `PATCH /fleet/sites/{id}` |
 | Infrastructure | `PUT /system/platform/{subsystem}`, `DELETE /system/platform/{subsystem}`, `POST /system/storage/move`, `PATCH /system/storage/quotas` |
+
+Changing your own email address with `PATCH /me` also asks for a recent password confirmation, though the rest of that endpoint does not.
 
 All paths are under `/api/v1`. Use `requiresRecentAuth()` in your own endpoints for actions with the same weight: deleting everything a plugin stores, changing who can reach something, sending data to another server. A public endpoint cannot require it.
 
@@ -227,6 +275,9 @@ All paths are under `/api/v1`. Use `requiresRecentAuth()` in your own endpoints 
 | `<Endpoint> declares neither a capability nor isPublic(): refused (deny by default).` | Add `capability()`, or make it public on purpose. |
 | `<Endpoint> uses unknown scope [notices:read]. Declare it with $cms->api->scope().` | Declare the scope before registering the endpoint. |
 | `<Endpoint> is public but also declares a capability or scopes; pick one.` | Public endpoints take neither. |
+| `<Endpoint> declares no scopes: refused (tokens need an explicit scope).` | Add at least one scope to `scopes()`. |
+| `<Endpoint> is public but requires recent authentication.` | A public endpoint cannot require it. |
+| `This is turned off in the demo.` | The `403` detail for `demo`, on a site with `app.demo` on. |
 | `The token lacks a required scope.` | The `403` detail for `insufficient_scope`. |
 | `Confirm your password to continue.` | The `401` detail for `reauth_required`. |
 

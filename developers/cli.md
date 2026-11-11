@@ -129,6 +129,8 @@ Everything goes through the same checks as the admin, in one transaction. When s
 | `package:update <zip>` | Updates an installed plugin or theme: backup, swap, health check, automatic rollback. `--downgrade` to install an older version. |
 | `package:check-updates [<plugin:slug\|theme:slug>]` | Asks the update sources plugins and themes name (`updates` in their manifest) for new versions now, and prints what each one has. Installs nothing. Exits 1 when a source could not be checked. |
 | `package:license <plugin:slug\|theme:slug>` | Saves the license key a paid plugin or theme needs, read from what you type or pipe in so it stays out of the shell history. `--remove` forgets it. |
+| `registry:status` | Shows this site's copy of the [plugin and theme registry](/developers/registry): where it comes from, when it was last fetched, until when it is valid and how many packages it lists. `--refresh` fetches it first. Exits 1 when the copy could not be fetched or checked. |
+| `registry:install <name>` | Installs a plugin or theme from the registry, the same way the admin does: the newest version this site can run, or the one given with `--version=1.5.0`. The download is checked against the registry's size and SHA-256 before it is installed. `--prerelease` also considers pre-releases, `--activate` activates it. A package that is already installed is updated under **Site → Updates** instead. |
 | `core:release [<dir>]` | Builds a Kestello release zip from this core (or the core folder given). `--out=dist`, `--key=<file>`. |
 | `core:install-zip` | Builds `kestello-<version>.zip`, the folder people upload to install a new site. `--out=dist`. |
 | `core:update <zip>` | Updates Kestello itself: backup, switch release, health check, automatic switch back. `--downgrade`. |
@@ -213,5 +215,6 @@ These work in a checkout that was never installed.
 | `make:plugin` | Scaffolds a plugin in `content/plugins/`. |
 | `make:theme` | Scaffolds a theme, or a child theme with `--parent=<slug>`. |
 | `make:migration`, `make:model`, `make:controller`, `make:middleware`, `make:command` | Create a class or file from a template inside a plugin. `--plugin=<slug>` is required. |
+| `api:client` | Prints a TypeScript client for every API endpoint of core and the active plugins. `--out=<file>` writes it to a file, `--owner=<slug>` keeps only one plugin's endpoints (`--owner=core` only core's), `--openapi` writes the OpenAPI document instead. See [The OpenAPI document](/developers/rest-api#the-openapi-document). |
 | `hooks:list` | Lists the events and filters of core and the active plugins. `--events`, `--filters`, `--owner=<slug>`, `--deprecated`, `--json`, `--markdown`. See [Events and filters](/developers/events#declare-your-hooks). |
 | `test [path]` | Runs the test suite, a folder of it, or one `*Test.php` file. `--filter=Text` runs only the tests whose `Class::method` name contains that text. |

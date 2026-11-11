@@ -1,3 +1,17 @@
+<script setup>
+const platform = [
+    { title: 'Environment', text: 'KESTELLO_<SUBSYSTEM>_DRIVER and KESTELLO_<SUBSYSTEM>_<OPTION>. Locked in the admin.', tone: 'brand' },
+    { title: 'Config file', text: 'config/platform.php. Locked in the admin.' },
+    { title: 'Admin', text: 'System → Infrastructure, compiled to storage/framework/platform.php.' },
+    { title: 'Core defaults', text: 'core/config/platform.php, then the driver’s own option defaults.', tone: 'muted' },
+];
+const groups = [
+    { title: 'The site’s config/<group>.php', text: 'Only the keys you change. It may read the environment with getenv().', tone: 'brand' },
+    { title: 'core/config/<group>.php', text: 'Core’s defaults, inside the running release. Replaced by core updates.' },
+    { title: 'The default in the code', text: 'For a key no file sets.', tone: 'muted' },
+];
+</script>
+
 # Configuration
 
 This page lists every setting Kestello reads from files in `config/` and from environment variables, with its type, default and effect. Use it when you set up a server, pin infrastructure for a host, or need to know why a value in the admin is locked. For the folders themselves, see [Folders and files](/developers/layout); for running a site in production, see [Deployment](/developers/deployment).
@@ -43,9 +57,14 @@ There are two kinds of settings, and they are layered differently.
 | 3 | Admin | **System → Infrastructure**, stored in the database and compiled to `storage/framework/platform.php` |
 | 4 | Core defaults | `core/config/platform.php`, then the driver's own option defaults |
 
+<Layers :layers="platform" caption="Infrastructure settings: the highest layer that sets a value wins" />
+
 A value from layer 1 or 2 is locked in the admin, which shows where it comes from. See [Infrastructure: `config/platform.php`](#infrastructure-config-platform-php).
 
-**Everything else** (`app.*`, `database.*`, `storage.*`, `cron.*` and the other groups) has two layers: the site's `config/` file over core's defaults. There is no automatic environment layer for these keys, with one exception (`KESTELLO_SSR_URL`, below). Because config files are PHP, you can read the environment yourself:
+**Everything else** (`app.*`, `database.*`, `storage.*`, `cron.*` and the other groups) has two layers: the site's `config/` file over core's defaults. There is no automatic environment layer for these keys, with one exception (`KESTELLO_SSR_URL`, below). Because config files are PHP, you can read the environment yourself.
+
+<Layers :layers="groups" caption="Every other setting: the site's file over core's defaults" />
+
 
 ```php
 <?php
@@ -124,7 +143,7 @@ Every update of a plugin, theme or Kestello itself checks the site after the new
 | `app.updates.health` | string | `'auto'` | `auto`: a fresh PHP process when `proc_open` works, otherwise an HTTP request. `process`: always the PHP process. `http`: always the HTTP request. |
 | `app.updates.php` | string or null | `null` | The PHP command line binary for the process check, such as `/usr/bin/php8.5`. `null` finds it from the running PHP. |
 | `app.updates.health_url` | string or null | `null` | The address at which the server can reach its own site for the HTTP check. `null` uses `app.url`. Set it when the server cannot reach its public address, for example `http://127.0.0.1`. |
-| `app.updates.check_every` | int | `12` | Hours between checks of the update sources plugins and themes name (`updates` in their manifest). `0` turns the scheduled check off; **Check now** still works. |
+| `app.updates.check_every` | int | `12` | Hours between checks of the update sources plugins and themes name (`updates` in their manifest), and between fetches of the [registry](#plugin-and-theme-registry-config-registry-php). `0` turns the scheduled check of update sources off (**Check now** still works); the registry is then fetched every hour. |
 | `app.updates.prereleases` | bool | `false` | Also offer plugin and theme pre-releases, such as `1.3.0-beta.1`. |
 
 ### Server-side rendering
@@ -134,7 +153,16 @@ Every update of a plugin, theme or Kestello itself checks the site after the new
 | `app.ssr.url` | string or null | `getenv('KESTELLO_SSR_URL') ?: null` | The address of the SSR process (`core/ssr/server.mjs`), such as `http://127.0.0.1:13714`. It must be an `http` or `https` address; anything else is ignored, and redirects from it are not followed. `null` renders pages in the browser only. See [Frontend](/developers/frontend). |
 | `app.ssr.timeout` | float | `1.5` | Seconds to wait for the SSR process before falling back to rendering in the browser. |
 
+| `app.prerender` | bool | `true` | Saves the HTML of pages that are the same for every visitor once an administrator's browser has drawn them, and sends it on later visits, for sites without the SSR process. Off whenever `app.ssr.url` is set, and on a public demo. See [Rendering and caching](/developers/frontend). |
+
 The environment variable is read by core's default file. If the site's `config/app.php` sets `ssr.url`, that value wins over the variable.
+
+### Demo and fleet
+
+| Key | Type | Default | Meaning |
+|---|---|---|---|
+| `app.demo` | bool | `false` | Makes the site a [public demo](/guide/demo): everyone signs in as `demo`, only content, design, menus, forms and images can be changed, nothing is emailed, and the site goes back to its snapshot every hour. Only the server can turn it off. |
+| `app.fleet.enabled` | bool | `false` | Adds **Site → Fleet**, which watches other Kestello sites from this one, each through a token with only the `fleet` scope. Only the site that watches needs it; every site can be watched. |
 
 ### A complete example
 
@@ -179,6 +207,23 @@ Where Kestello's own updates come from. The defaults are in `core/config/release
 | `release.check_every` | int | `12` | Hours between scheduled checks. `0` turns them off; **Check now** and `core:check` still work. |
 | `release.prereleases` | bool | `false` | Also offer pre-releases, such as `1.6.0-beta.1`. For test sites. A site already running a pre-release is offered the later pre-releases of that version and the release itself without this. |
 | `release.keys` | list | official keys | The public keys official releases are signed with: `['name' => 'Kestello releases', 'public_key' => '<base64>']`. Trusted for core releases only, never for plugins. |
+
+## Plugin and theme registry: `config/registry.php`
+
+Where the [registry](/developers/registry) of plugins and themes comes from. The defaults are in `core/config/registry.php`; a site's `config/registry.php` changes any of them, for a mirror or to turn the registry off.
+
+| Key | Type | Default | Meaning |
+|---|---|---|---|
+| `registry.enabled` | bool | `true` | `false`: Kestello never contacts the registry. Plugins and themes are then installed by upload or from their publishers' update sources only, and security advisories are not checked. |
+| `registry.url` | string | `'https://registry.kestello.com/v1/'` | The registry's files, or a mirror of them. A mirror needs no keys of its own, because every file is signed and checked against `registry.root_keys`. |
+| `registry.root_keys` | list | Kestello's two root keys | The public halves of the registry's root keys, as `['name' => 'Kestello root A', 'public_key' => '<base64>']`. They sign only the list of index keys and the publishers' certificates. Replacing a root key needs a Kestello release. |
+
+## Webhooks: `config/webhooks.php`
+
+| Key | Type | Default | Meaning |
+|---|---|---|---|
+| `webhooks.allow_private` | bool | `false` | Webhook addresses must resolve to public addresses. `true` also allows addresses on your own network, such as an internal build server. It can only be set in this file, never in the admin. |
+| `webhooks.timeout` | int | `10` | Seconds to wait for a receiver to answer. At least `1`. |
 
 ## `config/database.php`
 

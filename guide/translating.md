@@ -1,3 +1,11 @@
+<script setup>
+const lookup = [
+    { title: 'Language and region', text: 'sr_Latn_RS: Serbian in Latin script for Serbia.', tone: 'brand' },
+    { title: 'The language', text: 'sr: Serbian.' },
+    { title: 'English', text: 'The sentence as it is written in the code.', tone: 'muted' },
+];
+</script>
+
 # Translating Kestello
 
 This page is for people who want to translate the Kestello admin, emails and messages into their language, and for site owners who want to try a translation. You need a free program for translation files, such as [Poedit](https://poedit.net/), and a GitHub account to send the translation in. You do not need to read code.
@@ -8,6 +16,8 @@ Open **Site → Settings**, and under **General** choose a **Language**, then sa
 
 Languages written right to left, such as Arabic or Hebrew, turn the admin around as well.
 
+When the site has more than one language, each person can also choose the language of the emails they get, under **Language** on **Your profile**. See [Emails](/guide/emails).
+
 ## How translations work
 
 Every sentence Kestello shows is written in English in its code. A translation pairs each English sentence with yours. Kestello looks up a sentence in this order, and uses the first one it finds:
@@ -15,6 +25,8 @@ Every sentence Kestello shows is written in English in its code. A translation p
 1. the language and region, such as Serbian in Latin script for Serbia (`sr_Latn_RS`),
 2. the language, such as Serbian (`sr`),
 3. the English sentence.
+
+<Flow :steps="lookup" caption="Where Kestello looks for a sentence, stopping at the first it finds" />
 
 So a translation for a region only needs the sentences that differ from the main language.
 

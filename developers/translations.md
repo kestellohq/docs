@@ -1,8 +1,27 @@
+<script setup>
+const journey = [
+    { title: 'Write', text: '__() in PHP and Vue, in English, with your slug as the domain.' },
+    { title: 'i18n:extract', text: 'Collects every sentence into resources/lang/<slug>.pot.' },
+    { title: 'Translate', text: 'A translator turns the template into sr.po, sr.json or sr.php in resources/lang/.', tone: 'brand' },
+    { title: 'Loaded', text: 'Kestello reads the pack for the site’s language, for PHP and for the browser.' },
+];
+const lookup = [
+    { title: 'The site’s language and region', text: 'sr_Latn_RS', tone: 'brand' },
+    { title: 'The language', text: 'sr' },
+    { title: 'The fallback language', text: 'app.fallback_locale, en by default' },
+    { title: 'The English text', text: 'The sentence as written in __().', tone: 'muted' },
+];
+</script>
+
 # Translations
 
 This page shows how to make the text of a plugin or theme translatable, and how its translations are found. Read it before you write text people will see: labels, messages, emails and admin pages.
 
 Kestello's own text works the same way. Its template is `core/resources/lang/kestello.pot`; translators use [Translating Kestello](/guide/translating).
+
+From the sentence you write to the text a visitor reads:
+
+<Flow :steps="journey" caption="How a sentence gets translated" />
 
 ## Write translatable text
 
@@ -82,7 +101,13 @@ Translations live in the plugin's or theme's `resources/lang/` folder, one file 
 | `sr.json` | `{"Your order was placed.": "Vaša porudžbina je primljena."}` |
 | `sr.php` | A PHP file that returns the same pairs as an array: `return ['Your order was placed.' => 'Vaša porudžbina je primljena.'];` |
 
-A sentence is looked up for the site's language and region (`sr_Latn_RS`), then the language (`sr`), then the English text. The browser gets the same translations, so one pack covers PHP and Vue: admin pages load every domain's, and site pages load the active plugins' and theme's before they are drawn (and before server-side rendering, so both show the same text). Core's own site blocks, such as the form, bring their text already translated.
+When a folder holds more than one format for a language, `.po` wins over `.json`, and `.json` over `.php`.
+
+A sentence is looked up for the site's language and region (`sr_Latn_RS`), then the language (`sr`), then the fallback language (`app.fallback_locale`, `en` by default), then the English text.
+
+<Layers :layers="lookup" caption="Where a translation is looked up: the first layer that has the sentence wins" />
+
+The browser gets the same translations, so one pack covers PHP and Vue: admin pages load every domain's, and site pages load the active plugins' and theme's before they are drawn (and before server-side rendering, so both show the same text). Core's own site blocks, such as the form, bring their text already translated.
 
 ## If something goes wrong
 

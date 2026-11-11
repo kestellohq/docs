@@ -1,3 +1,52 @@
+<script setup>
+const queuedOrInline = {
+    question: 'Is the listener a class marked #[Queued]?',
+    answers: [
+        { label: 'No', result: 'It runs during the dispatch, in priority order. The person who caused the event waits for it.' },
+        { label: 'Yes', next: {
+            question: 'Does the event hold only scalars, null and arrays?',
+            answers: [
+                { label: 'No', result: 'It runs during the dispatch after all, and the log says why.', tone: 'danger' },
+                { label: 'Yes', next: {
+                    question: 'When the worker picks up the job, is the listener still registered for that event?',
+                    answers: [
+                        { label: 'Yes', result: 'It runs in the background, retried up to 3 times.', tone: 'brand', link: '/developers/jobs' },
+                        { label: 'No', result: 'The job fails: its plugin was deactivated or the listener lost #[Queued].', tone: 'muted' },
+                    ],
+                } },
+            ],
+        } },
+    ],
+};
+const saveFlow = [
+    { title: 'saving', text: 'Before any insert or update.', note: 'Can cancel: save() returns false.' },
+    { title: 'creating or updating', text: 'creating for a new row; updating for a row with changes.', note: 'Can cancel. A row without changes skips this step and the next two.' },
+    { title: 'The write', text: 'One INSERT or UPDATE.', tone: 'brand' },
+    { title: 'created or updated', text: 'The row is written.' },
+    { title: 'saved', text: 'Last, after either of them.' },
+];
+const lifecycle = [
+    { id: 'new', title: 'New', text: 'A model that is not in the database yet.' },
+    { id: 'stored', title: 'Stored', text: 'A row in the table.', tone: 'brand' },
+    { id: 'trashed', title: 'Soft-deleted', text: 'Only for models with soft deletes: deleted_at is set.' },
+    { id: 'gone', title: 'Deleted', text: 'The row is removed.', tone: 'muted' },
+];
+const lifecycleMoves = [
+    { from: 'new', to: 'stored', label: 'save()', note: 'saving, creating, created, saved' },
+    { from: 'stored', to: 'stored', label: 'save()', note: 'saving, updating, updated, saved' },
+    { from: 'stored', to: 'trashed', label: 'delete()', note: 'deleting, deleted' },
+    { from: 'stored', to: 'gone', label: 'delete() or forceDelete()', note: 'deleting, deleted; delete() only without soft deletes' },
+    { from: 'trashed', to: 'stored', label: 'restore()', note: 'restoring, the save() events, restored' },
+    { from: 'trashed', to: 'gone', label: 'forceDelete()', note: 'deleting, deleted' },
+];
+const filterChain = [
+    { title: 'apply()', text: 'The code that uses the value passes it in, with extra arguments.' },
+    { title: 'Highest priority first', text: 'Each callback receives the value and the arguments, and returns the value.', tone: 'brand' },
+    { title: 'Next callback', text: 'It receives what the one before returned. Same priority: the order they were added.' },
+    { title: 'Back to the caller', text: 'apply() returns what the last callback returned.' },
+];
+</script>
+
 # Events and filters
 
 Events and filters are how a plugin reacts to what happens in Kestello without changing core code. An **event** says that something happened: a person signed in, an entry was published, a form was sent. A **filter** passes a value through every plugin that wants to change it before Kestello uses it: the HTML in the page head, the Content Security Policy, the password rules. This page covers listening to events (in the request or in the background), model events, offering your own events and filters, and how long a hook keeps working once it is replaced. The [hook reference](/developers/hooks) lists every core event and filter with its properties and arguments. Read this page when your plugin needs to act on something core does.
@@ -99,6 +148,8 @@ In the worker, the listener only runs if it is still registered for that event, 
 
 Use `#[Queued]` for anything slow or that calls another server: sending mail, calling a webhook, resizing. The person who caused the event does not wait for it.
 
+<Decide :tree="queuedOrInline" caption="Where a listener runs: during the request or in the background" />
+
 ### Stop later listeners
 
 An event class that implements `Kestello\Framework\Events\StoppableEvent` can stop the listeners after the current one. `isPropagationStopped()` is checked after each listener. None of the core events in `Kestello\Cms\Events` are stoppable. The model events that run before a write are.
@@ -149,11 +200,15 @@ $cms->models->on(Entry::class, 'saving', function (Saving $event): void {
 });
 ```
 
+`save()` runs its events in this order:
+
+<Flow :steps="saveFlow" caption="The events of one save(), and where a listener can stop it" />
+
 | Event | When | Can cancel |
 |---|---|---|
 | `saving` | Before any insert or update | Yes |
 | `creating` | Before an insert, after `saving` | Yes |
-| `updating` | Before an update, after `saving` | Yes |
+| `updating` | Before an update, after `saving`. Only when the model has changes. | Yes |
 | `created` | After an insert | No |
 | `updated` | After an update | No |
 | `saved` | After `created` or `updated` | No |
@@ -161,6 +216,10 @@ $cms->models->on(Entry::class, 'saving', function (Saving $event): void {
 | `deleted` | After a delete | No |
 | `restoring` | Before a soft-deleted row is restored | Yes |
 | `restored` | After it was restored | No |
+
+A `save()` of a stored model without changes fires only `saving` and `saved`, and writes nothing. `restore()` clears `deleted_at` with a `save()`, so the save events run between `restoring` and `restored`. `forceDelete()` removes the row of a soft-deleting model and fires `deleting` and `deleted` like `delete()`.
+
+<States :states="lifecycle" :moves="lifecycleMoves" caption="A model's life, and the events each call fires" />
 
 The event classes are in `Kestello\Framework\Database\Orm\Events` (`Saving`, `Created` and so on), and each has `$event->model`. In a cancellable event, `cancel(string $reason)` stops the write: `save()`, `delete()` or `restore()` returns `false` and later listeners are skipped. `cancelled()` and `reason()` tell the code that saved what happened.
 
@@ -212,8 +271,10 @@ $cms->filters->apply(string $name, mixed $value, mixed ...$args): mixed
 ```
 
 - The callback receives the value and any extra arguments, and must return the value.
-- Higher priority runs first. Each callback runs as the package that added it.
-- With `app.debug` on, a callback that returns a different type than it received throws `Filter "security.csp" from plugin:notices changed the value type from array to null.` In production the value is passed on as returned, and most core filters then fall back to the value before filtering.
+- Higher priority runs first. Callbacks with the same priority run in the order they were added. Each callback runs as the package that added it.
+- With `app.debug` on, a callback that returns a different type than it received throws `Filter "security.csp" from plugin:notices changed the value type from array to string.` A move to or from `null` is allowed, because some values start as `null` (a media scanner returns a message), so a callback that forgets to `return` is not caught this way. In production the value is passed on as returned.
+
+<Flow :steps="filterChain" caption="How a filter passes a value through its callbacks" />
 
 Your plugin can offer filters too. Name them after your slug (`notices.message`) and apply them where the value is used:
 
@@ -303,7 +364,7 @@ $cms->pages->share('notices', fn() => Notice::query()->current()->limit(3)->get(
 | `Listener [Plugins\Notices\Listeners\AnnouncePublishedEntry] needs a handle() or __invoke() method.` | Add `handle()`. |
 | `Unknown model event [saveing]; use one of: creating, created, updating, updated, saving, saved, deleting, deleted, restoring, restored.` | A typo in the event name given to `$cms->models->on()`. |
 | `[Plugins\Notices\Notice] is not a model.` | `$cms->models->on()` and `extend()` take model classes. |
-| `Filter "page.head" from plugin:notices changed the value type from string to null.` | Debug mode only. The callback forgot to `return`. |
+| `Filter "page.head" from plugin:notices changed the value type from string to array.` | Debug mode only. The callback returned another type than it received. |
 | `[queue] ... runs inline: ... cannot be queued (...)` | A `#[Queued]` listener ran during the request because its event holds an object. |
 | `[kestello] api.response.users filter removed fields; result ignored.` | Redact values (set them to `null`) instead of removing keys. |
 | `Filters declared by plugin:notices start with "notices.", not "page.title".` | `$cms->hooks->filter()` only declares your own filters. To use a core filter, add a callback with `$cms->filters->add()`. |

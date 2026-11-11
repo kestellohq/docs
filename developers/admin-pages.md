@@ -1,3 +1,13 @@
+<script setup>
+const pageRequest = [
+    { title: 'Address', text: 'The request matches /admin/p/<slug>/<path>, and each {placeholder} matches its rule.', fail: 'No match: the page is not found (404).' },
+    { title: 'Signed in', text: 'The session belongs to a person.', fail: 'A guest is sent to /login, and back here after signing in.' },
+    { title: 'Capabilities', text: 'The person holds admin.access and the page’s capability.', fail: 'The 403 page. The page’s JavaScript is never sent.' },
+    { title: 'Component', text: 'The server renders it with title, params and admin.', tone: 'brand' },
+    { title: 'API calls', text: 'The component loads its data from /api/v1 with the session. Each endpoint checks its own capability and scopes.' },
+];
+</script>
+
 # Admin pages
 
 The admin is a Vue app that only talks to the REST API. A plugin adds to it from PHP, in its provider: whole pages with menu entries, dashboard widgets, panels on core screens, columns in the People table, settings tabs, and replacements for a few core components. The screens themselves are Vue single-file components built with the admin UI kit. This page covers every registration method of `$cms->admin`, how a page component receives its data, the components in `@kestello/ui`, and building. Read it when your plugin needs a screen.
@@ -7,17 +17,19 @@ The [`hello` example plugin](https://github.com/kestellohq/examples/tree/main/pl
 ## How an admin page works
 
 1. In `boot()`, you register a page: a path, a Vue component, a title and a capability.
-2. Kestello adds a server route for it. Plugin pages live at `/admin/p/<slug>/<path>`.
+2. Kestello adds a server route for it. Plugin pages live at `/admin/p/<slug>/<path>`. An address whose placeholders do not match their rules answers 404.
 3. When someone opens the page, the server checks that they are signed in, hold `admin.access` and hold the page's capability. If not, they are sent to `/login` or get the 403 page. The page's JavaScript is never sent to someone who cannot open it.
 4. The server renders the component with three props: `title`, `params` (the values of `{placeholders}` in the path) and `admin` (the menu, extensions and capabilities of the current person).
 5. The component loads its data from `/api/v1`, with the person's session.
 
 So the page's data is protected by the API endpoint's own capability and scopes, not by the page. See [Permissions](/developers/permissions).
 
+<Flow :steps="pageRequest" caption="What happens when someone opens an admin page" />
+
 ## Register a page
 
 ```php
-$cms->admin->page(string $path, string $component, string $title, string $capability = 'admin.access', ?array $menu = null): string
+$cms->admin->page(string $path, string $component, string $title, string $capability = 'admin.access', ?array $menu = null, array $where = []): string
 ```
 
 | Argument | Meaning |
@@ -27,16 +39,19 @@ $cms->admin->page(string $path, string $component, string $title, string $capabi
 | `$title` | The browser title and the default menu label. |
 | `$capability` | What a person needs on top of `admin.access`. |
 | `$menu` | `null` for no menu entry, or `['label' => ..., 'icon' => ..., 'group' => ..., 'order' => ...]`. |
+| `$where` | A rule per placeholder, as a regular expression without delimiters or anchors: `['id' => AdminRegistry::ID]` for a positive whole number. Without a rule, a placeholder matches a plain name (`AdminRegistry::SLUG`: letters, digits, `_`, `.` and `-`). |
 
 It returns the page URL.
 
 ```php
+use Kestello\Cms\Admin\AdminRegistry;
+
 // /admin/p/acme-events, in the Plugins group
 $cms->admin->page('', '@acme-events/admin/Events', 'Events', 'acme-events.manage',
     ['label' => 'Events', 'icon' => 'calendar-event', 'group' => 'plugins', 'order' => 10]);
 
-// /admin/p/acme-events/edit/123, no menu entry
-$cms->admin->page('edit/{id}', '@acme-events/admin/EventEdit', 'Edit event', 'acme-events.manage');
+// /admin/p/acme-events/edit/123, no menu entry; /admin/p/acme-events/edit/abc answers 404
+$cms->admin->page('edit/{id}', '@acme-events/admin/EventEdit', 'Edit event', 'acme-events.manage', where: ['id' => AdminRegistry::ID]);
 
 // /admin/p/acme-events/reports/sales
 $cms->admin->page('reports/sales', '@acme-events/admin/SalesReport', 'Sales', 'acme-events.reports',
@@ -301,8 +316,11 @@ The relative path to `core/build/preset.mjs` depends on where the plugin folder 
 | `Components of plugin:acme-events are named "@acme-events/admin/…" (got "@acme-events/Widget").` | Widgets, slots, cells, settings components and replacements must live under `pages/admin/`. |
 | `Invalid admin page path "Events".` | Paths are lowercase. Placeholders cannot be the first segment. |
 | `The admin page /admin/p/acme-events is already registered.` | Two `page()` calls with the same path. |
+| `The admin page /admin/p/acme-events/edit/{id} has no parameter "slug".` | A key of `$where` is not a placeholder of the path. |
+| `The rule for {id} on /admin/p/acme-events/edit/{id} is not a valid pattern.` | Fix the regular expression, and leave out `#`, delimiters and anchors. |
 | `Pages with parameters cannot be menu entries.` | Drop `$menu` from a page whose path has `{...}`. |
 | `Unknown admin menu group "events".` | Call `$cms->admin->group('events', ...)` first. |
+| `Admin menu group "events" already exists.` | Another plugin or core owns that group id. Pick another. |
 | `Invalid icon name "Calendar".` | Icon names are lowercase letters, digits and dashes, up to 40 characters. |
 | The menu entry shows an empty space instead of an icon. | The name is not a Phosphor icon, or it starts with `ph-`. Look the name up on phosphoricons.com and leave out the prefix. |
 | `Admin menu ids of plugin:acme-events must start with "acme-events.".` | A `link()` id outside your namespace. |

@@ -1,3 +1,12 @@
+<script setup>
+const tabFlow = [
+    { title: 'Schema', text: '$cms->admin->settings() in boot(): fields, labels, secrets.' },
+    { title: 'Settings tab', text: 'The admin draws the form under Settings and checks the values against the schema.', tone: 'brand' },
+    { title: 'Stored keys', text: 'plugin.<slug>.<tab>.<field>, as strings. Secrets are sealed with the app key.' },
+    { title: 'Your code reads them', text: '$this->setting() and $this->secret() add the plugin.<slug>. prefix.' },
+];
+</script>
+
 # Settings
 
 Settings are the values a site owner changes without touching code: how many notices to show, an API key for a payment provider, whether a feature is on. Kestello stores them in the database, in the `settings` table, as strings. This page covers how a plugin names, reads and writes its settings, how secrets are sealed, the settings tab in the admin, and `plugin:config` on the command line. Read it when your plugin needs a value that differs between sites.
@@ -79,12 +88,12 @@ $settings->delete('plugin.notices.display.style');
 
 ## Secrets
 
-API keys, passwords and client secrets must not sit in the database in plain text, where a backup or a database dump would show them. Kestello seals them with the site's app key (`APP_KEY`, see [Configuration](/developers/configuration)) before storing them.
+API keys, passwords and client secrets must not sit in the database in plain text, where a backup or a database dump would show them. Kestello seals them with the site's app key (`app.secret_key`, see [Configuration](/developers/configuration)) before storing them.
 
 - A sealed value is bound to its setting name. Copying it to another key, or to another plugin's settings, does not open it.
 - `$this->secret()` opens it. If the app key changed or the value was tampered with, it returns the default.
 - Sealed values are never sent to the browser. The settings API sends `<field>_set: true` instead.
-- They are included in backups in their sealed form. A backup restored on a site with another app key can only open them if the old key is listed under `previous_keys` in `config/app.php`; otherwise enter them again. The restore warns about this.
+- They are included in backups in their sealed form. A backup restored on a site with another app key can only open them if the old key is listed under `app.previous_keys` in `config/app.php`; otherwise enter them again. The restore warns about this.
 
 You set secrets in one of two ways: a settings tab with the field in `secrets` (below), or `plugin:config --secret`. Both store the same format, so the provider reads both with `$this->secret()`.
 
@@ -108,6 +117,8 @@ $cms->admin->settings('display', 'Notices', Schema::object([
 ```
 
 Fields are stored as `plugin.<slug>.<tab>.<field>`: here `plugin.notices.display.enabled`, `plugin.notices.display.limit` and `plugin.notices.display.token`. The provider reads them as `$this->setting('display.limit', 1)` and `$this->secret('display.token')`.
+
+<Flow :steps="tabFlow" caption="From the schema you register to the value your code reads" />
 
 How the tab behaves:
 
@@ -204,5 +215,5 @@ public function handle(): void
 
 - [Admin pages](/developers/admin-pages): the settings tab and its arguments.
 - [Providers](/developers/providers): the `setting()` and `secret()` helpers.
-- [Configuration](/developers/configuration): server configuration and `APP_KEY`.
+- [Configuration](/developers/configuration): server configuration and `app.secret_key`.
 - [Command line](/developers/cli): every `bin/cms` command.

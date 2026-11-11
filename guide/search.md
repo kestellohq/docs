@@ -1,3 +1,12 @@
+<script setup>
+const indexing = [
+    { title: "You save an entry", text: "Or publish, unpublish, trash, restore or delete it." },
+    { title: "Only what visitors see", text: "Published entries of searchable types: titles, text, blocks, categories and tags.", note: "Members-only and timed blocks, editors-only fields and alt text stay out." },
+    { title: "The search index", text: "Updated straight away by the Database engine, through background jobs by an engine from a plugin.", tone: "brand" },
+    { title: "Results at /search", text: "Best matches first.", note: "If a plugin's engine can't be reached, the database answers instead." },
+];
+</script>
+
 # Site search
 
 Visitors can search your site for anything public: a recipe, the opening hours, last spring's news. This page shows where search lives, how to put a search box on a page, what search finds and what it leaves out, and what to do when results are missing something or show something they shouldn't.
@@ -15,6 +24,8 @@ To put a search field on your pages, add the **Search box** block in the block e
 Many themes also have a search field of their own, for example in the header.
 
 Kestello does not search the site at the moment someone asks. It keeps a **search index**: a copy of the text of everything public, prepared for fast searching. The index is updated each time an entry is saved, published, unpublished, trashed, restored or deleted, so you do not need to do anything for new content to be found.
+
+<Flow :steps="indexing" caption="How an entry gets into site search" />
 
 ## What search finds
 

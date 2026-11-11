@@ -1,3 +1,11 @@
+<script setup>
+const path = [
+    { title: "Build a menu", text: "Appearance → Menus: the links, in order.", note: "On its own, it is shown nowhere." },
+    { title: "Pick it for a theme location", text: "Under Theme locations, such as Main navigation.", tone: "brand", note: "No menu leaves the location empty." },
+    { title: "Visitors see it there", text: "Where the theme puts that location, such as across the top of every page." },
+];
+</script>
+
 # Menus
 
 Menus are how visitors find their way around your site: the links across the top, and often a few more at the bottom. You build each menu from your pages, posts and categories, add your own links, nest items under each other, and put the menu where your theme offers a place for it. If a page you added doesn't show up, see [If something goes wrong](#if-something-goes-wrong).
@@ -5,6 +13,8 @@ Menus are how visitors find their way around your site: the links across the top
 ## How menus work
 
 A menu is a list of links you build in the admin. On its own, a menu is not shown anywhere. Your theme decides **where** menus can appear, for example across the top of every page or in the footer. Each of those places is a **theme location**, and you choose which menu goes in each one.
+
+<Flow :steps="path" caption="From a menu you build to the place visitors see it" />
 
 ![The Menus screen: Theme locations at the top, Add items on the left and the footer menu's items on the right.](/screenshots/menus.png)
 

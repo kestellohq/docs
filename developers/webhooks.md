@@ -1,3 +1,22 @@
+<script setup>
+const verify = [
+    { title: 'Read the header', text: 'Take t and every v1 value from Kestello-Signature.' },
+    { title: 'Check the time', text: 't within 5 minutes of your clock.', fail: 'Refuse it: it may be a replay.' },
+    { title: 'Compute', text: 'HMAC-SHA256 of "<t>.<raw body>" with the webhook’s secret, as hex.', tone: 'brand' },
+    { title: 'Compare', text: 'With each v1 value, in constant time. One match is enough: after a rotation there are two, for 24 hours.', fail: 'No match: refuse it.' },
+];
+const retries = [
+    { at: 'At once', title: 'Attempt 1', text: 'A job on the queue, soon after the event.' },
+    { at: '+1 min', title: 'Attempt 2' },
+    { at: '+5 min', title: 'Attempt 3' },
+    { at: '+30 min', title: 'Attempt 4' },
+    { at: '+2 h', title: 'Attempt 5' },
+    { at: '+6 h', title: 'Attempt 6' },
+    { at: '+12 h', title: 'Attempt 7', text: 'About 21 hours after the first.' },
+    { at: 'If it fails too', title: 'Given up', text: 'After 10 deliveries in a row give up, the webhook is turned off.', tone: 'danger' },
+];
+</script>
+
 # Webhooks
 
 Kestello sends a signed HTTP POST to other services when something happens on the site. This page is for two kinds of developers: those writing a service that receives Kestello webhooks, and plugin authors who want to offer their own events. Site owners set webhooks up in the admin; see [Webhooks](/guide/webhooks).
@@ -51,11 +70,14 @@ Bodies larger than 256 KB are sent without their `data` (it becomes `{"truncated
 | `entry.submitted` | The entry, with status `pending`. |
 | `form.submitted` | `form` (`id`, `title`), `submission_id` (null if the form does not store answers) and `answers`. |
 | `user.registered` | `id`, `username`, `email`, `role` and `via` (`admin`, or `external:<provider>`). |
+| `user.deleted` | `id`, `username`, `email` and `via` (`self`, `admin` or `cli`): who deleted the account. |
 | `webhook.ping` | Sent only by **Send a test**. |
 
 ## Check the signature
 
 Always check the signature before trusting a message. Compute HMAC-SHA256 of `<t>.<raw body>` with the webhook's secret, and compare it with each `v1` value in the header. Right after a secret is rotated there are two `v1` values, one per secret; one match is enough. Refuse messages whose `t` is more than 5 minutes from your clock, so a captured message can't be replayed later.
+
+<Flow :steps="verify" caption="How a receiver checks a Kestello signature" />
 
 Use the raw body exactly as received. Parsing and re-encoding the JSON changes it and the signature no longer matches.
 
@@ -139,9 +161,12 @@ A Kestello site or plugin receiving webhooks from another Kestello site can use 
 
 Answer with a 2xx status within 10 seconds (`webhooks.timeout`). Do slow work after answering, in your own queue. Anything else counts as a failure:
 
-- Other statuses, timeouts and connection errors are retried after 1, 5 and 30 minutes, then 2, 6 and 12 hours.
+- Other statuses, timeouts and connection errors are retried after 1, 5 and 30 minutes, then 2, 6 and 12 hours: seven attempts in all. Each wait counts from the attempt before.
 - Redirects are not followed and count as failures.
+- An address that is not allowed (`http://` or a private network, without `webhooks.allow_private`) is not retried.
 - After 10 deliveries in a row give up, the webhook is turned off and administrators are told.
+
+<Timeline :points="retries" caption="One delivery that keeps failing, attempt by attempt" />
 
 The same event can arrive more than once, for example when your answer was lost on the way. Use `Kestello-Event-Id` to skip messages you have already handled. Events can also arrive out of order; compare `created_at` or fetch the current record from the API when order matters.
 
@@ -194,4 +219,4 @@ Adding a webhook, changing one and rotating its secret need a recent password en
 | `webhooks.timeout` | `10` | Seconds to wait for the receiver to answer. |
 | `webhooks.allow_private` | `false` | Allow `http://` and addresses on private networks. Turn it on only for local development, for example to send to a receiver on your own machine. |
 
-Deliveries run on the `webhooks` queue. The `webhooks.retry` task (every minute) queues retries that are due, and `webhooks.prune` (daily) deletes deliveries older than 30 days. Both need the [scheduler](/developers/jobs) running.
+Deliveries run on the `default` queue, one attempt per job. The `webhooks.retry` task (every minute) queues retries that are due, and `webhooks.prune` (daily at 03:40) deletes deliveries older than 30 days. Both need the [scheduler](/developers/jobs) running.

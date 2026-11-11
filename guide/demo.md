@@ -1,3 +1,12 @@
+<script setup>
+const cycle = [
+    { title: 'Snapshot', text: 'A backup of the whole demo, taken on the first visit after installing, or with demo:snapshot.' },
+    { title: 'Visitors try it', text: 'They change content and the design, and upload images. The admin bar counts down.' },
+    { title: 'The hour is up', text: 'The next run of scheduled tasks starts demo.reset.', note: 'Without cron, that is the next visit.' },
+    { title: 'Back to the snapshot', text: 'Content, settings, uploads and accounts go back, and everyone is signed out. The next hour starts.', tone: 'brand' },
+];
+</script>
+
 # Public demo
 
 A public demo is a Kestello site anyone can sign in to and try. This page covers what visitors can and cannot do on one, how it resets, and how you look after it on the server. Read it before you put a demo online, for example to show Kestello to clients or in a post about it.
@@ -60,7 +69,9 @@ Some screens are hidden on a demo even for reading, because they would show one 
 
 Every hour the scheduled task `demo.reset` restores the snapshot: content, settings, uploads and accounts go back to how they were, and everyone is signed out. Visitors see the countdown in the admin bar.
 
-The snapshot is a backup listed under **Site → Backups** with the note *Demo snapshot*. Do not delete it on the server: without it the demo cannot reset. **Site Health** lists a **Demo** check that turns critical when the snapshot is missing, or when scheduled tasks ran after a reset was due and the demo still did not go back (the reset is failing). A demo that is overdue only because nobody visited is fine.
+<Flow :steps="cycle" caption="A demo's hour, from the snapshot back to it" />
+
+The snapshot is a backup listed under **Site → Backups** with the note *Demo snapshot: the demo goes back to this every hour.* Do not delete it on the server: without it the demo cannot reset. **Site Health** lists a **Demo** check that turns critical when the snapshot is missing, or when scheduled tasks ran after a reset was due and the demo still did not go back (the reset is failing). A demo that is overdue only because nobody visited is fine.
 
 ## Look after the demo on the server
 

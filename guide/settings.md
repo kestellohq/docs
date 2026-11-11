@@ -18,6 +18,8 @@ The name, address and clock of your site.
 | **Timezone** | The clock for dates on the site and for scheduled posts and tasks. Choose the city you work in. | UTC |
 | **Language** | The language of the admin, of emails, and of the words your theme shows by itself, such as "Read more". Language packs add more languages. | English |
 
+When the site has more than one language, each person can also choose the language of the emails they get: **Language** on **Your profile**. Left at **The site's language**, they get the one set here. See [Emails](/guide/emails).
+
 Changing **Site address** needs the permission *Manage infrastructure, background jobs, scheduled tasks and Site Health* as well, because password reset links are built on it.
 
 ## Reading

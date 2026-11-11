@@ -1,3 +1,15 @@
+<script setup>
+const upload = [
+    { title: "Sent in pieces", text: "4 MB at a time, so an interrupted upload carries on.", note: "An upload nobody finishes is removed after a day." },
+    { title: "Checked", text: "The kind of file is allowed, its content matches its name, and it is within the size limits.", fail: "The upload is refused, with the reason." },
+    { title: "Turned the right way up", text: "If the camera saved it sideways." },
+    { title: "Hidden information removed", text: "Such as the camera model and where the photo was taken." },
+    { title: "Scaled down", text: "To Largest photo edge (px), 2560 by default.", tone: "muted", note: "Only photos larger than that." },
+    { title: "Stored", text: "The file appears at the top of the library.", tone: "brand" },
+    { title: "Sizes and formats made", text: "thumb, medium and large, as AVIF, WebP and JPEG or PNG.", note: "In the background, or when a page first asks for one." },
+];
+</script>
+
 # Media
 
 Every photo and file on your site lives in the media library. Upload a picture once and use it on as many pages as you like; Kestello makes smaller copies for phones by itself, so you can upload the photo straight from your camera. This page shows how to upload, crop and turn pictures, choose the part that must always stay in view, and write the short description people who can't see the picture rely on. If an upload is refused, the reason is under [If something goes wrong](#if-something-goes-wrong).
@@ -59,6 +71,8 @@ When you upload a photo, Kestello prepares it before storing it:
 - **Very large photos are scaled down.** **Largest photo edge (px)** (default 2560) sets the longest side a stored photo may have. Set it to 0 to keep every original at full size.
 
 Animated GIFs and WebPs are not resized or turned.
+
+<Flow :steps="upload" caption="What happens to a photo from upload to the sizes pages use" />
 
 ### Sizes and formats
 

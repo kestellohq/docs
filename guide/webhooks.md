@@ -1,3 +1,20 @@
+<script setup>
+const retries = [
+    { at: 'At once', title: 'First try' },
+    { at: '1 minute later', title: 'Second try' },
+    { at: '5 minutes later', title: 'Third try' },
+    { at: '30 minutes later', title: 'Fourth try' },
+    { at: '2 hours later', title: 'Fifth try' },
+    { at: '6 hours later', title: 'Sixth try' },
+    { at: '12 hours later', title: 'Last try' },
+    { at: 'About 21 hours in all', title: 'Given up', text: 'After 10 deliveries in a row give up, the webhook is turned off.', tone: 'danger' },
+];
+const secrets = [
+    { at: 'Make a new secret', title: 'Both secrets sign', text: 'Each message carries a signature from the old secret and one from the new.', tone: 'brand' },
+    { at: '24 hours later', title: 'Only the new secret', text: 'The old secret stops being used.' },
+];
+</script>
+
 # Webhooks
 
 A webhook tells another service when something happens on your site. When a post goes live, a form is sent or someone signs up, Kestello sends a short message to an address you choose. Use it to rebuild a static site, post to a team chat through an automation tool, or copy new form answers into a spreadsheet.
@@ -29,7 +46,7 @@ You land on the webhook's page. Click **Send a test** to check that the service 
 | An entry was moved to the trash | An entry is trashed. |
 | An entry was submitted for review | A contributor submits an entry for review. |
 | A form was submitted | A visitor sends a form. The answers are included. |
-| A person got an account | An administrator adds someone, or someone signs in with an outside account (such as Google) for the first time. |
+| A person got an account | An administrator adds someone, someone creates their own account by email, someone signs in with an outside account (such as Google) for the first time, or an account is made from the command line. |
 
 Plugins can add their own events. They appear under the plugin's name in the list.
 
@@ -39,7 +56,9 @@ Form answers and new accounts contain personal data such as names and email addr
 
 ## When a delivery fails
 
-The service must answer within 10 seconds with a success code (200 to 299). If it does not, Kestello tries again after 1 minute, 5 minutes, 30 minutes, 2 hours, 6 hours and 12 hours, about 21 hours in all.
+The service must answer within 10 seconds with a success code (200 to 299). If it does not, Kestello tries again after 1 minute, 5 minutes, 30 minutes, 2 hours, 6 hours and 12 hours, about 21 hours in all. An address that isn't allowed is not tried again, because nothing would change.
+
+<Timeline :points="retries" caption="When a failed delivery is tried again" />
 
 If 10 deliveries in a row give up, Kestello turns the webhook off and tells administrators by email and in the admin. Fix the receiving service, then open the webhook and click **Turn on again**.
 
@@ -53,6 +72,8 @@ If the secret may have leaked, make a new one:
 2. Copy the new secret and give it to the receiving service.
 
 For the next 24 hours, messages are signed with both the old and the new secret, so nothing is missed while you switch.
+
+<Timeline :points="secrets" caption="The old and the new secret, after Make a new secret" />
 
 ## If something goes wrong
 

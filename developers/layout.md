@@ -1,3 +1,17 @@
+<script setup>
+const owners = [
+    { title: 'Yours, never touched by updates', tone: 'brand', items: ['`bin/`', '`public/`', '`config/`', '`storage/`'] },
+    { title: 'Replaced one package at a time', items: ['`content/plugins/<slug>/`', '`content/themes/<slug>/`'] },
+    { title: 'Replaced by core updates', tone: 'muted', items: ['`core/releases/<version>/`', '`core/current.php`'] },
+];
+const precedence = [
+    { title: 'Environment variables', text: 'Such as KESTELLO_CACHE_DRIVER. Locked in the admin.', tone: 'brand' },
+    { title: 'The site’s config/', text: 'Such as config/platform.php. Locked in the admin.' },
+    { title: 'System → Infrastructure', text: 'What an administrator saved, compiled to storage/framework/platform.php.' },
+    { title: 'Core’s defaults', text: 'core/config/ in the running release.', tone: 'muted' },
+];
+</script>
+
 # Folders and files
 
 A Kestello site and the Kestello development repository have almost the same layout. This page explains each folder, who writes to it, and whether updates touch it.
@@ -29,6 +43,8 @@ site/
 | `core/` | Core updates: a new folder under `releases/`, then `current.php` is switched. | Yes, and only this |
 | `storage/` | Kestello at run time. | No |
 
+<Compare :columns="owners" caption="Which folders an update replaces" />
+
 A development checkout has no `core/current.php`. Without it, the entry points load `core/` directly, which is what you want while working on Kestello itself.
 
 ### `config/`
@@ -39,15 +55,19 @@ A development checkout has no `core/current.php`. Without it, the entry points l
 | `database.php` | The database connection. |
 | `installed.php` | The date and version of installation. Its presence is what tells Kestello the site is installed. |
 | `platform.php` | Optional. Infrastructure settings you want fixed in a file (see below). |
+| `cron.php`, `queue.php`, `auth.php`, `audit.php` | Written by the installer with every option at its default and a comment on each. `php bin/cms config:publish` adds the ones that are missing. |
+| Any other group | Optional. `config/<group>.php` changes core's defaults for that group key by key, such as `config/storage.php` or `config/registry.php`. See the [configuration reference](/developers/configuration). |
 
 Sites installed with early versions may also have a `cache.php`. Nothing reads it any more: the cache store is an infrastructure setting like the others, and the file can be deleted.
 
-Core's defaults live in `core/config/` inside each release. For infrastructure settings (cache, sessions, queue, search, storage, mail, logs) there are four layers, and the first one that sets a value wins:
+Core's defaults live in `core/config/` inside each release. For infrastructure settings (the drivers for the cache, sessions, the queue and search; plugins can add more) there are four layers, and the first one that sets a value wins:
 
 1. environment variables, such as `KESTELLO_CACHE_DRIVER`,
 2. files in the site's `config/`, such as `config/platform.php`,
 3. what an administrator saved under **System → Infrastructure**,
 4. core's defaults.
+
+<Layers :layers="precedence" caption="Where an infrastructure setting comes from: the highest layer that sets it wins" />
 
 A value set in an environment variable or a config file shows as locked in the admin, with its source.
 
@@ -65,9 +85,10 @@ The folder can live elsewhere: set `KESTELLO_STORAGE` to its path (see [Environm
 | `storage/database/` | SQLite databases, when SQLite is used. |
 | `storage/fonts/` | Web fonts the site serves itself (downloaded once from the theme builder). |
 | `storage/forms/` | Files visitors attached to form submissions, kept privately and downloaded from **Submissions**. |
-| `storage/framework/` | Run-time state: maintenance mode, locks, the compiled platform settings. |
+| `storage/framework/` | Run-time state: maintenance mode, locks, rate limits, the compiled platform settings and saved page HTML. |
 | `storage/logs/` | Log files. |
 | `storage/plugins/` | Files plugins keep. |
+| `storage/registry/` | The site's checked copy of the [plugin and theme registry](/developers/registry). |
 | `storage/sessions/` | Session files, when sessions are stored on disk. |
 | `storage/tmp/` | Uploads waiting for review, staged packages. Cleaned automatically. |
 
@@ -112,8 +133,8 @@ The repository is a site with a few extra folders:
 | `core/` | Kestello itself, run directly (no `current.php`). |
 | `core/src/` | PHP, namespace `Kestello\`: `Framework/`, `Contracts/`, `Support/`, `Cms/` (the modules). |
 | `core/resources/js/` | The admin app (`app/`), pages, layouts, `@kestello/ui` (`ui/`) and `@kestello/sdk` (`sdk/`). |
-| `core/resources/assets/build/` | Built front-end files. Committed, so servers never need Node.js. |
-| `core/build/` | The Vite build script. |
+| `core/resources/assets/build/` | Built front-end files. Not committed: `npm run build` makes them in a checkout, and the release workflow puts them in every release zip, so servers never need Node.js. |
+| `core/build/` | The Vite build scripts. |
 | `core/ssr/` | The optional server-side rendering process. |
 | `core/database/migrations/` | Core migrations. |
 | `docker/`, `docker-compose.yml` | The local development environment. |

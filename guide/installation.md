@@ -1,3 +1,27 @@
+<script setup>
+const layouts = [
+    {
+        title: "You can choose the document root",
+        text: "The best setup: nothing outside public can be reached from the web.",
+        tone: "brand",
+        items: ["`kestello/`", "Document root: `kestello/public`"],
+    },
+    {
+        title: "The folder is fixed, such as public_html",
+        text: "The .htaccess file at the top sends visitors into public and refuses every other folder.",
+        items: ["`public_html/`", "Holds bin, config, core, public and the others", "Document root: `public_html`"],
+    },
+];
+const installer = [
+    { title: "Server check", text: "PHP, a database driver, extensions and folders." },
+    { title: "Database", text: "Kestello connects before you continue." },
+    { title: "Your site", text: "Name, address, time zone, and what the site is for." },
+    { title: "Administrator", text: "The first account, with full access.", note: "A public demo skips this step." },
+    { title: "Install", text: "A summary, then Install Kestello.", tone: "brand" },
+    { title: "Kestello is installed", text: "Sign in, add the cron job, check before going live." },
+];
+</script>
+
 # Installing Kestello
 
 This page takes you from an empty hosting account to a working site with your own admin account. It takes about fifteen minutes. You will need:
@@ -47,6 +71,8 @@ How you get there depends on what your host allows:
 
 **If you cannot choose it** (the domain always shows a fixed folder such as `public_html`): upload the contents of the Kestello folder into that folder, so `public_html` contains `bin`, `config`, `core`, `public` and the others. The `.htaccess` file at the top sends visitors into `public` and refuses requests for every other folder.
 
+<Compare :columns="layouts" caption="The two ways to lay out the files, depending on your host" />
+
 ::: warning
 Upload the hidden `.htaccess` files too. Some FTP programs hide files that start with a dot. In FileZilla, turn on **Server → Force showing hidden files** before uploading.
 :::
@@ -60,6 +86,8 @@ If it is not, use your file manager or FTP program to give those three folders p
 ## 4. Run the installer
 
 Open your site's address in a browser. Kestello sees that it is not installed yet and opens the installer at `/install`. It has five steps.
+
+<Flow :steps="installer" vertical caption="The installer's five steps, and the screen after them" />
 
 ### Step 1: Server check
 
@@ -92,7 +120,7 @@ Choose **Connect and continue**. Kestello connects with these details before it 
 
 ![The installer's Your site step: Site name, Tagline, Site address, Time zone, and the choice between A website and A public demo.](/screenshots/install-3-your-site.png)
 
-### Step 4: Your admin account
+### Step 4: Administrator account
 
 A public demo skips this step: its only account is `demo`.
 

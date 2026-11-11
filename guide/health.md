@@ -1,3 +1,21 @@
+<script setup>
+const background = [
+    { title: 'Something starts the scheduler', text: 'Every minute: a cron job running schedule:run, the web runner after a page is sent, or an outside service calling /system/cron.' },
+    { title: 'The scheduler', text: 'Runs the tasks that are due, listed under System → Scheduled tasks.' },
+    { title: 'queue.work', text: 'One of those tasks: it runs the waiting background jobs.', tone: 'brand' },
+    { title: 'Failed jobs', text: 'Jobs that used up their retries, under System → Background jobs.', tone: 'muted' },
+];
+const nightly = [
+    { at: '00:00', title: 'Logs and submissions', text: 'redirects.prune-log, forms.prune-submissions' },
+    { at: '02:30', title: 'Backup', text: 'backups.run', tone: 'brand' },
+    { at: '03:10', title: 'Audit log and old links', text: 'audit.prune' },
+    { at: '03:20', title: 'Failed jobs', text: 'queue.prune-failed' },
+    { at: '03:30', title: 'Expired tokens', text: 'auth.prune-tokens' },
+    { at: '03:35', title: 'Preview links', text: 'content.prune-previews' },
+    { at: '03:40', title: 'Notifications and deliveries', text: 'notifications.prune, webhooks.prune' },
+];
+</script>
+
 # Site Health
 
 Site Health is a set of checks Kestello runs on itself: the PHP version, folders it must write to, the database, email, backups, background tasks and more. This page explains each check, what its result means and how to fix it. Read it when the **Overview** screen says something needs you, when you get a "Your site needs attention" email, or before a site goes live.
@@ -317,7 +335,9 @@ php /home/youraccount/kestello/bin/cms health > /dev/null || echo "Kestello Site
 
 ## Scheduled tasks and background jobs
 
-Two screens under **System** show the background machinery in detail.
+Two screens under **System** show the background machinery in detail. Both depend on one thing: something has to start the scheduler every minute. The scheduler runs the tasks that are due, and one of them, `queue.work`, runs the background jobs.
+
+<Flow :steps="background" caption="How background work gets done" />
 
 ![Scheduled tasks: each task with its schedule, next run, last run and a Run now button.](/screenshots/scheduled-tasks.png)
 
@@ -337,16 +357,26 @@ The tasks Kestello ships with. Times are on the clock of the timezone set under 
 |---|---|---|
 | `queue.work` | every minute | Runs waiting background jobs. |
 | `content.publish-scheduled` | every minute | Publishes content whose publish time has come. |
-| `media.purge-uploads` | hourly | Removes uploads nobody finished within a day. |
-| `sessions.gc` | hourly | Removes expired sessions. |
-| `cache.prune` | hourly | Removes expired cache entries and rate-limit counters, which otherwise pile up in `storage/` or the cache table. |
-| `health.check` | hourly | Runs Site Health and tells administrators about new critical problems. |
+| `webhooks.retry` | every minute | Sends again the [webhook](/guide/webhooks) deliveries whose next try is due. |
+| `media.purge-uploads` | hourly, on the hour | Removes uploads nobody finished within a day. |
+| `sessions.gc` | hourly, at 17 past | Removes expired sessions. |
+| `updates.check` | hourly, at 17 past | Asks GitHub whether a new Kestello version is out, when the hours set in `release.check_every` have passed. It installs nothing. |
+| `cache.prune` | hourly, at 23 past | Removes expired cache entries and rate-limit counters, which otherwise pile up in `storage/` or the cache table. |
+| `health.check` | hourly, at 23 past | Runs Site Health and tells administrators about new critical problems. |
+| `updates.packages` | hourly, at 27 past | Asks where plugins and themes publish their updates for new versions. It installs nothing. |
+| `updates.registry` | hourly, at 37 past | Fetches and checks the plugin and theme registry's list, every 12 hours by default. It installs nothing. |
+| `redirects.prune-log`, `forms.prune-submissions` | midnight | Clean up the redirect log and old form submissions. |
 | `backups.run` | 02:30 | Makes the scheduled backup (daily or weekly, as set under **Site → Backups**). |
-| `audit.prune` | 03:10 | Deletes old audit entries and expired password-reset links. |
+| `audit.prune` | 03:10 | Deletes old audit entries, and expired password-reset, sign-up and email-change links. |
 | `queue.prune-failed` | 03:20 | Deletes failed jobs older than 30 days. |
 | `auth.prune-tokens` | 03:30 | Deletes access tokens that expired over 30 days ago. |
+| `content.prune-previews` | 03:35 | Deletes preview links that expired. |
 | `notifications.prune` | 03:40 | Removes read notifications after 90 days and all after a year. |
-| `redirects.prune-log`, `forms.prune-submissions` | midnight | Clean up the redirect log and old form submissions. |
+| `webhooks.prune` | 03:40 | Deletes webhook deliveries older than 30 days. |
+
+A site with the [fleet](/guide/fleet) console turned on also has `fleet.check` (hourly), and a [public demo](/guide/demo) has `demo.reset`.
+
+<Timeline :points="nightly" caption="The nightly tasks, on the site's clock" />
 
 The same list is available from the command line:
 

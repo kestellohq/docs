@@ -1,3 +1,11 @@
+<script setup>
+const fanout = [
+    { title: 'Where it lives', text: 'Files, tables, settings and assets.', items: ['`content/plugins/acme-events/`', '`p_acme_events_`', '`plugin.acme-events.`', '`/assets/plugins/acme-events/`'] },
+    { title: 'Names it owns', text: 'Capabilities, filters, emails and audit events start with the slug and a dot; token scopes and sign-in guards with the slug and a colon.', items: ['`acme-events.*`', '`acme-events:*`'] },
+    { title: 'Where it is reached', text: 'Addresses and imports.', items: ['`/api/v1/acme-events/`', '`/admin/p/acme-events/`', '`@acme-events/`'] },
+];
+</script>
+
 # Manifest: plugin.json and theme.json
 
 Every plugin has a `plugin.json` and every theme a `theme.json` in its root folder. The manifest names the package, says which versions of Kestello and PHP it runs on, what it depends on, where its PHP code lives, and what it is allowed to do. This page lists every key Kestello reads, with the rules it checks. Read it when you write a manifest by hand, when a package is refused with `Invalid plugin.json`, or before you publish a package.
@@ -53,12 +61,18 @@ This file lives at `content/plugins/acme-events/plugin.json`. The folder name mu
 | `permissions` | object | no | What the package does that the site owner should know about. |
 | `author` | string, or object with `name` | no | Shown on the **Plugins** screen. |
 | `homepage` | string | no | Returned by the plugins API (`GET /api/v1/plugins`) when it starts with `https://`. Other values are ignored. |
+| `updates` | object | no | Where new versions are published. See [`updates`](#updates). |
+| `signing_keys` | list of strings | no | Keys that may sign the next versions. See [`signing_keys`](#signing-keys). |
 
 Kestello keeps the whole decoded file, so you may add keys of your own (for example `"license"`). Unknown keys are not an error.
 
 ### `slug`
 
-The slug is the package's identity. It decides:
+The slug is the package's identity. Everything the package stores, names and serves carries it:
+
+<Compare :columns="fanout" caption="What the slug acme-events decides" />
+
+In detail:
 
 | Derived from the slug `acme-events` | Value |
 |---|---|
@@ -72,9 +86,13 @@ The slug is the package's identity. It decides:
 | Admin pages | `/admin/p/acme-events/...` |
 | Vue components | `@acme-events/...` |
 | Scheduled task names | `acme-events.*` or `acme-events:*` |
+| Filters it declares | `acme-events.*` |
+| Email ids | `acme-events.*` |
+| Audit log events | `acme-events.*` |
+| Sign-in guards | `acme-events:*` |
 | Assets URL | `/assets/plugins/acme-events/...` |
 
-Dashes become underscores in the table prefix. Changing the slug of a released plugin makes it a different plugin: its tables, settings and grants stay with the old slug.
+Dashes become underscores in the table prefix. A theme's components have no `@` prefix, and its assets are under `/assets/themes/<slug>/`. Names that do not start with the slug are refused when the package registers them, for example `[acme.sync] must start with "acme-events:" (declared by plugin:acme-events).` Changing the slug of a released plugin makes it a different plugin: its tables, settings and grants stay with the old slug.
 
 ### `version`
 

@@ -1,3 +1,27 @@
+<script setup>
+const request = {
+    question: "Is there a page at this address?",
+    answers: [
+        { label: "Yes", result: "The page is shown. A redirect never applies.", tone: "brand" },
+        {
+            label: "No",
+            next: {
+                question: "Does a redirect rule match?",
+                answers: [
+                    { label: "Yes, a redirect", result: "The visitor is sent to its To address, with its kind (301, 302, 307 or 308).", tone: "brand" },
+                    { label: "Yes, Gone (410)", result: "The not found page, with the code 410." },
+                    { label: "No", result: "The not found page. The address is listed under Not found, unless it is a file or a scanner's probe.", link: "#the-not-found-list", tone: "danger" },
+                ],
+            },
+        },
+    ],
+};
+const moved = [
+    { title: "Before", items: ["`/services`", "`/services/web-design`"] },
+    { title: "After", tone: "brand", items: ["`/what-we-do`", "`/what-we-do/web-design`"] },
+];
+</script>
+
 # Redirects
 
 When a page moves, its old address shouldn't lead nowhere. A redirect sends visitors, and search engines, from the old address to the new one. Kestello adds one by itself whenever you change a page's address, and you can add your own, for one address or a whole section. It also lists the addresses people tried that found nothing, so you can see which old links still need a home.
@@ -8,9 +32,13 @@ A redirect sends anyone who opens an old address, such as `/old-page`, on to ano
 
 Redirects in Kestello only apply to addresses that would otherwise show "not found". A redirect can never hide a page that exists. If you add a rule for `/about` while an **About** page is published at that address, the page wins and the rule does nothing until the page is gone.
 
+<Decide :tree="request" caption="What happens when someone opens an address" />
+
 To move a page that exists, change its address in the editor instead. Kestello then adds the redirect for you.
 
 Redirects are under **Site → Redirects**. Editors and administrators can use this screen.
+
+![The Redirects screen with the Redirects and Not found tabs, a search field and the list of redirects.](/screenshots/redirects.png)
 
 ## Automatic redirects {#automatic-redirects}
 
@@ -20,6 +48,8 @@ When you change the address of a **published** entry, Kestello adds a redirect f
 - move a page under a different **Parent**.
 
 For pages (and other types whose entries can have a parent), the redirect covers everything below the old address too. If `/services` becomes `/what-we-do`, then `/services/web-design` goes to `/what-we-do/web-design`.
+
+<Compare :columns="moved" arrow caption="A page and the page below it, before and after the move" />
 
 These redirects are listed under **Site → Redirects** with the note **page moved**. To see only them, set **Added** to **When a page moved**.
 
@@ -43,8 +73,6 @@ And a few things do not get one, but may need one:
 6. In **To**, enter where visitors should go: a path on your site such as `/new-page`, or a full address on another site, starting with `https://`.
 7. Optionally add a **Note** for yourself and other editors, such as why the redirect exists.
 8. Choose **Add the redirect**.
-
-![The Redirects screen with the Redirects and Not found tabs, a search field and the list of redirects.](/screenshots/redirects.png)
 
 The new rule works straight away.
 

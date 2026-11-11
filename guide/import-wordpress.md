@@ -1,3 +1,27 @@
+<script setup>
+const stages = [
+    { title: "Categories and tags" },
+    { title: "Files", text: "Downloaded from the old site." },
+    { title: "Posts and pages", tone: "brand" },
+    { title: "Links between posts", text: "Pointed at the imported pages and files." },
+    { title: "Menus" },
+    { title: "Redirects", text: "From each old address to its new one." },
+    { title: "Finishing" },
+];
+const switchOver = [
+    { title: "Keep the old site running", text: "Don't cancel the WordPress hosting yet." },
+    { title: "Point the domain at this site", text: "In the DNS settings or the host's control panel.", note: "Takes from a few minutes to a day to reach everyone." },
+    { title: "Turn on HTTPS", text: "Then set Site address to the real domain, starting with https://." },
+    { title: "Let search engines in", text: "Turn off Hide the site from search engines." },
+    { title: "Try the old addresses again", text: "On the real domain." },
+    { title: "Wait a few weeks, then cancel the old hosting", text: "Keep the export file and a backup of the old site.", tone: "brand" },
+];
+const addresses = [
+    { title: "On the WordPress site", items: ["`/здраво/`", "`/category/news/releases/`"] },
+    { title: "Here", tone: "brand", items: ["`/zdravo`", "`/category/releases`"] },
+];
+</script>
+
 # Moving from WordPress
 
 You have a WordPress site and you want it here: the posts, the pages, the pictures, the menus, and the old addresses that Google and your customers already know. Kestello reads the export file WordPress makes and rebuilds the site from it, with a redirect from every old address to its new one.
@@ -39,7 +63,9 @@ Then:
    - **Redirect old addresses** sends visitors and search engines from each old address to the same page here. A redirect never hides a page of this site: it only applies where nothing else lives at that address.
 6. Choose **Import**. If this is not the site you meant, choose **Cancel**: nothing has changed.
 
-A progress bar shows how far it is and which part it is on: categories and tags, files, posts and pages, links between posts, menus, then redirects. To stop it, choose **Stop**. What was imported so far stays.
+A progress bar shows how far it is and which part it is on: categories and tags, files, posts and pages, links between posts, menus, redirects, then finishing. To stop it, choose **Stop**. What was imported so far stays.
+
+<Flow :steps="stages" caption="The parts of an import, in the order the progress bar shows them" />
 
 ::: warning Keep the screen open on shared hosting
 On a site without a background worker (most shared hosting), the import runs while the **Site → Import** screen is open. Closing it pauses the import, and opening it again carries on where it stopped. When a background worker runs, you can close the screen and come back later. **System → Background jobs** shows whether one runs.
@@ -87,6 +113,8 @@ When the new site looks right, move your domain to it. Do it in this order, so y
 5. **Try the old addresses again**, this time on the real domain.
 6. **Wait a few weeks, then cancel the old hosting.** Keep the WordPress export file and a backup of the old site somewhere safe, in case you ever need something from it.
 
+<Flow :steps="switchOver" caption="Switching the domain over, in order" />
+
 ::: tip Will I lose my place in Google?
 The redirects tell search engines that each page has moved, not gone, so your pages keep their place. It is normal to see the numbers move a little for a few weeks while search engines visit the new addresses.
 :::
@@ -125,6 +153,8 @@ The review and the report list each of these every time, so nothing disappears w
 - Blocks that showed something WordPress made as the page loaded, such as **Latest posts**, a search box or the site title, are left out. The report lists them in one line.
 - A video in a **Media & Text** block becomes a link next to the text, and the video behind a **Cover** is left out, since covers here take an image.
 - Social icons become a list of links.
+
+<Compare :columns="addresses" arrow caption="Two old addresses and where they lead here" />
 
 ## Import the same site again
 

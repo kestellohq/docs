@@ -1,3 +1,12 @@
+<script setup>
+const layers = [
+    { title: 'Your code', text: 'Never touched by Kestello updates.', items: ['theme', 'plugins'], tone: 'brand' },
+    { title: 'Core modules', text: 'Kestello’s own features, built like plugins.', items: ['content', 'media', 'forms', 'backups'] },
+    { title: 'Contracts', text: 'Stable interfaces your code depends on.' },
+    { title: 'Framework and support', text: 'The kernel, database, cache, queue and plain helpers.', tone: 'muted' },
+];
+</script>
+
 # Building on Kestello
 
 Kestello is made for developers and agencies who build and look after sites for clients. These pages are for you: extending Kestello with plugins and themes, connecting other systems to it through the API, moving client sites over, or working on Kestello itself. They assume you write PHP 8.4 or newer and know the basics of Vue 3.
@@ -15,6 +24,8 @@ Why: plugins run in the same PHP process as Kestello, so any library Kestello sh
 **Everything is a plugin or a theme.** There is no folder in a site where you edit Kestello's own code. Site-specific code goes in a plugin made for that site. Updates replace Kestello's code and never touch yours.
 
 **Core is built the way plugins are built.** Kestello's own features (content, media, forms, backups) are modules that use the same service providers, events, filters, admin pages and API endpoints that plugins use. If core can do it, a plugin can.
+
+<Layers :layers="layers" caption="Where your code sits: each layer uses only those below it. See Architecture." />
 
 **The admin uses only the public API.** Every screen in the admin talks to `/api/v1`. An integration with an API token can do what the admin does, within the token's scopes. The exceptions are a few sensitive actions, such as installing plugins, restoring backups and applying updates, which need a person who signed in recently.
 

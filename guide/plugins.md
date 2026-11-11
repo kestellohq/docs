@@ -1,3 +1,64 @@
+<script setup>
+const statuses = [
+    { id: 'inactive', title: 'Inactive', text: 'Installed but switched off. Its data is kept.', tone: 'muted' },
+    { id: 'active', title: 'Active', text: 'Switched on and running.', tone: 'brand' },
+    { id: 'suspended', title: 'Suspended', text: 'Kestello stopped it after it crashed the site.' },
+    { id: 'failed', title: 'Failed to start', text: 'Something it needs is missing.' },
+];
+const moves = [
+    { from: 'inactive', to: 'active', label: 'Activate', note: 'after a trial start' },
+    { from: 'active', to: 'inactive', label: 'Deactivate' },
+    { from: 'active', to: 'suspended', label: 'An error while it starts or runs', note: 'Kestello' },
+    { from: 'active', to: 'failed', label: 'Something it needs goes missing', note: 'another plugin, Kestello version, PHP extension' },
+    { from: 'suspended', to: 'inactive', label: 'Deactivate', note: 'clears the suspension' },
+    { from: 'failed', to: 'inactive', label: 'Deactivate' },
+];
+const seal = {
+    question: 'What does the review say about who vouches for the zip?',
+    answers: [
+        { label: 'Published by … in the Kestello registry', result: 'Installs from the admin.', tone: 'brand', link: '#add-a-plugin-from-the-registry' },
+        { label: 'Signed by …, a publisher this site trusts', result: 'Installs from the admin.', tone: 'brand', link: '#trusting-a-publisher' },
+        {
+            label: 'Signed with a key this site does not trust, or Not signed',
+            next: {
+                question: 'Is app.packages.admin_unsigned on?',
+                answers: [
+                    { label: 'Yes', result: 'Installs from the admin. Meant for development sites.', link: '#allowing-unsigned-plugins-in-the-admin' },
+                    { label: 'No', result: 'Installs from the command line, or as a folder uploaded by FTP.', tone: 'muted', link: '#installing-an-unsigned-plugin-on-the-server' },
+                ],
+            },
+        },
+        { label: 'Changed after it was signed, or refused by the registry', result: 'Never installs, from anywhere.', tone: 'danger' },
+    ],
+};
+const install = [
+    { title: 'Upload a plugin', text: 'Choose the zip, then Upload and review. Nothing is installed yet.' },
+    { title: 'Review', text: 'Who vouches for it, What it may do, and the Code check.', note: 'Valid for an hour.' },
+    { title: 'Install', text: 'The files are put in place.', tone: 'brand' },
+    {
+        title: 'Trial start',
+        text: 'With Activate it after installing on: its tables are made and it starts once. Then it is Active.',
+        fail: 'It stays installed and Inactive, and you see why it could not be activated.',
+    },
+];
+const broken = {
+    question: 'Does Plugins → Manage plugins show the plugin as Suspended?',
+    answers: [
+        { label: 'Yes', result: 'Fix the cause, then Deactivate and Activate it.', tone: 'brand', link: '#automatic-suspension' },
+        {
+            label: 'No, or the admin does not open',
+            next: {
+                question: 'Can someone run commands on the server?',
+                answers: [
+                    { label: 'Yes', result: 'Open the site in recovery mode and deactivate the plugin.', link: '#recovery-mode' },
+                    { label: 'No', result: 'Rename the plugin’s folder over FTP.', link: '#without-a-terminal' },
+                ],
+            },
+        },
+    ],
+};
+</script>
+
 # Plugins
 
 Plugins add features to your site: a shop, a search engine, a sign-in button for another service. This page covers adding a plugin, switching it on and off, its settings, removing it, and what Kestello does when a plugin breaks. Read it before you install your first plugin, and come back to the last part if a plugin ever takes your site down.
@@ -23,6 +84,8 @@ Open **Plugins → Manage plugins**. Each installed plugin has a row with its na
 | **Suspended** | Switched on, but Kestello stopped it after it crashed the site. The reason is shown under the plugin. See [When a plugin breaks the site](#when-a-plugin-breaks-the-site). |
 | **Failed to start** | Switched on, but it cannot run, usually because something it needs is missing (another plugin, a newer Kestello, a PHP extension). The reason is shown under the plugin. |
 
+<States :states="statuses" :moves="moves" caption="A plugin's statuses and what moves it between them" />
+
 Under the name you may also see:
 
 - **Needs** followed by other plugins: this plugin only runs when those are active.
@@ -45,18 +108,23 @@ Plugins that add screens of their own show them in the menu under **Plugins**, b
 
 ## Signed and unsigned plugins
 
-A plugin zip can carry a signature: a seal from the publisher that proves who made it and that nobody changed it afterwards. When you upload a plugin, Kestello checks the seal and tells you which of four cases you have:
+A plugin zip can carry a signature: a seal from the publisher that proves who made it and that nobody changed it afterwards. When you upload a plugin, Kestello checks the seal and tells you which case you have:
 
 | What you see | What it means | Can you install it from the admin? |
 |---|---|---|
+| **Published by Acme in the Kestello registry, which checked this exact zip and its signature.** | The registry lists this exact zip, and it is sealed with the key the registry names for Acme. Your own list of trusted publishers doesn't matter for it. | Yes. |
 | **Signed by Acme, a publisher this site trusts.** | The zip is sealed by a publisher listed in your site's configuration. | Yes. |
 | **Signed with a key this site does not trust (…)** | Sealed, but by a publisher your site does not know. | No, unless unsigned installs are allowed (see below). |
 | **Not signed: nobody vouches for where it came from.** | No seal at all. | No, unless unsigned installs are allowed. |
 | **Changed after it was signed. Do not install it.** | The seal is broken: files were changed after signing. | Never. Not from the admin and not from the command line. |
 
+A version the registry refuses, such as one it withdrew, is never installed either, from anywhere, and the review says why.
+
+<Decide :tree="seal" caption="Whether a plugin zip installs, and from where" />
+
 ### Trusting a publisher
 
-The publishers your site trusts are listed in `config/app.php` under `app.packages.trusted_keys`. A new site trusts nobody, so out of the box no plugin can be installed from the admin. A publisher who signs plugins gives you a name and a public key. Ask whoever looks after your server to add them to `config/app.php`:
+The publishers your site trusts are listed in `config/app.php` under `app.packages.trusted_keys`. A new site trusts no publisher of its own, so out of the box the admin installs only plugins from the [registry](#add-a-plugin-from-the-registry). A publisher who signs plugins gives you a name and a public key. Ask whoever looks after your server to add them to `config/app.php`:
 
 ```php
 'packages' => [
@@ -86,6 +154,8 @@ On shared hosting without a terminal, you can also unzip the plugin and upload i
 
 ## Install a plugin
 
+<Flow :steps="install" caption="Installing a plugin from a zip" />
+
 1. Open **Plugins → Manage plugins** and choose **Upload a plugin**.
 2. Under **Plugin zip**, choose the plugin's zip file.
 3. Choose **Upload and review**. Nothing is installed yet. You now see the plugin's name, version and author, the signature line, and **What it may do**.
@@ -98,6 +168,17 @@ On shared hosting without a terminal, you can also unzip the plugin and upload i
 You see **Acme Shop was installed and is active.** (or **…was installed.** if you did not activate it). The review stays valid for an hour; after that, upload the zip again.
 
 If the plugin installed but could not be switched on, you see **Acme Shop was installed but could not be activated:** followed by the reason. The plugin stays installed and inactive. Fix the reason (often a plugin it needs) and activate it later.
+
+### Add a plugin from the registry
+
+The Kestello registry lists plugins that publishers have signed and the registry has checked. **Plugins → Add new** shows them.
+
+1. Open **Plugins → Add new**.
+2. Find the plugin with **Search plugins** or a **Category**. **Details** shows its description, its versions and what the newest version this site can run may do.
+3. Choose **Install** on its row, or **Install** followed by the version in **Details**. Kestello downloads that version and checks it against the registry.
+4. The same review as for an uploaded zip opens. Continue from step 4 above.
+
+If the screen says **The registry is turned off on this site**, a developer has turned it off in `config/registry.php` (`enabled`). Plugins are then installed from a zip under **Manage plugins**.
 
 ### Replacing an inactive plugin
 
@@ -149,6 +230,10 @@ Deleting a plugin deletes its data. There is no undo except restoring a backup m
 :::
 
 ## When a plugin breaks the site {#when-a-plugin-breaks-the-site}
+
+Kestello usually catches a broken plugin by itself. When it can't, or the admin itself is down, there are two ways to switch the plugin off by hand:
+
+<Decide :tree="broken" caption="Switching off a plugin that broke the site" />
 
 ### Automatic suspension
 

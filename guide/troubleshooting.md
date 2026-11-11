@@ -1,8 +1,36 @@
+<script setup>
+const seen = {
+    question: 'What do you see?',
+    answers: [
+        { label: 'Something went wrong, a white page or a 500 page', result: 'Read the error log.', link: '#white-page' },
+        { label: 'Back in a moment, for longer than a few minutes', result: 'Find out what is running, or what failed.', link: '#maintenance' },
+        {
+            label: 'The admin doesn’t let you in',
+            next: {
+                question: 'Where does it stop?',
+                answers: [
+                    { label: 'At the password', result: 'Reset it, or have it set for you.', link: '#you-forgot-your-password' },
+                    { label: 'At the six-digit code', result: 'Use a recovery code, or have two-step sign-in reset.', link: '#you-lost-the-phone-with-your-authenticator-app' },
+                    { label: 'After signing in, with an error', result: 'Switch off the plugin with a recovery link.', link: '#plugin-broke-the-site' },
+                ],
+            },
+        },
+        { label: 'A plugin shows Suspended, or the log names one', result: 'Switch it off and tell its author.', link: '#plugin-broke-the-site' },
+        { label: 'Emails don’t arrive', result: 'Check the mail settings and the failed jobs.', link: '#email' },
+        { label: 'Pages show old content', result: 'Clear the page cache.', link: '#old-content' },
+        { label: 'Scheduled posts, backups or emails never happen', result: 'Get the scheduler running.', link: '#background-tasks-do-not-run' },
+        { label: 'Cannot write to a folder', result: 'Fix the folder permissions.', link: '#permission-errors' },
+    ],
+};
+</script>
+
 # Troubleshooting
 
 Something isn't working and you want it fixed. Each section below starts with what you see, such as an error page, a locked-out admin, emails that don't arrive or a site stuck on "Back in a moment", then where to look and what to do. If you can still open the admin, start with [Site Health](/guide/health): it finds many of these problems for you and says what to do.
 
 Several fixes need a command run on the server. On a VPS you run them over SSH from the site's root folder (the folder that holds `bin`, `config` and `core`). On shared hosting, look for **Terminal** or **SSH Access** in your control panel; if there is none, ask your host to run the command for you. All commands are listed in [Command line](/developers/cli).
+
+<Decide :tree="seen" caption="Where to start, from what you see" />
 
 ::: tip
 Run commands as the same user the web server runs PHP as. On a VPS that is often `www-data`, for example `sudo -u www-data php bin/cms cache:pages`. Files a command creates as `root` cannot be changed by the site afterwards, which causes the permission errors described [below](#permission-errors).
@@ -66,8 +94,8 @@ First work out which kind of lockout it is.
 
 ### You forgot your password
 
-1. Open `/login` on your site and choose **Forgot password?**.
-2. Enter the email address of your account and send the form. You always see "If an account uses that address, we sent it a link to reset the password.", whether or not an account uses it. That way nobody can find out which addresses have accounts.
+1. Open `/login` on your site and choose **Forgot your password?**.
+2. Enter the email address of your account and choose **Send reset link**. You always see "If an account uses that address, we sent it a link to reset the password.", whether or not an account uses it. That way nobody can find out which addresses have accounts.
 3. Open the email and follow the link. It works once and expires after 60 minutes.
 4. Choose a new password of at least 12 characters that is not a common password. You see "Your password was changed. Sign in with the new one."
 

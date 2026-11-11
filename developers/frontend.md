@@ -1,3 +1,22 @@
+<script setup>
+const firstVisit = [
+    { title: 'Page cache', text: 'A visitor who is not signed in may get a stored copy, without routing or rendering.', note: 'X-Kestello-Cache: HIT ends the request here.' },
+    { title: 'Page::render()', text: 'Your handler names a component and passes props.' },
+    { title: 'Shared props', text: 'Core’s, then $cms->pages->share(), then the page.shared filter. The handler’s props win on a clash.' },
+    { title: 'Component lookup', text: 'The theme chain, then plugins (@<slug>/), then core (@core/).' },
+    { title: 'Server HTML', text: 'The SSR renderer within app.ssr.timeout (1.5 seconds), or saved page HTML when there is no renderer.', note: 'Neither: the browser draws the page.' },
+    { title: 'HTML shell', text: 'Stylesheets, modulepreload links, the import map, the page object and the nonced boot script.', tone: 'brand' },
+    { title: 'Stored', text: 'The page cache keeps the response when it may.' },
+    { title: 'Boot', text: 'Vue hydrates the server HTML (data-ssr) or renders the page from the page object.' },
+];
+const navigation = [
+    { title: 'Click a Link', text: 'The router asks for the next page with X-Kestello and X-Kestello-Version.' },
+    { title: 'Version check', text: 'The server compares the version with the current one.', fail: '409 with X-Kestello-Location: the browser loads the address in full, with the new files.' },
+    { title: 'Page JSON', text: 'The same page object, with X-Kestello: true.', tone: 'brand' },
+    { title: 'Swap', text: 'The router renders the new component, updates usePage() and the history.' },
+];
+</script>
+
 # Frontend
 
 This page explains how a Kestello page gets from a PHP handler to the browser: `Page::render()`, the props every page shares, `usePage()`, client navigation, server-side rendering, the page cache and the Content Security Policy. Read it when you write a route that renders a page, share data with every page, or need to know why a visitor sees an old version of one. The short version is in [Architecture](/developers/architecture#pages-and-the-frontend); building the components themselves is on [Themes](/developers/themes).
@@ -40,7 +59,7 @@ Page::render(string $component, array $props = [], int $status = 200, array $pre
 | `$status` | The HTTP status. `Page::render('@acme/NotFound', [], 404)` renders a page with a 404. |
 | `$preload` | Other registered components the page will render, such as block components. Their scripts get `modulepreload` links and their stylesheets are linked in the first response. |
 
-A `title` prop sets the document title as `<title> - <site name>`, or the site name alone when it is empty.
+A `title` prop sets the document title through the site's title pattern from **Settings → Search and sharing**: by default `{title} - {site}`, and the site name alone on the home page or when the title is empty. A `seo.title` prop takes the place of `title` in it.
 
 ### Component names
 
@@ -57,7 +76,11 @@ The first match wins, in this order: the theme chain, plugins, core. A theme can
 
 ## What the browser gets
 
-On a first visit the response is an HTML document. It carries:
+A first visit runs these steps on the server:
+
+<Flow :steps="firstVisit" caption="From the request to a page in the browser, on a first visit" />
+
+The response is an HTML document. It carries:
 
 - the component's stylesheets, and `modulepreload` links with Subresource Integrity hashes;
 - an import map that points `vue`, `@kestello/app`, `@kestello/sdk` and `@kestello/ui` at the single copy the site serves;
@@ -87,7 +110,7 @@ Every page receives these props from core:
 
 | Prop | Value |
 |---|---|
-| `site` | `{ name, url }` from **Settings**, falling back to `app.name` and `app.url`. |
+| `site` | `{ name, url, titles }`: the name and address from **Settings**, falling back to `app.name` and `app.url`, and `titles`, the title patterns from **Settings → Search and sharing** (`{ page, home, sep, tagline }`), so the browser writes the same document title as the server. |
 | `auth` | `{ user: null }` or `{ user: { id, username, email, role, admin } }`. `admin` is `true` when the person's role may open the admin (`admin.access`): use it, not the role's name, to show a link there. A hint for the interface only; the server checks every permission. |
 | `csrfToken` | The session's CSRF token, or `''` when there is no session. |
 | `flash` | `{ success, error }` messages flashed by the last request. |
@@ -96,6 +119,7 @@ Every page receives these props from core:
 | `i18n` | `{ locale, translations }`: the site's language, and the address of the active plugins' and theme's translations for it (`null` when there are none, as for English). The page loads them before it is drawn, so `__()` in their components shows the site's language. |
 | `recoveryMode` | `true` while the site runs in recovery mode. |
 | `menus` | The menus assigned to the active theme's locations, `{ primary: [...], footer: [...] }`. See [Themes](/developers/themes#menu-locations). |
+| `demo` | Only on a public demo site (`app.demo`): `{ username, password, next_reset, every }`, the account to sign in with, the Unix time of the next reset and the minutes between resets. |
 
 Add your own with `$cms->pages->share()` in a provider's `boot()`:
 
@@ -148,7 +172,7 @@ const page = usePage();
 
 `usePage()` returns the reactive page object: `component`, `props`, `url` and `version`. It updates when the visitor navigates.
 
-`<Head title="...">` sets the document title, with ` - <site name>` added. `<Head title="..." raw />` leaves the suffix off.
+`<Head title="...">` sets the document title through the same title pattern as the server (in the admin, always `Title - Site`). `<Head title="..." raw />` uses the title as given.
 
 ## Client navigation
 
@@ -188,6 +212,8 @@ form.post('/login');   // form.errors.email, form.processing
 ```
 
 ### What a navigation request looks like
+
+<Flow :steps="navigation" caption="A click on a Link, from request to swap" />
 
 Every navigation request carries these headers:
 
@@ -277,6 +303,17 @@ The renderer only accepts `POST /render` with a JSON body up to 2 MB, and `GET /
 
 Admin pages are never server-rendered: they are per user and need no search engine.
 
+### Saved page HTML, without the renderer
+
+A site without the Node renderer still sends real HTML for its public pages, once an administrator's browser has drawn them. This is on by default (`app.prerender`, `true`), and off when `app.ssr.url` is set or on a public demo.
+
+1. A visitor who is not signed in, with no session data (no form errors, no flash message), opens a page whose address has no query string except `page`.
+2. When no HTML is saved for that page yet, the page goes out as usual and its data waits in `storage/framework/prerender/`.
+3. An administrator's browser, in the admin, draws the waiting pages to HTML in a hidden frame and sends it back.
+4. The next visitor gets the saved HTML, and Vue takes it over.
+
+A page's key is a SHA-256 hash of the exact page data the browser receives, so saved HTML never goes stale: when the page, a menu or a list changes, the key changes too. Up to 2000 pages are kept and up to 100 wait at once; the oldest go first.
+
 ### When the renderer is down
 
 If the renderer does not answer within the timeout, answers with anything but `200`, or returns no body, Kestello:
@@ -304,7 +341,7 @@ Kestello stores whole pages for visitors who are not signed in and serves them w
 A response is stored when all of these hold:
 
 - the request is `GET` or `HEAD`, without a session cookie and without an `Authorization` header;
-- the path does not start with `/admin`, `/api/`, `/login`, `/logout`, `/install`, `/system/`, `/auth/`, `/forgot-password`, `/reset-password`, `/uploads/`, `/assets/`, `/storage/` or `/search`;
+- the path does not start with `/admin`, `/api/`, `/login`, `/logout`, `/install`, `/system/`, `/auth/`, `/forgot-password`, `/reset-password`, `/register/`, `/uploads/`, `/assets/`, `/storage/` or `/search`;
 - the query string is empty, or holds only allowed parameters (by default `page`, with a value from `1` to `99999`); parameters in the ignored list below do not count;
 - the status is `200`, with no cookies set, no session started while rendering, and no `Cache-Control: private` or `no-store`;
 - the content type is HTML, JSON, XML, RSS, Atom or plain text, and the body is at most 2 MB;

@@ -1,3 +1,58 @@
+<script setup>
+const signing = [
+    { title: 'Hash each file', text: 'The SHA-256 of every file in the zip except SIGNATURE.' },
+    { title: 'List them', text: 'One line per file, the hash then the name, sorted by name.' },
+    { title: 'Digest', text: 'The SHA-256 of that list.' },
+    { title: 'Sign', text: 'Ed25519 over a domain line and the digest, stored in the zip as SIGNATURE.', tone: 'brand' },
+];
+const verifying = {
+    question: 'Does the zip hold a SIGNATURE file?',
+    answers: [
+        { label: 'No', result: 'unsigned', tone: 'muted', link: '#who-may-install-what' },
+        { label: 'Yes', next: {
+            question: 'Does the digest of the files match the one in SIGNATURE?',
+            answers: [
+                { label: 'No', result: 'tampered', tone: 'danger', link: '#who-may-install-what' },
+                { label: 'Yes', next: {
+                    question: 'Is the key id in app.packages.trusted_keys?',
+                    answers: [
+                        { label: 'No', result: 'untrusted', tone: 'muted', link: '#who-may-install-what' },
+                        { label: 'Yes', next: {
+                            question: 'Does the signature check with that public key?',
+                            answers: [
+                                { label: 'No', result: 'tampered', tone: 'danger', link: '#who-may-install-what' },
+                                { label: 'Yes', result: 'signed', tone: 'brand', link: '#who-may-install-what' },
+                            ],
+                        } },
+                    ],
+                } },
+            ],
+        } },
+    ],
+};
+const publishing = [
+    { title: 'Build and sign', text: 'package:build with --key writes the zip and its .sha256 to dist/.' },
+    { title: 'Publish', text: 'A GitHub release or your own feed names the version, the zip and its SHA-256.', tone: 'brand' },
+    { title: 'Sites find it', text: 'Every 12 hours (app.updates.check_every), or on Check now under Site → Updates.' },
+    { title: 'Review', text: 'The site downloads the zip, checks its SHA-256 and the signing key, and checks it like an upload.', fail: 'A zip that does not match its published checksum is thrown away.' },
+    { title: 'Update', text: 'The update pipeline puts it in place, with a backup and a way back.' },
+];
+const pipeline = [
+    { title: 'Checks', text: 'Installed, newer, and every requirement met.', note: 'Nothing has changed yet if a check fails.' },
+    { title: 'Backup', text: 'A database backup of kind before-update.' },
+    { title: 'Maintenance', text: 'Visitors get a 503 page for up to 30 minutes.' },
+    { title: 'Swap', text: 'The old folder moves to storage/app/backups/packages/ and the new one takes its place.' },
+    { title: 'Probe', text: 'A fresh process boots the new code, runs migrations and upgrade(), and requests / and /api/v1/status.', fail: 'The old folder and the database backup go back, and the probe runs again on the old version.' },
+    { title: 'Commit', text: 'The new version stays and maintenance ends.', tone: 'brand' },
+];
+const coreRelease = [
+    { title: 'Tag', text: 'A maintainer tags vX.Y.Z on main. The tag must match core/VERSION.' },
+    { title: 'Build', text: 'npm run build, then core:release signs kestello-core-X.Y.Z.zip with the release key.' },
+    { title: 'Verify', text: 'core:verify checks the signature and the .sha256 file.', fail: 'The workflow stops and nothing is published.' },
+    { title: 'Publish', text: 'The GitHub release carries both zips, their .sha256 files and kestello.stub.php.', tone: 'brand' },
+];
+</script>
+
 # Packaging and signing
 
 This page covers turning a plugin or theme folder into a zip that a site can install, signing it so the admin accepts it, checking a package before you ship it, and what happens on a site when it updates to your new version. It also covers building and applying releases of Kestello itself. Read it when your plugin works locally and you want to put it on a real site.
@@ -61,7 +116,10 @@ The build runs the code check first. Any error stops the build and lists the pro
 
 Signatures use Ed25519 through PHP's `sodium` extension, which Kestello requires anyway.
 
-The signature covers every file in the zip: Kestello hashes each file, lists `<sha256> <name>` lines sorted by name, hashes that list, and signs the result. Changing, adding or removing any file afterwards breaks the signature. The signature is stored inside the zip as `SIGNATURE`, so a package stays one file:
+The signature covers every file in the zip: Kestello hashes each file, lists `<sha256> <name>` lines sorted by name, hashes that list into a digest, and signs a domain line followed by the digest. The domain line is `kestello-package-v1` for plugins and themes and `kestello-core-v1` for releases of Kestello, so a package signature never passes as a core one, even under the same key. Changing, adding or removing any file afterwards breaks the signature. The signature is stored inside the zip as `SIGNATURE`, so a package stays one file:
+
+<Flow :steps="signing" caption="What a package signature covers" />
+
 
 ```json
 {
@@ -130,6 +188,10 @@ return [
 Packages installed from the Kestello registry (**Plugins → Add new**, or `registry:install` on the command line) don't need this list: the registry vouches for them, through keys its root keys certify. For anything else, this list is the only source of trust. To show what the registry lists on a site, see [Reading the registry](/developers/registry).
 
 ### Who may install what
+
+A site checks a zip in this order, and the first answer that stops it gives the state:
+
+<Decide :tree="verifying" caption="How a site finds a package's signature state" />
 
 A package's signature has one of four states:
 
@@ -201,13 +263,15 @@ Method calls with the same names (`$this->exec()`, `Foo::system()`) are not flag
 
 ## Publish updates {#publish-updates}
 
-Name where your releases are in the manifest (`updates`, see [the manifest](/developers/manifest#updates)), and sites find them by themselves: every 12 hours, and when the administrator chooses **Check now** on **Site → Updates**. They download the new zip only when the administrator chooses **Review**, check it like an upload, and apply it through the [update pipeline](#updating-a-package-on-a-site). A site offers the newest version above the installed one whose `requires.core` its Kestello meets, and pre-releases only when `app.updates.prereleases` is on.
+Name where your releases are in the manifest (`updates`, see [the manifest](/developers/manifest#updates)), and sites find them by themselves: every 12 hours (`app.updates.check_every`), and when the administrator chooses **Check now** on **Site → Updates**. They download the new zip only when the administrator chooses **Review**, throw it away unless its SHA-256 matches the published one, check it like an upload, and apply it through the [update pipeline](#updating-a-package-on-a-site). A site offers the newest version above the installed one whose `requires.core` its Kestello meets, and pre-releases only when `app.updates.prereleases` is on.
+
+<Flow :steps="publishing" caption="From your build to a site that runs the new version" />
 
 Sign every release with the same key. From the admin, a site applies an update only when the key that signed the installed version signed it too (or a key that version listed under [`signing_keys`](/developers/manifest#signing-keys)). An update signed by another key is refused with "Acme Events 1.5.0 is not signed by the publisher of the installed version (key …).", even when the site trusts that other key.
 
 ### From GitHub releases
 
-With `"updates": {"github": "acme/events"}`, a release counts when it is published (not a draft), its tag is `v<version>`, and it carries two assets: `<slug>-<version>.zip` and `<slug>-<version>.zip.sha256`, exactly as `package:build` writes them to `dist/`. Releases without both are skipped. For `acme-events` 1.5.0:
+With `"updates": {"github": "acme/events"}`, a release counts when it is published (not a draft), its tag is `v<version>` or `<slug>-v<version>` (for a repository that holds several packages, such as `acme-events-v1.5.0`), and it carries two assets: `<slug>-<version>.zip` and `<slug>-<version>.zip.sha256`, exactly as `package:build` writes them to `dist/`. Releases without both are skipped. For `acme-events` 1.5.0:
 
 ```bash
 php bin/cms package:build ../acme-events --key=acme.key
@@ -215,6 +279,19 @@ gh release create v1.5.0 dist/acme-events-1.5.0.zip dist/acme-events-1.5.0.zip.s
 ```
 
 The release notes are shown to the administrator, as Markdown. GitHub allows each server 60 checks an hour without a token, shared with Kestello's own update check.
+
+Kestello also has a reusable GitHub Actions workflow for plugin and theme repositories, `kestellohq/cms/.github/workflows/package.yml`. It runs the package's tests and `plugin:check`, builds the zip and, on a release tag, checks that the tag matches the manifest's version, signs the zip with the `package-key` secret, and publishes the GitHub release with notes from the package's `CHANGELOG.md`:
+
+```yaml
+jobs:
+  package:
+    uses: kestellohq/cms/.github/workflows/package.yml@main
+    with:
+      package: acme-events
+      release: ${{ startsWith(github.ref, 'refs/tags/') }}
+    secrets:
+      package-key: ${{ secrets.KESTELLO_PACKAGE_KEY }}
+```
 
 ### From your own feed
 
@@ -315,6 +392,8 @@ Before anything changes, Kestello checks that:
 
 Then, holding the update lock (`storage/framework/update.lock`) and the backup lock so a scheduled backup cannot start halfway:
 
+<Flow :steps="pipeline" caption="The update pipeline, and where it rolls back" />
+
 1. **Backup.** A database backup of kind `before-update` is made. Files are not included: the old package folder is kept instead.
 2. **Maintenance.** Visitors get a 503 page for up to 30 minutes. Signed-in people, the admin and the API keep working.
 3. **Swap.** The installed folder is moved to `storage/app/backups/packages/<slug>-<old version>-<date>-<time>-<random>/` and the new folder takes its place. OPcache and the page cache are cleared.
@@ -398,9 +477,11 @@ After a successful update, Kestello keeps the running release, the one before it
 
 ### Where sites get releases {#where-sites-get-releases}
 
-Official releases are GitHub releases of [kestellohq/cms](https://github.com/kestellohq/cms/releases). A maintainer pushes a `vX.Y.Z` tag, and the release workflow builds `kestello-core-X.Y.Z.zip`, signs it with the release key, checks it with `core:verify`, and publishes it with its `.sha256` file and `kestello.stub.php` (see [Editor setup](/developers/editor-setup)).
+Official releases are GitHub releases of [kestellohq/cms](https://github.com/kestellohq/cms/releases). A maintainer pushes a `vX.Y.Z` tag on `main`, and the release workflow checks that the tag matches `core/VERSION`, builds the assets, builds `kestello-core-X.Y.Z.zip`, signs it with the release key, checks it with `core:verify`, builds the install zip, and publishes both zips with their `.sha256` files and `kestello.stub.php` (see [Editor setup](/developers/editor-setup)).
 
-Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **Site → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
+<Flow :steps="coreRelease" caption="How an official release of Kestello is published" />
+
+Sites ask the GitHub releases API every `release.check_every` hours (the `updates.check` scheduled task), on **Check now** under **Site → Updates**, or with `php bin/cms core:check`. A release counts only when it is published (not a draft), its tag is `v` (or `kestello-core-v`) plus a semantic version, and it carries both `kestello-core-<version>.zip` and `kestello-core-<version>.zip.sha256` downloaded from the same repository. Anything else is ignored.
 
 Pre-releases (a version with a hyphen, published as a GitHub pre-release) are offered when `release.prereleases` is on, or when the site already runs a pre-release of the same version: a site on `0.1.0-rc.1` gets `0.1.0-rc.2`, then `0.1.0`, and only releases after that. Their notes are the changelog's Unreleased section at the time, because a pre-release has no changelog section of its own.
 

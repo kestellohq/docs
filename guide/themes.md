@@ -1,3 +1,12 @@
+<script setup>
+const layers = [
+    { title: 'This site\'s changes', text: 'What you publish under Appearance → Styles and Appearance → Templates, kept with the theme in use.', tone: 'brand' },
+    { title: 'The theme in use', text: 'A theme made in the admin holds its own styles, custom CSS, templates, parts, patterns and fonts.' },
+    { title: 'The theme it builds on', text: 'The parent, shown as Builds on. Everything the theme above leaves alone comes from here.' },
+    { title: 'Kestello', text: 'Patterns every site has, marked Comes with Kestello.', tone: 'muted' },
+];
+</script>
+
 # Themes and design
 
 A theme decides how every page of your site looks: the layout, the colours, the type and the shared pieces such as the header and footer. This page covers switching themes, changing colours and fonts under **Appearance → Styles**, writing custom CSS, changing page layouts under **Appearance → Templates**, making your own theme from the current look, and moving a theme from one Kestello site to another. Read it when you first set up the look of a site, and again before you switch themes on a site that is already live.
@@ -12,6 +21,10 @@ Every theme in **Appearance → Themes** shows one of two labels under its descr
 - **Made in the admin, no code**: a theme you or someone else made with **New theme**. It holds only design data: colours and other style values, custom CSS, templates, parts, patterns and fonts. It cannot run anything on the server, which is why it can be exported and imported from the admin.
 
 A theme made in the admin always builds on another theme, called its parent. The card then says **Builds on** followed by the parent's name. It looks exactly like the parent, with its own changes on top. This is what developers call a child theme. The parent must stay installed for as long as a theme builds on it.
+
+So the look of your site comes in layers. Where two layers have the same thing, such as a template with the same name, the top one wins:
+
+<Layers :layers="layers" caption="Where a site's look comes from, the top layer winning" />
 
 ## Who can do what
 
@@ -69,8 +82,6 @@ A value you changed is marked, and has a reset button that puts it back to the s
 
 ### Go back to an earlier version
 
-In a layout that pages are built from, such as a pattern, a block's **What editors can't change** section (at the bottom of its **Block** tab) locks it for editors, for example so the order of a page's sections stays fixed. People who may design can still change everything.
-
 Every publish is kept under **History** on the **Styles** screen, newest first. The live one has the badge **Live**.
 
 - To go back to an earlier version, choose **Restore** next to it. It is published at once. Custom CSS in that version comes back only if it still passes today's checks.
@@ -120,7 +131,7 @@ Comments (`/* ... */`) are allowed.
 - **Parts** are shared pieces such as a header or footer, placed into templates with the **Template part** block.
 - **Patterns** are ready-made groups of blocks that appear in the block inserter of the editor. A **Synced** pattern stays the same everywhere: change the pattern and every page that uses it changes. An unsynced pattern gives each page its own copy to change freely.
 
-Each row shows where it comes from: **From the theme**, **Changed on this site** or **Made on this site**.
+Each row shows where it comes from: **From the theme**, **Changed on this site**, **Made on this site**, or, for patterns every Kestello site has, **Comes with Kestello**.
 
 ### Edit a template, part or pattern
 
@@ -132,6 +143,8 @@ Each row shows where it comes from: **From the theme**, **Changed on this site**
 6. Choose **Publish**.
 
 Every publish is kept under **History**, where **Restore** brings back an earlier version. For something that came from the theme, **Back to the theme's version** removes this site's changes.
+
+In a layout that pages are built from, such as a pattern, a block's **What editors can't change** section (at the bottom of its **Block** tab) locks it for editors, for example so the order of a page's sections stays fixed. People who may design can still change everything.
 
 ### Make a new one
 
