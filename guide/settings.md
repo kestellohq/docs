@@ -65,6 +65,7 @@ How every email the site sends looks: the logo at the top and a line at the foot
 |---|---|---|
 | **Show a logo** | Show a logo at the top of every email. Without one, the site name is shown at the foot only. | On |
 | **Email logo** | The picture to use. Left empty, the **Logo or photo** from **Search and sharing** is used. It is shown 40 pixels tall. | Empty |
+| **Logo in dark mode** | Shown instead of the logo when a mail app is in dark mode, such as a light version of a dark logo. Mail apps that do not tell an email they are dark, such as Gmail, show the logo. | Empty |
 | **Footer text** | A line under the site name in every email, such as a postal address. | Empty |
 
 This tab needs the permission *Change how the site's emails look and what they say*.

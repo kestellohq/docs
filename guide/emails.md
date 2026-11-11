@@ -53,7 +53,7 @@ Every email is built from the same layout, then made yours in layers. The top la
 <Layers :layers="where" caption="An email’s words, logo and colours, from the top layer down" />
 
 - **Colours and the font** follow your theme. Change them under **Appearance → Styles**, and the emails change with the site. Mail apps in dark mode get the theme's dark colours. If a colour would make text hard to read, Kestello uses a readable one instead.
-- **The logo** is your site's logo, shown 40 pixels tall. Change it, or turn it off, under **Site → Settings → Emails** (see [Settings](/guide/settings#emails)).
+- **The logo** is your site's logo, shown 40 pixels tall. Change it, or turn it off, under **Site → Settings → Emails** (see [Settings](/guide/settings#emails)). If your logo is dark, add a light version there as the **Logo in dark mode**: mail apps in dark mode, such as Apple Mail and Outlook, show it instead.
 - **The footer** shows the site name and, if you write one, a line such as a postal address.
 - **The layout**, where the logo, the card and the footer sit, is Kestello's unless your theme brings its own. The Base theme does: it shows your site's name on a band in the theme's accent colour above the email. Changing themes under **Appearance → Themes** can change it. Your words, logo and footer stay the same whichever layout is used.
 

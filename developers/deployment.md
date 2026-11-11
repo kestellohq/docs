@@ -54,7 +54,7 @@ A production site has three kinds of parts: what answers visitors, what works in
 | `app.url` starts with `https://`, `app.debug` is `false` | [Configuration](/developers/configuration) |
 | Cron runs `schedule:run` every minute | [Cron](#cron) |
 | A queue worker under systemd or supervisor, `queue.worker` set to `daemon` | [Queue workers](#queue-workers) |
-| `app.trusted_proxies` set when behind a proxy or load balancer | [HTTPS and proxies](#https-and-proxies) |
+| `app.trusted_proxies` set when behind a proxy or load balancer, or nginx's real IP module behind Cloudflare | [HTTPS and proxies](#https-and-proxies) |
 | Backups copied off the server | [Backups off the server](#backups-off-the-server) |
 | `bin/cms health` in your monitoring | [Health monitoring](#health-monitoring) |
 
@@ -198,6 +198,18 @@ php_admin_value[max_execution_time] = 300
 ```
 
 Size `pm.max_children` to your memory: roughly the memory you can give PHP divided by the memory one request uses.
+
+### Docker
+
+Kestello's `docker/Dockerfile` builds PHP-FPM with every extension Kestello uses. A plain build makes the development image, with Xdebug. For a server, build the production stage:
+
+```sh
+docker build --target production -t kestello-php docker
+```
+
+The production image has no Xdebug, does not show errors in pages (they go to the log), hides the PHP version, and gives OPcache more room (`docker/php/production.ini`). It keeps `opcache.validate_timestamps` on, checking every 2 seconds, so updates from the admin and deploys that replace files are picked up without a restart.
+
+The image is PHP-FPM only. Run nginx, the database, the queue worker, the scheduler and the SSR process as their own containers, with the site's folder mounted at `/var/www/html` in each that needs it. Run the worker and the scheduler as `www-data` (`user: '33:33'` in Compose), so files they write in `storage/` stay writable for PHP-FPM. To keep `storage/` outside the site's folder, set `KESTELLO_STORAGE` to the folder (see [Configuration](/developers/configuration)).
 
 ## File permissions
 
@@ -393,6 +405,21 @@ Behind a load balancer, CDN or reverse proxy that terminates TLS, two things nee
    ```
 
 2. **Secure cookies.** Kestello marks cookies `Secure` when PHP sees `HTTPS` set, port 443, or `X-Forwarded-Proto: https` from an address in `app.trusted_proxies`. If your proxy sends none of these, set `fastcgi_param HTTPS on;` in the nginx that talks to PHP-FPM, or set `app.secure_cookies` to `true` in `config/app.php`.
+
+### Behind Cloudflare
+
+With Cloudflare in front, set its SSL/TLS mode to **Full (strict)** and give nginx a Cloudflare **Origin Certificate** (SSL/TLS → Origin Server), so the connection from Cloudflare to the server is encrypted and checked.
+
+Let nginx put the visitor's address in place of Cloudflare's, with the real IP module and Cloudflare's [published ranges](https://www.cloudflare.com/ips/). PHP then gets the visitor's address as `REMOTE_ADDR`, and `app.trusted_proxies` stays empty:
+
+```nginx
+# one line per range from https://www.cloudflare.com/ips-v4 and https://www.cloudflare.com/ips-v6
+set_real_ip_from 173.245.48.0/20;
+set_real_ip_from 2400:cb00::/32;
+real_ip_header CF-Connecting-IP;
+```
+
+Cloudflare changes its ranges now and then, so write the list with a script rather than by hand. To answer only requests that come through Cloudflare, add a `geo $realip_remote_addr` block that marks the same ranges and return `444` for the rest, or allow only those ranges to ports 80 and 443 in the server's firewall.
 
 ## Several servers, one database
 
