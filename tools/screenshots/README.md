@@ -21,7 +21,7 @@ needs again: delete the folder when you are done.
 
 ## 2. The sample site
 
-Unzip the release again into another folder. This one becomes the sample bakery site that
+Unzip the release again into another folder. This one becomes the sample studio site that
 every other picture shows:
 
 ```bash
@@ -31,7 +31,8 @@ php bin/cms schedule:work                                   # in a second termin
 
 # in the docs folder
 npm run screenshots:install -- --demo
-curl -s -o /dev/null http://127.0.0.1:8090/                 # the first visit adds the sample content
+curl -s -o /dev/null http://127.0.0.1:8090/                 # the first visit builds the sample's content types
+curl -s -o /dev/null http://127.0.0.1:8090/                 # the second fills them
 node tools/screenshots/prepare.mjs /path/to/sample/kestello # a contributor and a post in review
 ```
 

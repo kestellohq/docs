@@ -17,7 +17,16 @@ Kestello's own demo is at [demo.kestello.com](https://demo.kestello.com/). Sign 
 
 Install Kestello as usual (see [Installation](/guide/installation)). In step 3, under **What is this site for?**, choose **A public demo**. The installer then skips the administrator step and creates one account, `demo`, with the password `demo`.
 
-The first time the site is opened after installing, Kestello fills it with a sample site, a small bakery with pages, posts, a contact form, menus and images, and takes a snapshot of it. That takes a few seconds.
+The first visits after installing fill it with a sample site: Taller Arroyo & Lind, an invented architecture studio in Valencia, in English and Spanish, in the Exhibit theme. It has:
+
+- three content types built in the admin: projects, talks and people;
+- pages, journal posts with categories, and a contact form in each language;
+- menus for each language, and Spanish words in its addresses, such as `/es/proyectos`;
+- photos that are free to reuse (CC0 or public domain), each credited in its caption.
+
+The first visit builds the content types and the second fills them, because a content type built in the admin is ready from the next request on. Kestello then takes a snapshot of the site. Both visits together take a few seconds.
+
+The studio, its people and its projects are made up, and the site says so. The photos are real: the projects show close details of walls, stairs and concrete, so no recognisable building passes as the studio's work.
 
 The hourly reset is a [background task](/guide/installation#background-tasks). A cron job is best, but a demo also works without one.
 

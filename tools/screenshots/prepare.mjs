@@ -1,4 +1,4 @@
-// Add what the sample bakery site lacks for a few screenshots: a second person (a
+// Add what the sample studio site lacks for a few screenshots: a second person (a
 // contributor, Ines) and a post of hers waiting for review with a comment on it. Writes the
 // screenshot site's SQLite database directly; run it once after install.mjs.
 //   node tools/screenshots/prepare.mjs <path to the site's folder>
@@ -25,15 +25,15 @@ const ines = db.prepare(
 ).run(now, now).lastInsertRowid;
 
 // A copy of a sample post, as a new draft by Ines that she has submitted for review.
-const source = db.prepare("SELECT * FROM entries WHERE type = 'post' AND slug = 'soda-bread-for-a-quiet-sunday'").get();
+const source = db.prepare("SELECT * FROM entries WHERE type = 'post' AND slug = 'courtyards-in-urbino'").get();
 const post = db.prepare(
     `INSERT INTO entries (type, status, title, slug, author_id, locale, template, excerpt, data, menu_order, version, published_at, created_at, updated_at)
      VALUES ('post', 'pending', ?, ?, ?, ?, ?, ?, ?, 0, 1, NULL, ?, ?)`,
-).run('Our Christmas stollen, start to finish', 'our-christmas-stollen-start-to-finish', ines, source.locale, source.template, 'Four days, one loaf, and why we let it rest.', source.data, now, now).lastInsertRowid;
+).run('Market roofs in Valencia', 'market-roofs-in-valencia', ines, source.locale, source.template, 'A morning on the roof of the Mercado Central with a sketchbook.', source.data, now, now).lastInsertRowid;
 
 const comment = db.prepare('INSERT INTO entry_comments (entry_id, user_id, kind, body, created_at) VALUES (?, ?, ?, ?, ?)');
 comment.run(post, ines, 'submitted', null, now);
-comment.run(post, ines, 'comment', 'Could someone check the oven temperatures in step 3? I wrote them from memory.', now);
+comment.run(post, ines, 'comment', 'Could someone check the dates in the second paragraph? I wrote them from memory.', now);
 db.exec('COMMIT');
 
 console.log(`Added the contributor "ines" and her post #${post} in review.`);
