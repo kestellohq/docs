@@ -10,6 +10,8 @@ const lookup = [
 
 This page is for people who want to translate the Kestello admin, emails and messages into their language, and for site owners who want to try a translation. You need a free program for translation files, such as [Poedit](https://poedit.net/), and a GitHub account to send the translation in. You do not need to read code.
 
+To write your own pages in more than one language, see [A site in several languages](/guide/languages) instead.
+
 ## Choose the language of your site
 
 Open **Site → Settings**, and under **General** choose a **Language**, then save. The list shows English and every language that comes with your version of Kestello. The admin, the emails Kestello sends and the text of your theme switch to it. Numbers, dates and plurals follow the language too.

@@ -478,6 +478,8 @@ const internal = (item) => item.url.startsWith('/') && !item.url.startsWith('//'
 
 A location with no menu assigned is an empty list. Give your layout a fallback, as the base theme does, so a fresh site still has navigation.
 
+On a site in several languages, each language can have its own menu in a location; `menus` already holds the one for the page's language. To add a language switcher, see [Content in several languages](/developers/multilingual#add-a-language-switcher-to-a-theme).
+
 ## Block templates and patterns
 
 A theme can ship block trees as JSON files that site owners then change on **Appearance → Templates**:

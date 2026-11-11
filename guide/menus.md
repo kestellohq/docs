@@ -107,6 +107,10 @@ If the card is missing and you see **The active theme declares no menu locations
 
 When you switch themes, the new theme may name its locations differently. Check **Theme locations** after switching and assign your menus again where needed.
 
+### Menus in other languages
+
+On a site in several languages, the **Theme locations** card has a language switch. Choose the language, then a menu for each place; **Same as English** uses the main language's menu. Links to pages and categories open their translation in the visitor's language. See [A site in several languages](/guide/languages#menus).
+
 ## Hidden items
 
 An item that points at a draft, scheduled or trashed entry is kept in the menu but not shown to visitors. In the admin it carries the badge **Hidden: not published**. Its sub-items are hidden with it. Once the entry is published, the item appears by itself, with no need to edit the menu.

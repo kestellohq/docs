@@ -27,6 +27,7 @@ const guide = [
             { text: 'Search and sharing', link: '/guide/search-and-sharing' },
             { text: 'Media library', link: '/guide/media' },
             { text: 'Menus', link: '/guide/menus' },
+            { text: 'A site in several languages', link: '/guide/languages' },
             { text: 'Redirects', link: '/guide/redirects' },
             { text: 'Forms', link: '/guide/forms' },
             { text: 'Search', link: '/guide/search' },
@@ -88,6 +89,7 @@ const developers = [
             { text: 'Themes', link: '/developers/themes' },
             { text: 'Rendering and caching', link: '/developers/frontend' },
             { text: 'Search engines', link: '/developers/seo' },
+            { text: 'Content in several languages', link: '/developers/multilingual' },
         ],
     },
     {

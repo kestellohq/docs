@@ -16,7 +16,10 @@ The name, address and clock of your site.
 | **Tagline** | One sentence about the site, used by search engines and themes. | Empty |
 | **Site address** | The public address, starting with `https://`. Links in emails, such as password resets, are built from it. | The address given at installation |
 | **Timezone** | The clock for dates on the site and for scheduled posts and tasks. Choose the city you work in. | UTC |
-| **Language** | The language of the admin, of emails, and of the words your theme shows by itself, such as "Read more". Language packs add more languages. | English |
+| **Language** | The language of the admin, of emails, and of the words your theme shows by itself, such as "Read more". Language packs add more languages. It is also the main language of your content. | English |
+| **Other languages** | Languages your content is also written in. Each lives under its code, such as `/es` for Spanish. See [A site in several languages](/guide/languages). | None |
+| **Name and tagline in other languages** | The **Site name** and **Tagline** in each other language. Empty fields use the main ones. | Empty |
+| **Addresses in other languages** | A word of each language for each content type's and category's address, such as `proyectos` for `/projects`. | Empty |
 
 When the site has more than one language, each person can also choose the language of the emails they get: **Language** on **Your profile**. Left at **The site's language**, they get the one set here. See [Emails](/guide/emails).
 

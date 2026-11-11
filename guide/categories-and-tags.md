@@ -30,6 +30,10 @@ A category or tag that is used only by drafts, scheduled posts or trashed posts 
 
 Changing the address of a category or tag does not add a redirect. If the old address was shared, add one yourself under **Site → Redirects**.
 
+## In other languages
+
+On a site in several languages, each category and tag can have a translation with its own name and address. Switch the **Language** at the top of the list and use the **Translations** column. See [A site in several languages](/guide/languages#categories-and-tags).
+
 ## Related pages
 
 - [Pages, posts and other content](/guide/content): writing and publishing posts.
