@@ -342,6 +342,8 @@ These are all the environment variables Kestello reads.
 | `KESTELLO_LOG` | `Logger` | `stderr` writes the log to the process's output, one JSON line per entry, instead of daily files in `storage/logs/`. The production Docker image sets it, so `docker logs` shows the log. |
 | `KESTELLO_LOG_LEVEL` | `Logger` | The lowest level written: `debug`, `info`, `warning`, `error` or `critical`. Default: `info`, or `debug` with `app.debug` on. |
 | `KESTELLO_LOG_DAYS` | the `logs.prune` task | How many days of log files to keep in `storage/logs/`. Default: `14`. |
+| `KESTELLO_SLOW_QUERY_MS` | `QueryWatch` | A database statement that takes this many milliseconds or longer is logged, with its SQL (placeholders, not values). Default: `500`. `0` turns it off. |
+| `KESTELLO_REPEATED_QUERIES` | `QueryWatch` | A statement that runs this many times in one request is logged once at the end of it, with how often it ran: usually a query per item of a list. Default: `20`. `0` turns it off. Commands log slow statements only. |
 | `KESTELLO_STORAGE` | `Paths` | The folder for everything Kestello writes (cache, sessions, logs, uploaded files, backups), instead of the site's `storage/`: an absolute path, or one relative to the site. For a throwaway test run beside a development site, or a host that keeps the site's folder read-only. |
 | `SSR_HOST` | `core/ssr/server.mjs` | Address the SSR process listens on. Default `127.0.0.1`. |
 | `SSR_PORT` | `core/ssr/server.mjs` | Port the SSR process listens on. Default `13714`. |

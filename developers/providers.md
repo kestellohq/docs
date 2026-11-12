@@ -263,6 +263,16 @@ Log::error('the sync stopped', ['exception' => $e]);
 
 Each entry is one JSON line with the level, your message, your package as `owner` (from the [execution context](#execution-context)), the request's ID and the context you pass. The levels are `debug`, `info`, `warning`, `error` and `critical`; the site writes `info` and up unless it sets `KESTELLO_LOG_LEVEL`. Put details in the context rather than the message, so they can be searched. Keys that look like secrets (`password`, `token`, `api_key`, `secret`, `authorization`, `cookie`) are written as `[redacted]`, and an exception becomes its class, message, file, line and trace. Logging never throws.
 
+To follow database statements yourself, for example to send them to a tracing service, listen on the connection. You get each statement's SQL (placeholders, not values) and its time in milliseconds, also for statements that failed:
+
+```php
+use Kestello\Framework\Database\DatabaseManager;
+
+DatabaseManager::getConnection()->listen(function (string $sql, float $ms): void {
+    // record a span
+});
+```
+
 Where the log goes is the site's choice: daily files in `storage/logs/`, or the process's output with `KESTELLO_LOG=stderr`. See [Configuration](/developers/configuration#environment-variables).
 
 ## If something goes wrong
