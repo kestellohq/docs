@@ -69,6 +69,22 @@ final class NoticesProvider extends PluginProvider
 
 The class is created with `new`, without arguments. Do not give it a constructor with parameters.
 
+A route's controller and middleware, named by class as `FeedController` is here, are built by the container, so their constructors can ask for what they need. `FeedController` can take the `NoticeFeed` bound in `register()`, and core's services such as `Cms` or `Filters`:
+
+```php
+final readonly class FeedController
+{
+    public function __construct(private NoticeFeed $feed) {}
+
+    public function show(Request $request): Response
+    {
+        return Response::json($this->feed->latest());
+    }
+}
+```
+
+This needs Kestello 0.1.0-rc.6 or later. On older versions, controllers are made with `new` and take no arguments.
+
 ## Hooks
 
 | Hook | When it runs | Use it to |
