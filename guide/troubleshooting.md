@@ -289,6 +289,15 @@ Your browser's developer tools show a response header `X-Kestello-Cache` on page
 
 Scheduled posts stay unpublished, nightly backups are missing, or emails sent by background jobs never go out. All of these mean the scheduler is not running. Site Health shows **Scheduled tasks** as critical. See [Site Health](/guide/health#core-scheduler) for the fix and for hosts without cron.
 
+## Pages are slow {#slow}
+
+Kestello logs the two database problems that slow pages down without an error. Look in [the log](#logs) for:
+
+- `slow query: 812 ms`: one statement took that long. Its SQL is in the entry's `context`. On a large site it often means a missing index or a plugin asking for too much at once.
+- `the same query ran 40 times in one request`: something asked the database once per item of a list instead of once for the whole list. The entry's `owner` and `sql` say where to look; if it is a plugin, tell its author.
+
+The limits are 500 milliseconds and 20 repeats, and can be changed with `KESTELLO_SLOW_QUERY_MS` and `KESTELLO_REPEATED_QUERIES` (see [Configuration](/developers/configuration#environment-variables)).
+
 ## When you ask for help
 
 When you write to your developer, your host or a plugin's author, include:
