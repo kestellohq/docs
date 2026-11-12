@@ -250,6 +250,21 @@ php bin/cms plugin:deactivate notices --safe
 - **Do not depend on another plugin's registrations** unless it is in your `dependencies`, which makes it boot first.
 - **Do not resolve services you bind in `register()` of other packages during `register()`.** Other providers may not have registered yet. Resolve them in `boot()` or later.
 
+## Logging
+
+Write to the site's log with `Kestello\Framework\Log\Log`, not `error_log()`:
+
+```php
+use Kestello\Framework\Log\Log;
+
+Log::warning('the feed could not be read', ['feed' => $url, 'status' => $status]);
+Log::error('the sync stopped', ['exception' => $e]);
+```
+
+Each entry is one JSON line with the level, your message, your package as `owner` (from the [execution context](#execution-context)), the request's ID and the context you pass. The levels are `debug`, `info`, `warning`, `error` and `critical`; the site writes `info` and up unless it sets `KESTELLO_LOG_LEVEL`. Put details in the context rather than the message, so they can be searched. Keys that look like secrets (`password`, `token`, `api_key`, `secret`, `authorization`, `cookie`) are written as `[redacted]`, and an exception becomes its class, message, file, line and trace. Logging never throws.
+
+Where the log goes is the site's choice: daily files in `storage/logs/`, or the process's output with `KESTELLO_LOG=stderr`. See [Configuration](/developers/configuration#environment-variables).
+
 ## If something goes wrong
 
 | Message | What it means |

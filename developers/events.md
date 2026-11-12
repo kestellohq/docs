@@ -59,11 +59,12 @@ Events are plain PHP objects with public, read-only properties. Listen with `$cm
 
 ```php
 use Kestello\Cms\Events\UserRegistered;
+use Kestello\Framework\Log\Log;
 
 public function boot(Cms $cms): void
 {
     $cms->events->on(UserRegistered::class, function (UserRegistered $event): void {
-        error_log("[notices] new user {$event->userId} via {$event->via}");
+        Log::info('new user', ['user' => $event->userId, 'via' => $event->via]);
     });
 }
 ```
