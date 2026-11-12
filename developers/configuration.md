@@ -349,7 +349,7 @@ These are all the environment variables Kestello reads.
 | `SSR_PORT` | `core/ssr/server.mjs` | Port the SSR process listens on. Default `13714`. |
 | `KESTELLO_ROOT` | `core/ssr/server.mjs` | The site's root folder. The SSR process only loads built files under it. Default: the current folder. |
 | `PATH` | `Kestello\Support\Process` | Searched for external programs such as image optimizers and Ghostscript. Default `/usr/local/bin:/usr/bin:/bin`. |
-| `KESTELLO_TEST_DATABASES`, `KESTELLO_TEST_REDIS` | the test suite | Extra databases and a Redis URL for `bin/cms test`. See [Local development](/developers/local-development#running-the-tests). |
+| `KESTELLO_TEST_DATABASES`, `KESTELLO_TEST_DATABASE`, `KESTELLO_TEST_REDIS` | the test suite | Extra databases for the database tests, one database the whole suite runs on instead of SQLite, and a Redis URL for `bin/cms test`. See [Local development](/developers/local-development#running-the-tests). |
 
 Any environment variable can feed a value set from the command line: `php bin/cms platform:set cache redis password=@env:REDIS_PASSWORD` reads `REDIS_PASSWORD` instead of taking the secret from the shell history. The value is then stored (encrypted) in the admin layer.
 

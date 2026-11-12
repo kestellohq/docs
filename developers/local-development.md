@@ -128,7 +128,7 @@ docker exec cms_app php bin/cms test tests/Package
 docker exec cms_app php bin/cms test tests/Package/UpdatesTest.php
 ```
 
-Tests that touch the database can also run against MySQL and PostgreSQL, and the cache and session tests against Redis, as CI does. One command starts the `pgsql` and `redis` services and runs the suite on all of them:
+The whole suite also runs on MySQL and PostgreSQL, and the cache and session tests against Redis, as CI does. One command starts the `pgsql` and `redis` services, runs the suite once with every database (the database tests loop over them), then runs it again on MySQL and on PostgreSQL:
 
 ```bash
 npm run test:php:matrix
@@ -142,10 +142,20 @@ docker exec cms_db sh /docker-entrypoint-initdb.d/10-test-database.sh
 docker exec cms_pgsql sh /docker-entrypoint-initdb.d/10-test-database.sh
 ```
 
-The command passes the connections to `bin/cms test` in `KESTELLO_TEST_DATABASES` and a Redis address in `KESTELLO_TEST_REDIS`, and turns on APCu for the command line (`-d apc.enable_cli=1`) so the APCu cache store is tested too. Set those variables yourself to test against other servers.
+The command sets three variables for `bin/cms test`, and turns on APCu for the command line (`-d apc.enable_cli=1`) so the APCu cache store is tested too. Set them yourself to test against other servers:
+
+| Variable | What it does |
+|---|---|
+| `KESTELLO_TEST_DATABASES` | A JSON list of connections. The database tests (migrations, the query builder, the schema snapshot) run on each one as well as on SQLite. |
+| `KESTELLO_TEST_DATABASE` | One connection as JSON. Every test that boots the site runs on it instead of on SQLite. It is migrated once; before each test, what the last test changed is put back. |
+| `KESTELLO_TEST_REDIS` | A Redis address for the cache and session tests. |
+
+```bash
+KESTELLO_TEST_DATABASE='{"driver":"pgsql","host":"127.0.0.1","port":5432,"database":"kestello_test","username":"kestello","password":"secret"}' php bin/cms test
+```
 
 ::: warning
-The tests empty the test databases they are given. Never point `KESTELLO_TEST_DATABASES` at a database you care about.
+The tests empty the test databases they are given. Never point `KESTELLO_TEST_DATABASES` or `KESTELLO_TEST_DATABASE` at a database you care about. The two can't name the same database in one run: the database tests drop every table.
 :::
 
 ## Checks before a pull request
