@@ -40,9 +40,21 @@ Run commands as the same user the web server runs PHP as. On a VPS that is often
 
 Most problems leave a message in a log file. There are two places to look.
 
-**Kestello's log**: `storage/logs/`, one file per day named by date, for example `storage/logs/2026-11-05.log`. Every error that reaches Kestello is written here with the full details. When an error came from a plugin or theme, its name is in square brackets after the time, for example `[plugin:acme-shop]`, so you can see straight away which one to blame.
+**Kestello's log**: `storage/logs/`, one file per day named by date, for example `storage/logs/2026-11-05.log`. Every error that reaches Kestello is written here with the full details, and so are Kestello's notes, such as a plugin being switched off or a password reset email that could not be sent. In the production Docker image the same lines go to the container's output instead: read them with `docker logs <container>`.
 
-**PHP's own error log**: where PHP writes errors that happen before Kestello starts, and short notes from Kestello such as a plugin being switched off or a password reset email that could not be sent. Its location depends on the host:
+Each line is one entry, written as JSON:
+
+```json
+{"time":"2026-11-05T14:02:11+00:00","level":"error","message":"RuntimeException: the price list could not be read","owner":"plugin:acme-shop","request_id":"4bf92f3577b34da6a3ce929d0e0e4736","context":{"exception":{"file":"…","line":42,"trace":"…"}}}
+```
+
+- `level` says how serious it is: `debug`, `info`, `warning`, `error` or `critical`.
+- `owner` says what it came from: `core`, or a plugin or theme such as `plugin:acme-shop`, so you can see straight away which one to blame.
+- `request_id` is also on the page's response, in the `X-Request-Id` header, so you can find the entry for one visit (in your browser's developer tools, **Network**, the request, **Headers**).
+
+Log files are deleted after 14 days. See [Configuration](/developers/configuration#environment-variables) to keep them longer, write fewer, or send them to the output.
+
+**PHP's own error log**: where PHP writes errors that happen before Kestello starts. Its location depends on the host:
 
 - On shared hosting it is often a file called `error_log` in the site's folder or in `public/`, or a page called **Errors** or **Error Log** in the control panel.
 - On a VPS it is set by `error_log` in PHP's settings (`php.ini`), often next to the web server's logs in `/var/log/`.
@@ -56,8 +68,8 @@ Open the newest file and read from the bottom up: the last entries are the most 
 
 The **Something went wrong** page means Kestello caught an error and wrote it to the log. On a live site the details are hidden from visitors on purpose, because they can contain file paths and settings.
 
-1. Open the newest file in `storage/logs/` and find the last entry. It names the error, the file and the line.
-2. If the entry names a plugin or theme in square brackets, go to [A plugin broke the site](#plugin-broke-the-site).
+1. Open the newest file in `storage/logs/` and find the last entry with `"level":"error"` or `"critical"`. It names the error, and its `context` the file and the line.
+2. If the entry's `owner` is a plugin or theme, go to [A plugin broke the site](#plugin-broke-the-site).
 3. If the entry mentions the database (`SQLSTATE`, "Connection refused", "Access denied"), check that the database server is running and that the details in `config/database.php` are still right. Your host may have changed the database password or server.
 4. If the entry says a folder or file is not writable, go to [Permission errors](#permission-errors).
 
@@ -215,7 +227,7 @@ Kestello protects itself from plugins in two ways.
 
 The link only works on the site that made it and stops working when its time runs out. It does not sign you in, so you still need your password.
 
-If the admin works but you do not know which plugin is the cause, look in `storage/logs/` for the name in square brackets, then deactivate that one. To bring a suspended plugin back after its author fixed it, deactivate it, update it, then activate it again. See [Plugins](/guide/plugins).
+If the admin works but you do not know which plugin is the cause, look in `storage/logs/` for the `owner` of the errors, such as `"owner":"plugin:acme-shop"`, then deactivate that one. To bring a suspended plugin back after its author fixed it, deactivate it, update it, then activate it again. See [Plugins](/guide/plugins).
 
 If a theme broke the site, recovery mode uses the default theme so you can get in. Activate another theme under **Appearance → Themes**. See [Themes](/guide/themes).
 
