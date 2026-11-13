@@ -681,7 +681,7 @@ $cms->api->extend('users')->field(
 );
 ```
 
-Field names are lowercase with underscores, an added field never replaces an existing one, and a field whose resolver throws is left out and logged. The core resources you can extend are `users`, `entries`, `media`, `redirects` and `not-found` (the addresses visitors asked for that the site does not have). The filter `api.response.<name>` can add or redact values in a resource's output; a filter result that removes keys is ignored.
+Field names are lowercase with underscores, an added field never replaces an existing one, and a field whose resolver throws is left out and logged. The core resources you can extend are `users`, `entries`, `media`, `terms`, `menus`, `webhooks`, `redirects` and `not-found` (the addresses visitors asked for that the site does not have). The filter `api.response.<name>` can add or redact values in a resource's output; a filter result that removes keys is ignored.
 
 ## If something goes wrong
 
