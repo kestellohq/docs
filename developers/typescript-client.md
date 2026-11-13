@@ -58,7 +58,7 @@ for (const post of posts) {
 }
 ```
 
-Every method takes one object: path parameters by name (`id`, `type`), then `query` and `body`. Each endpoint has its own query parameters: entries are paged with `page` and `per_page`, users with `limit` and `cursor` (see [Pagination](/developers/rest-api#pagination)). A key the endpoint does not declare is a type error, and if it reaches the server anyway the answer is `422` with `Unknown field.` It answers with `{ data, meta }`, where `meta` holds paging details for lists. A `DELETE` that has nothing to return answers `undefined`.
+Every method takes one object: path parameters by name (`id`, `type`), then `query` and `body`. Each endpoint has its own query parameters: entries are paged with `page` and `per_page`, users with `limit` and `cursor` (see [Pagination](/developers/rest-api#pagination)). A key the endpoint does not declare is a type error, and if it reaches the server anyway the answer is `422` with `Unknown field.` It answers with `{ data, meta }`, where `meta` holds paging details for lists. An operation with nothing to return (a `204`, which most `DELETE`s answer) gives `undefined`.
 
 ```ts
 const { data: hook } = await kestello.createWebhook({

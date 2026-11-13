@@ -357,7 +357,7 @@ What the document contains:
 |---|---|
 | `servers` | `app.url` followed by `/api/v1`. |
 | `paths` | One operation per endpoint. `operationId` is the endpoint class name with a lowercase first letter (`listGreetings`). Path parameters constrained to digits (`\d+`, `\d{1,18}`, `[0-9]+`) are typed `integer`. |
-| `responses` | The shape of `data`, from the endpoint's `response()` schema or its resource's `properties()`, as a list when `collection()` is true. Endpoints that declare neither are described as a plain object. |
+| `responses` | The success status from `status()` (`200`, `201`, or only `204`) with the shape of `data`, from the endpoint's `response()` schema or its resource's `properties()`, as a list when `collection()` is true. Endpoints that declare neither are described as a plain object. Then the problems from `problems()` (`404`, `409`), and `401`, `403`, `422` and `429`. |
 | `security` | `session` or `bearer` with the endpoint's scopes; empty for public endpoints. |
 | `requestBody` | The endpoint's body schema. Objects have `additionalProperties: false`. |
 | `x-kestello-capability` | The capability the endpoint needs. |
@@ -519,7 +519,6 @@ use Kestello\Cms\Api\ApiRequest;
 use Kestello\Cms\Api\ApiRoute;
 use Kestello\Cms\Api\Endpoint;
 use Kestello\Cms\Api\Schema;
-use Kestello\Framework\Core\Response;
 use Kestello\Framework\Database\QueryBuilder;
 
 /** POST /api/v1/acme-books/books {title, author} */
@@ -530,6 +529,8 @@ final class CreateBook extends Endpoint
     public function scopes(): array { return ['acme-books:write']; }
     public function rateLimit(): ?array { return [30, 60]; }
     public function resource(): ?string { return BookResource::class; }
+    public function status(): int { return 201; }
+    public function problems(): array { return [409]; }
     public function summary(): string { return 'Add a book'; }
     public function tags(): array { return ['acme-books']; }
 
@@ -556,7 +557,7 @@ final class CreateBook extends Endpoint
         ]);
         $row = QueryBuilder::table('p_acme_books_books')->where('id', $id)->first();
 
-        return Response::json(['data' => (new BookResource($row))->resolve($request->principal)], 201);
+        return new BookResource($row);     // 201, from status()
     }
 }
 ```
@@ -593,9 +594,13 @@ The [`hello` example plugin](https://github.com/kestellohq/examples/tree/main/pl
 | `resource(): ?string` | `null` | The `Resource` class returned, for the OpenAPI document. |
 | `response(): ?Schema` | `null` | The shape of one item of `data`, when the endpoint does not return a resource. Takes precedence over `resource()`. |
 | `collection(): bool` | `true` for classes named `List…` | Whether `data` is a list. Override it when a `List…` endpoint answers with an object. |
+| `status(): int` | `200` | The status of a successful answer: `201` when the endpoint made something, `204` when `handle()` returns `null`. |
+| `problems(): array` | `[404]` for a path with parameters, else `[]` | The problems the endpoint answers with besides `401`, `403`, `422` and `429`, for the OpenAPI document: `404` when what the address names does not exist, `409` for a conflict. |
 | `summary(): string`, `tags(): array` | `''`, `[]` | Shown in the OpenAPI document. Without tags, the first path segment is used. |
 
 Kestello refuses to register an endpoint that is not public and lacks a capability or scopes (deny by default), uses a scope nobody declared, lives outside `/<plugin-slug>/`, or repeats a method and path that is already registered. With `app.debug` on, the refusal throws so you see it at once. With it off, it is written to the PHP error log as `[kestello] API endpoint refused (plugin:acme-books): ...` and the site keeps running without that endpoint.
+
+With `app.debug` on, every answer is checked against what the endpoint declares: its status against `status()`, and `data` against `response()` or the resource's `properties()`. A `response()` describes the whole answer, so a field it leaves out is wrong; a resource's answer may carry the fields other plugins add. A plugin's or theme's answer that differs is sent as is and logged as a warning against it, such as `Plugins\AcmeBooks\Api\CreateBook answered what it does not declare: answered 201, but status() says 200`. Fix the declaration or the answer, so the OpenAPI document and the [TypeScript client](/developers/typescript-client) tell the truth. With `app.debug` off, nothing is checked. Kestello 0.1.0-rc.6 and later check answers, and read `status()` and `problems()`.
 
 Constructor dependencies are injected from the container, as `Greetings` is in the hello plugin's endpoints. `handle()` runs inside the plugin's execution context, so an exception thrown there is blamed on the plugin in the log.
 
@@ -603,10 +608,10 @@ Constructor dependencies are injected from the container, as `Greetings` is in t
 
 | Return | Response |
 |---|---|
-| A `Resource` | `200` with `{"data": {...}}` |
+| A `Resource` | `200` with `{"data": {...}}`, or `201` when `status()` says so |
 | A `ResourceCollection` (from `Resource::collection($rows, $meta)`) | `200` with `{"data": [...], "meta": {...}}` |
-| An array | `200` with `{"data": <array>}` |
-| A `Kestello\Framework\Core\Response` | Sent as is. Use it for `201`, files or custom headers. |
+| An array | `200` with `{"data": <array>}`, or `201` when `status()` says so |
+| A `Kestello\Framework\Core\Response` | Sent as is. Use it for files or custom headers. |
 | `null` | `204 No Content` |
 
 ### The request object
@@ -635,6 +640,7 @@ Constructor dependencies are injected from the container, as `Greetings` is in t
 | `Schema::enum(['a', 'b'])` | One of the listed strings. |
 | `Schema::list($items)` | A list whose items match `$items`. |
 | `Schema::dictionary($maxKeys = 50)` | An object with free keys and scalar values. |
+| `Schema::map($values, $maxKeys = 1000)` | An object with any string keys whose values all match `$values`, for answers keyed by an id, a code or an address. For input, `dictionary()` is stricter about the keys. |
 | `Schema::any($maxBytes, $maxDepth)` | Any JSON value within the size and depth limits; validate it yourself. |
 
 | Modifier | Effect |
