@@ -595,12 +595,13 @@ The [`hello` example plugin](https://github.com/kestellohq/examples/tree/main/pl
 | `response(): ?Schema` | `null` | The shape of one item of `data`, when the endpoint does not return a resource. Takes precedence over `resource()`. |
 | `collection(): bool` | `true` for classes named `List…` | Whether `data` is a list. Override it when a `List…` endpoint answers with an object. |
 | `status(): int` | `200` | The status of a successful answer: `201` when the endpoint made something, `204` when `handle()` returns `null`. |
-| `problems(): array` | `[404]` for a path with parameters, else `[]` | The problems the endpoint answers with besides `401`, `403`, `422` and `429`, for the OpenAPI document: `404` when what the address names does not exist, `409` for a conflict. |
+| `problems(): array` | `[404]` for a path with parameters, else `[]` | The problems the endpoint answers with besides the ones any endpoint can (`400`, `401`, `403`, `405`, `413`, `422`, `429`), for the OpenAPI document: `404` when what the address names does not exist, `409` for a conflict. List them even when a service your endpoint calls throws them. |
+| `produces(): ?string` | `null` | The media type of an answer that is a file instead of JSON with `data`, such as `text/csv` or `application/zip`. `handle()` returns a `Response` with that `Content-Type`. |
 | `summary(): string`, `tags(): array` | `''`, `[]` | Shown in the OpenAPI document. Without tags, the first path segment is used. |
 
 Kestello refuses to register an endpoint that is not public and lacks a capability or scopes (deny by default), uses a scope nobody declared, lives outside `/<plugin-slug>/`, or repeats a method and path that is already registered. With `app.debug` on, the refusal throws so you see it at once. With it off, it is written to the PHP error log as `[kestello] API endpoint refused (plugin:acme-books): ...` and the site keeps running without that endpoint.
 
-With `app.debug` on, every answer is checked against what the endpoint declares: its status against `status()`, and `data` against `response()` or the resource's `properties()`. A `response()` describes the whole answer, so a field it leaves out is wrong; a resource's answer may carry the fields other plugins add. A plugin's or theme's answer that differs is sent as is and logged as a warning against it, such as `Plugins\AcmeBooks\Api\CreateBook answered what it does not declare: answered 201, but status() says 200`. Fix the declaration or the answer, so the OpenAPI document and the [TypeScript client](/developers/typescript-client) tell the truth. With `app.debug` off, nothing is checked. Kestello 0.1.0-rc.6 and later check answers, and read `status()` and `problems()`.
+With `app.debug` on, every answer is checked against what the endpoint declares: its status against `status()`, a problem against `problems()`, a file's `Content-Type` against `produces()`, and `data` against `response()` or the resource's `properties()`. A `response()` describes the whole answer, so a field it leaves out is wrong; a resource's answer may carry the fields other plugins add. A plugin's or theme's answer that differs is sent as is and logged as a warning against it, such as `Plugins\AcmeBooks\Api\CreateBook answered what it does not declare: answered 201, but status() says 200`. Fix the declaration or the answer, so the OpenAPI document and the [TypeScript client](/developers/typescript-client) tell the truth. With `app.debug` off, nothing is checked. Kestello 0.1.0-rc.6 and later check answers, and read `status()` and `problems()`.
 
 Constructor dependencies are injected from the container, as `Greetings` is in the hello plugin's endpoints. `handle()` runs inside the plugin's execution context, so an exception thrown there is blamed on the plugin in the log.
 
@@ -611,7 +612,7 @@ Constructor dependencies are injected from the container, as `Greetings` is in t
 | A `Resource` | `200` with `{"data": {...}}`, or `201` when `status()` says so |
 | A `ResourceCollection` (from `Resource::collection($rows, $meta)`) | `200` with `{"data": [...], "meta": {...}}` |
 | An array | `200` with `{"data": <array>}`, or `201` when `status()` says so |
-| A `Kestello\Framework\Core\Response` | Sent as is. Use it for files or custom headers. |
+| A `Kestello\Framework\Core\Response` | Sent as is. Use it for files (declare `produces()`) or custom headers. |
 | `null` | `204 No Content` |
 
 ### The request object
@@ -680,7 +681,7 @@ $cms->api->extend('users')->field(
 );
 ```
 
-Field names are lowercase with underscores, an added field never replaces an existing one, and a field whose resolver throws is left out and logged. The core resources you can extend are `users`, `entries` and `media`. The filter `api.response.<name>` can add or redact values in a resource's output; a filter result that removes keys is ignored.
+Field names are lowercase with underscores, an added field never replaces an existing one, and a field whose resolver throws is left out and logged. The core resources you can extend are `users`, `entries`, `media`, `redirects` and `not-found` (the addresses visitors asked for that the site does not have). The filter `api.response.<name>` can add or redact values in a resource's output; a filter result that removes keys is ignored.
 
 ## If something goes wrong
 
