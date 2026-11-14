@@ -13,7 +13,7 @@
     "screenshots:install": "node tools/screenshots/install.mjs"
   },
   "devDependencies": {
-    "playwright": "1.57.0",
+    "playwright": "1.65.0",
     "vitepress": "1.6.4"
   },
   "license": "GPL-2.0-or-later"
